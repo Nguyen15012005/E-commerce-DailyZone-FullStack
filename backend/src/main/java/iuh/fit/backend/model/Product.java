@@ -18,7 +18,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Product {
 
@@ -48,7 +47,7 @@ public class Product {
     @ManyToOne
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Seller seller;
 
     private LocalDateTime createdAt;

@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author TrungNguyen
  * @created 4/11/2026
@@ -34,4 +37,7 @@ public class Category {
 
     @NotNull
     private Integer level;
+
+    @OneToMany(mappedBy = "category")
+    private Set<Product> product = new HashSet<>();
 }

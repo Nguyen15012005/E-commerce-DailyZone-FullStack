@@ -7,6 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author TrungNguyen
  * @created 4/11/2026
@@ -42,10 +47,15 @@ public class Seller {
 
     private String GSTIN;
 
+    @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.SELLER;
 
     private boolean isEmailVerified = false;
 
+    @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;
+
+    @OneToMany(mappedBy = "seller")
+    private List<Product> products = new ArrayList<>();
 
 }

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 /**
  * @author TrungNguyen
  * @created 4/11/2026
@@ -26,6 +29,7 @@ public class CartItem {
     @JsonIgnore
     private Cart cart;
 
+    @ManyToOne
     private Product product;
 
     private String size;

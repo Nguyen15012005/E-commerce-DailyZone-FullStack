@@ -13,7 +13,7 @@ Hệ thống cung cấp đầy đủ chức năng cho **khách hàng, người b
 
 ## 👨‍💻 Thành viên thực hiện
 - **Nguyễn Nam Trung Nguyên** - 23640731  
-- **Nguyễn Thành Long**
+- **Nguyễn Thành Long** - 23723141
 
 ---
 

@@ -1,7 +1,10 @@
 package iuh.fit.backend.repository;
 
+import iuh.fit.backend.domain.AccountStatus;
 import iuh.fit.backend.model.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 /**
  * @author TrungNguyen
@@ -11,4 +14,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SellerRepository extends JpaRepository<Seller, Long> {
 
     Seller findByEmail(String email);
+    List<Seller> findByAccountStatus(AccountStatus status);
+
 }

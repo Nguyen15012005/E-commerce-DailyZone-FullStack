@@ -1,8 +1,8 @@
 package iuh.fit.backend.controller;
 
 import iuh.fit.backend.domain.UserRole;
-import iuh.fit.backend.model.VerificationCode;
 import iuh.fit.backend.repository.UserRepository;
+import iuh.fit.backend.request.LoginOtpRequest;
 import iuh.fit.backend.request.LoginRequest;
 import iuh.fit.backend.response.ApiResponse;
 import iuh.fit.backend.response.AuthResponse;
@@ -42,8 +42,8 @@ public class AuthController {
     }
 
     @PostMapping("/sent/login-signup-otp")
-    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody VerificationCode req) throws Exception {
-        authService.sentLoginOtp(req.getEmail());
+    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody LoginOtpRequest req) throws Exception {
+        authService.sentLoginOtp(req.getEmail(), req.getRole());
 
         ApiResponse res = new ApiResponse();
         res.setMessage("otp sent successfully");

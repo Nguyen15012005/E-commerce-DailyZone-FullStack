@@ -3,7 +3,6 @@ package iuh.fit.backend.model;
 import iuh.fit.backend.domain.AccountStatus;
 import iuh.fit.backend.domain.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ import java.util.List;
  * @description
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity

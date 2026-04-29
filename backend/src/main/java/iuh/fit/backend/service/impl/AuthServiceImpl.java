@@ -3,9 +3,11 @@ package iuh.fit.backend.service.impl;
 import iuh.fit.backend.config.JwtProvider;
 import iuh.fit.backend.domain.UserRole;
 import iuh.fit.backend.model.Cart;
+import iuh.fit.backend.model.Seller;
 import iuh.fit.backend.model.User;
 import iuh.fit.backend.model.VerificationCode;
 import iuh.fit.backend.repository.CartRepository;
+import iuh.fit.backend.repository.SellerRepository;
 import iuh.fit.backend.repository.UserRepository;
 import iuh.fit.backend.repository.VerificationCodeRepository;
 import iuh.fit.backend.request.LoginRequest;
@@ -39,6 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
+    private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final CartRepository cartRepository;
     private final JwtProvider jwtProvider;
@@ -47,13 +50,24 @@ public class AuthServiceImpl implements AuthService {
     private final CustomUserServiceImpl customUserService;
 
     @Override
-    public void sentLoginOtp(String email) throws Exception {
-        String SIGNING_PREFIX = "signin_";
+    public void sentLoginOtp(String email, UserRole role) throws Exception {
+        String SIGNING_PREFIX = "signing_";
+
         if (email.startsWith(SIGNING_PREFIX)) {
             email = email.substring(SIGNING_PREFIX.length());
-            User user = userRepository.findByEmail(email);
-            if(user==null){
-                throw new Exception("User not found with provided email");
+
+            if (role.equals(UserRole.SELLER) ){
+                Seller seller = sellerRepository.findByEmail(email);
+                if (seller == null){
+                    throw new Exception("Seller not found");
+                }
+            }
+            else {
+                System.out.println("Email: " + email);
+                User user = userRepository.findByEmail(email);
+                if(user==null){
+                    throw new Exception("User not found with provided email");
+                }
             }
         }
 
@@ -70,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
 
         verificationCodeRepository.save(verificationCode);
         String subject = "Daily Store login/signup OTP";
-        String text = "Mã OTP để Đăng nhập/Đăng ký tài khoảng của bạn (Your login/signup with otp): " + otp;
+        String text = "Mã OTP để Đăng nhập/Đăng ký tài khoản của bạn (Your login/signup with otp): " + otp;
 
         emailService.sendVerificationOtpEmail(email, otp, subject, text);
     }
@@ -109,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse signing(LoginRequest req) {
+    public AuthResponse signing(LoginRequest req) throws Exception {
         String username = req.getEmail();
         String otp = req.getOtp();
 
@@ -128,8 +142,13 @@ public class AuthServiceImpl implements AuthService {
         return authResponse;
     }
 
-    private Authentication authenticate(String username, String otp){
+    private Authentication authenticate(String username, String otp) throws Exception {
         UserDetails userDetails = customUserService.loadUserByUsername(username);
+
+        String SELLER_PREFIX ="seller_";
+        if(username.startsWith(SELLER_PREFIX)){
+            username = username.substring(SELLER_PREFIX.length());
+        }
 
         if(userDetails == null){
             throw new BadCredentialsException("Tên người dùng không hợp lệ (invalid username)");
@@ -137,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
         if(verificationCode==null || !verificationCode.getOtp().equals(otp)){
-            throw new BadCredentialsException("Mã OTP không hợp lệ (invalid OTP)");
+            throw new Exception("Mã OTP không hợp lệ (invalid OTP)");
         }
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

@@ -1,11 +1,10 @@
 package iuh.fit.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import iuh.fit.backend.domain.AccountStatus;
 import iuh.fit.backend.domain.UserRole;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,9 @@ import java.util.List;
  * @created 4/11/2026
  * @description
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Seller {
     @Id
@@ -40,6 +39,7 @@ public class Seller {
     private BankDetails bankDetails = new BankDetails();
 
     @OneToOne(cascade = CascadeType.ALL) //một seller có một địa chỉ, khi xóa seller thì xóa luôn địa chỉ
+    @JsonIgnore
     private Address pickupAddress;
 
     private String GSTIN;
@@ -53,6 +53,7 @@ public class Seller {
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;
 
     @OneToMany(mappedBy = "seller")
+    @JsonIgnore
     private List<Product> products = new ArrayList<>();
 
 }

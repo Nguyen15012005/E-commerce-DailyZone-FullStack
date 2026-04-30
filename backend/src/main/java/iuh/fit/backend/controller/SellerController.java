@@ -4,12 +4,14 @@ import iuh.fit.backend.config.JwtProvider;
 import iuh.fit.backend.domain.AccountStatus;
 import iuh.fit.backend.exception.SellerException;
 import iuh.fit.backend.model.Seller;
+import iuh.fit.backend.model.SellerReport;
 import iuh.fit.backend.model.VerificationCode;
 import iuh.fit.backend.repository.VerificationCodeRepository;
 import iuh.fit.backend.request.LoginRequest;
 import iuh.fit.backend.response.AuthResponse;
 import iuh.fit.backend.service.AuthService;
 import iuh.fit.backend.service.EmailService;
+import iuh.fit.backend.service.SellerReportService;
 import iuh.fit.backend.service.SellerService;
 import iuh.fit.backend.util.OtpUtil;
 import jakarta.mail.MessagingException;
@@ -35,6 +37,7 @@ public class SellerController {
     private final AuthService authService;
     private final EmailService emailService;
     private final JwtProvider jwtProvider;
+    private final SellerReportService sellerReportService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginSeller(@RequestBody LoginRequest req) throws Exception {
@@ -90,13 +93,12 @@ public class SellerController {
         return new ResponseEntity<>(seller, HttpStatus.OK);
     }
 
-//    @GetMapping("/report")
-//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception{
-//        String email = jwtProvider.getEmailFromJwtToken(jwt);
-//        Seller seller = sellerService.getSellerByEmail(email);
-//        SellerReport sellerReport = sellerReportService.getSellerReport(seller);
-//        return new ResponseEntity<>(sellerReport, HttpStatus.OK);
-//    }
+    @GetMapping("/report")
+    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception{
+        Seller seller = sellerService.getSellerProfile(jwt);
+        SellerReport sellerReport = sellerReportService.getSellerReport(seller);
+        return new ResponseEntity<>(sellerReport, HttpStatus.OK);
+    }
 
     @GetMapping()
     public ResponseEntity<List<Seller>> getAllSellers(@RequestParam(required = false) AccountStatus status) {

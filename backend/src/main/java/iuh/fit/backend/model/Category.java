@@ -1,11 +1,9 @@
 package iuh.fit.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,10 +13,10 @@ import java.util.Set;
  * @created 4/11/2026
  * @description
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Category {
 
@@ -39,5 +37,6 @@ public class Category {
     private Integer level;
 
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private Set<Product> product = new HashSet<>();
 }

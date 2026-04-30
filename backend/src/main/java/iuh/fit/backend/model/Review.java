@@ -2,10 +2,7 @@ package iuh.fit.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,10 +12,10 @@ import java.util.List;
  * @created 4/11/2026
  * @description
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Review {
 
@@ -40,6 +37,7 @@ public class Review {
     private Product product;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)

@@ -1,10 +1,7 @@
 package iuh.fit.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author TrungNguyen
@@ -12,10 +9,10 @@ import lombok.NoArgsConstructor;
  * @description
  */
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Deal {
 

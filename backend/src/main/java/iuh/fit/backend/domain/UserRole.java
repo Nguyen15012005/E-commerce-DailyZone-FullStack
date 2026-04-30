@@ -5,7 +5,6 @@ package iuh.fit.backend.domain;
  * @description
  */
 public enum UserRole {
-
     ADMIN,
     CUSTOMER,
     SELLER

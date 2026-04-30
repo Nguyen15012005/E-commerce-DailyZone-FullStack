@@ -6,9 +6,12 @@ package iuh.fit.backend.domain;
  * @description
  */
 public enum PaymentMethod {
+    COD,
+    VNPAY,
     MOMO,
     ZALOPAY,
     SHOPEEPAY,
-    VNPAY,
-    STRIPE
+    BANK_TRANSFER,
+    STRIPE,
+    RAZORPAY
 }

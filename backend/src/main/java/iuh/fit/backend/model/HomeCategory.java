@@ -1,14 +1,8 @@
 package iuh.fit.backend.model;
 
 import iuh.fit.backend.domain.HomeCategorySection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * @author TrungNguyen
@@ -16,10 +10,10 @@ import lombok.NoArgsConstructor;
  * @description
  */
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class HomeCategory {
 
@@ -33,5 +27,6 @@ public class HomeCategory {
 
     private String categoryId;
 
+    @Enumerated(EnumType.STRING)
     private HomeCategorySection section;
 }

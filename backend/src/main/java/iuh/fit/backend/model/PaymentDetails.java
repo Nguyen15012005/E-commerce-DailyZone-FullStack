@@ -1,11 +1,10 @@
 package iuh.fit.backend.model;
 
 import iuh.fit.backend.domain.PaymentStatus;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author TrungNguyen
@@ -13,9 +12,11 @@ import lombok.NoArgsConstructor;
  * @description
  */
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class PaymentDetails {
 
     private String paymentId;

@@ -3,10 +3,7 @@ package iuh.fit.backend.model;
 import iuh.fit.backend.domain.OrderStatus;
 import iuh.fit.backend.domain.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,10 +14,10 @@ import java.util.List;
  * @created 4/11/2026
  * @description
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 @Table(name = "orders")
 public class Order {

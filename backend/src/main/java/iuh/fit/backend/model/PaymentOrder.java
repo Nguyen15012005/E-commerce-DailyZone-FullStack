@@ -3,10 +3,7 @@ package iuh.fit.backend.model;
 import iuh.fit.backend.domain.PaymentMethod;
 import iuh.fit.backend.domain.PaymentOrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,10 +13,10 @@ import java.util.Set;
  * @created 4/11/2026
  * @description
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class PaymentOrder {
     @Id

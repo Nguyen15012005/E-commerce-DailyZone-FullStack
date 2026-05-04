@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Grid, 
-  Card, 
-  Tabs, 
-  Tab, 
-  TextField, 
-  InputAdornment, 
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  Tabs,
+  Tab,
+  TextField,
+  InputAdornment,
   IconButton,
   Table,
   TableBody,
@@ -24,12 +24,12 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-import { 
-  Add, 
-  Search, 
-  CalendarToday, 
-  FilterList, 
-  FileDownload, 
+import {
+  Add,
+  Search,
+  CalendarToday,
+  FilterList,
+  FileDownload,
   Print,
   MoreVert,
   TrendingUp,
@@ -40,7 +40,7 @@ const stats = [
   { label: 'TỔNG ĐƠN HÀNG', value: '1,284', change: '+12%', isPositive: true },
   { label: 'ĐÃ XỬ LÝ', value: '1,154', change: '+8.4%', isPositive: true },
   { label: 'ĐANG CHỜ XỬ LÝ', value: '42', warning: 'Cần xử lý gấp', isWarning: true },
-  { label: 'ĐÃ HỦY', value: '10', change: '-2.5%', isPositive: true },
+  { label: 'ĐÃ HỦY', value: '10', change: '-2.5%', isPositive: false },
   { label: 'TỶ LỆ HỦY ĐƠN', value: '0.8%', change: '+0.2%', isPositive: false },
 ];
 
@@ -55,82 +55,16 @@ const orders = [
 
 const OrderList = () => {
   const [tab, setTab] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [dateAnchorEl, setDateAnchorEl] = useState(null);
-  const [dateFilter, setDateFilter] = useState('Tất cả thời gian');
-  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
-  const [paymentFilter, setPaymentFilter] = useState('Tất cả thanh toán');
-
-  const handleDateClick = (event) => setDateAnchorEl(event.currentTarget);
-  const handleDateClose = (value) => {
-    if (value) setDateFilter(value);
-    setDateAnchorEl(null);
-  };
-
-  const handleFilterClick = (event) => setFilterAnchorEl(event.currentTarget);
-  const handleFilterClose = (value) => {
-    if (value) setPaymentFilter(value);
-    setFilterAnchorEl(null);
-  };
 
   const filteredOrders = orders.filter(order => {
-    // Tab filter (Status)
-    const matchesTab = 
-      tab === 0 || 
-      (tab === 1 && order.payment === 'Chờ thanh toán') ||
-      (tab === 2 && order.status === 'Đang chuẩn bị') ||
-      (tab === 3 && order.status === 'Đang giao') ||
-      (tab === 4 && order.status === 'Hoàn thành') ||
-      (tab === 5 && order.status === 'Đã hủy');
-
-    if (!matchesTab) return false;
-
-    // Search filter
-    const searchLower = searchQuery.toLowerCase();
-    const matchesSearch = 
-      order.id.toLowerCase().includes(searchLower) ||
-      order.customer.toLowerCase().includes(searchLower) ||
-      order.email.toLowerCase().includes(searchLower);
-
-    if (!matchesSearch) return false;
-
-    // Payment filter (from "Lọc thêm")
-    if (paymentFilter !== 'Tất cả thanh toán' && order.payment !== paymentFilter) return false;
-
-    // Date filter (Mock logic for specific months/days)
-    if (dateFilter === 'Hôm nay') return order.date === '24/05/2024';
-    if (dateFilter === 'Tháng này') return order.date.includes('/05/2024');
-
+    if (tab === 0) return true;
+    if (tab === 1) return order.payment === 'Chờ thanh toán';
+    if (tab === 2) return order.status === 'Đang chuẩn bị';
+    if (tab === 3) return order.status === 'Đang giao';
+    if (tab === 4) return order.status === 'Hoàn thành';
+    if (tab === 5) return order.status === 'Đã hủy';
     return true;
   });
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleExport = () => {
-    const headers = ["Mã đơn hàng", "Ngày tạo", "Khách hàng", "Email", "Tổng tiền", "Thanh toán", "Trạng thái"];
-    const csvRows = filteredOrders.map(order => [
-      order.id,
-      `"${order.date} ${order.time}"`,
-      `"${order.customer}"`,
-      `"${order.email}"`,
-      `"${order.total}"`,
-      `"${order.payment}"`,
-      `"${order.status}"`
-    ].join(','));
-    
-    const csvContent = "\uFEFF" + [headers.join(','), ...csvRows].join('\n'); // Add BOM for Excel UTF-8 support
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Order_List_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <Box sx={{ p: 4 }}>
@@ -179,13 +113,13 @@ const OrderList = () => {
       <Card sx={{ borderRadius: '16px', border: '1px solid #f0f0f0', boxShadow: 'none', overflow: 'hidden' }}>
         {/* Tabs */}
         <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
-          <Tabs 
-            value={tab} 
+          <Tabs
+            value={tab}
             onChange={(e, v) => setTab(v)}
             sx={{
               '& .MuiTabs-indicator': { bgcolor: '#C9A96E' },
-              '& .MuiTab-root': { 
-                textTransform: 'none', 
+              '& .MuiTab-root': {
+                textTransform: 'none',
                 fontWeight: 600,
                 color: '#666',
                 '&.Mui-selected': { color: '#C9A96E' }
@@ -203,11 +137,9 @@ const OrderList = () => {
 
         {/* Filter Bar */}
         <Box sx={{ p: 2, display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-          <TextField 
+          <TextField
             placeholder="Tìm kiếm mã đơn hàng, tên khách hàng..."
             size="small"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
             sx={{ flexGrow: 1, '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#f9fafb' } }}
             InputProps={{
               startAdornment: (
@@ -217,47 +149,23 @@ const OrderList = () => {
               ),
             }}
           />
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             startIcon={<CalendarToday />}
-            onClick={handleDateClick}
             sx={{ borderRadius: '10px', color: '#666', borderColor: '#e5e7eb', textTransform: 'none' }}
           >
-            {dateFilter}
+            Thời gian
           </Button>
-          <Menu anchorEl={dateAnchorEl} open={Boolean(dateAnchorEl)} onClose={() => handleDateClose()}>
-            <MenuItem onClick={() => handleDateClose('Tất cả thời gian')}>Tất cả thời gian</MenuItem>
-            <MenuItem onClick={() => handleDateClose('Hôm nay')}>Hôm nay</MenuItem>
-            <MenuItem onClick={() => handleDateClose('Tháng này')}>Tháng này</MenuItem>
-          </Menu>
-
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             startIcon={<FilterList />}
-            onClick={handleFilterClick}
             sx={{ borderRadius: '10px', color: '#666', borderColor: '#e5e7eb', textTransform: 'none' }}
           >
-            {paymentFilter}
+            Lọc thêm
           </Button>
-          <Menu anchorEl={filterAnchorEl} open={Boolean(filterAnchorEl)} onClose={() => handleFilterClose()}>
-            <MenuItem onClick={() => handleFilterClose('Tất cả thanh toán')}>Tất cả thanh toán</MenuItem>
-            <MenuItem onClick={() => handleFilterClose('Đã thanh toán')}>Đã thanh toán</MenuItem>
-            <MenuItem onClick={() => handleFilterClose('Chờ thanh toán')}>Chờ thanh toán</MenuItem>
-            <MenuItem onClick={() => handleFilterClose('Đã hoàn tiền')}>Đã hoàn tiền</MenuItem>
-          </Menu>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton 
-              onClick={handleExport}
-              sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}
-            >
-              <FileDownload />
-            </IconButton>
-            <IconButton 
-              onClick={handlePrint}
-              sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}
-            >
-              <Print />
-            </IconButton>
+            <IconButton sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><FileDownload /></IconButton>
+            <IconButton sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><Print /></IconButton>
           </Box>
         </Box>
 
@@ -298,16 +206,16 @@ const OrderList = () => {
                   </TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>{order.total}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label={order.payment} 
-                      size="small" 
-                      sx={{ 
-                        fontWeight: 700, 
+                    <Chip
+                      label={order.payment}
+                      size="small"
+                      sx={{
+                        fontWeight: 700,
                         fontSize: '0.7rem',
                         bgcolor: order.payment === 'Đã thanh toán' ? '#ecfdf5' : order.payment === 'Chờ thanh toán' ? '#fffbeb' : '#fef2f2',
                         color: order.payment === 'Đã thanh toán' ? '#059669' : order.payment === 'Chờ thanh toán' ? '#d97706' : '#dc2626',
                         borderRadius: '6px'
-                      }} 
+                      }}
                     />
                   </TableCell>
                   <TableCell>
@@ -330,13 +238,13 @@ const OrderList = () => {
           <Typography variant="body2" color="textSecondary">
             Hiển thị 1 đến 10 trong 1,284 kết quả
           </Typography>
-          <Pagination 
-            count={129} 
-            shape="rounded" 
-            sx={{ 
+          <Pagination
+            count={129}
+            shape="rounded"
+            sx={{
               '& .Mui-selected': { bgcolor: '#002060 !important', color: '#fff' },
               '& .MuiPaginationItem-root': { fontWeight: 700 }
-            }} 
+            }}
           />
         </Box>
       </Card>

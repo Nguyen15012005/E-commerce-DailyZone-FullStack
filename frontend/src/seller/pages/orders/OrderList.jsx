@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  Grid,
-  Card,
-  Tabs,
-  Tab,
-  TextField,
-  InputAdornment,
+import { useState } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Grid, 
+  Card, 
+  Tabs, 
+  Tab, 
+  TextField, 
+  InputAdornment, 
   IconButton,
   Table,
   TableBody,
@@ -19,32 +19,25 @@ import {
   Avatar,
   Chip,
   Pagination,
-  Stack,
   Checkbox,
   Menu,
   MenuItem
 } from '@mui/material';
-import {
-  Add,
-  Search,
-  CalendarToday,
-  FilterList,
-  FileDownload,
+import { 
+  Search, 
+  CalendarToday, 
+  FilterList, 
+  FileDownload, 
   Print,
-  MoreVert,
-  TrendingUp,
-  WarningAmber
+  MoreVert
 } from '@mui/icons-material';
 
 const stats = [
   { label: 'TỔNG ĐƠN HÀNG', value: '1,284', change: '+12%', isPositive: true },
   { label: 'ĐÃ XỬ LÝ', value: '1,154', change: '+8.4%', isPositive: true },
-  { label: 'ĐANG CHỜ XỬ LÝ', value: '42', warning: 'Cần xử lý gấp', isWarning: true },
+  { label: 'ĐANG CHỜ XỬ LÝ', value: '42', change: '-5.2%', isPositive: false },
   { label: 'ĐÃ HỦY', value: '10', change: '-2.5%', isPositive: false },
-  {
-    label: 'TỶ LỆ HỦY ĐƠN', value: '0.8%', change: '+0.2%', isPositive: true
-
-  },
+  { label: 'TỶ LỆ HỦY ĐƠN', value: '0.8%', change: '+0.2%', isPositive: true },
 ];
 
 const orders = [
@@ -58,30 +51,76 @@ const orders = [
 
 const OrderList = () => {
   const [tab, setTab] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateAnchorEl, setDateAnchorEl] = useState(null);
+  const [dateFilter, setDateFilter] = useState('Tất cả thời gian');
+  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
+  const [paymentFilter, setPaymentFilter] = useState('Tất cả thanh toán');
+
+  const handleDateClick = (event) => setDateAnchorEl(event.currentTarget);
+  const handleDateClose = (value) => {
+    if (value) setDateFilter(value);
+    setDateAnchorEl(null);
+  };
+
+  const handleFilterClick = (event) => setFilterAnchorEl(event.currentTarget);
+  const handleFilterClose = (value) => {
+    if (value) setPaymentFilter(value);
+    setFilterAnchorEl(null);
+  };
 
   const filteredOrders = orders.filter(order => {
-    if (tab === 0) return true;
-    if (tab === 1) return order.payment === 'Chờ thanh toán';
-    if (tab === 2) return order.status === 'Đang chuẩn bị';
-    if (tab === 3) return order.status === 'Đang giao';
-    if (tab === 4) return order.status === 'Hoàn thành';
-    if (tab === 5) return order.status === 'Đã hủy';
+    // Tab filter (Status)
+    const matchesTab = 
+      tab === 0 || 
+      (tab === 1 && order.payment === 'Chờ thanh toán') ||
+      (tab === 2 && order.status === 'Đang chuẩn bị') ||
+      (tab === 3 && order.status === 'Đang giao') ||
+      (tab === 4 && order.status === 'Hoàn thành') ||
+      (tab === 5 && order.status === 'Đã hủy');
+
+    if (!matchesTab) return false;
+
+    // Search filter
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = 
+      order.id.toLowerCase().includes(searchLower) ||
+      order.customer.toLowerCase().includes(searchLower) ||
+      order.email.toLowerCase().includes(searchLower);
+
+    if (!matchesSearch) return false;
+
+    // Payment filter
+    if (paymentFilter !== 'Tất cả thanh toán' && order.payment !== paymentFilter) return false;
+
+    // Date filter
+    if (dateFilter === 'Hôm nay') return order.date === '24/05/2024';
+    if (dateFilter === 'Tháng này') return order.date.includes('/05/2024');
+
     return true;
   });
+
+  const handlePrint = () => window.print();
+
+  const handleExport = () => {
+    const headers = ["Mã đơn hàng", "Ngày tạo", "Khách hàng", "Email", "Tổng tiền", "Thanh toán", "Trạng thái"];
+    const csvRows = filteredOrders.map(order => [
+      order.id, `"${order.date} ${order.time}"`, `"${order.customer}"`, `"${order.email}"`, `"${order.total}"`, `"${order.payment}"`, `"${order.status}"`
+    ].join(','));
+    const csvContent = "\uFEFF" + [headers.join(','), ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Orders_${new Date().toLocaleDateString('vi-VN')}.csv`;
+    link.click();
+  };
 
   return (
     <Box sx={{ p: 4 }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, color: '#111' }}>
-            Quản lý đơn hàng
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Theo dõi, cập nhật và xử lý tất cả các đơn đặt hàng từ khách hàng của bạn.
-          </Typography>
-        </Box>
-
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, color: '#111' }}>Quản lý đơn hàng</Typography>
+        <Typography variant="body2" color="textSecondary">Theo dõi và xử lý tất cả các đơn hàng từ khách hàng.</Typography>
       </Box>
 
       {/* Stats Cards */}
@@ -89,102 +128,63 @@ const OrderList = () => {
         {stats.map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
             <Card sx={{ p: 3, borderRadius: '16px', border: '1px solid #f0f0f0', boxShadow: 'none' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: '#666', letterSpacing: '0.5px' }}>
-                {item.label}
-              </Typography>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#666' }}>{item.label}</Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                <Typography variant="h4" sx={{ fontWeight: 800 }}>
-                  {item.value}
-                </Typography>
-                {item.change && (
-                  <Typography variant="caption" sx={{ color: item.isPositive ? '#2ecc71' : '#e74c3c', fontWeight: 700 }}>
-                    {item.change}
-                  </Typography>
-                )}
-                {item.warning && (
-                  <Box sx={{ bgcolor: '#fee2e2', color: '#dc2626', px: 1, py: 0.5, borderRadius: '4px', display: 'inline-flex', alignItems: 'center' }}>
-                    <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.65rem' }}>{item.warning}</Typography>
-                  </Box>
-                )}
+                <Typography variant="h4" sx={{ fontWeight: 800 }}>{item.value}</Typography>
+                <Typography variant="caption" sx={{ color: item.isPositive ? '#2ecc71' : '#e74c3c', fontWeight: 700 }}>{item.change}</Typography>
               </Box>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-      {/* Main Content Area */}
-      <Card sx={{ borderRadius: '16px', border: '1px solid #f0f0f0', boxShadow: 'none', overflow: 'hidden' }}>
-        {/* Tabs */}
+      {/* Main Content */}
+      <Card sx={{ borderRadius: '16px', border: '1px solid #f0f0f0', boxShadow: 'none' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
-          <Tabs
-            value={tab}
-            onChange={(e, v) => setTab(v)}
-            sx={{
-              '& .MuiTabs-indicator': { bgcolor: '#C9A96E' },
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 600,
-                color: '#666',
-                '&.Mui-selected': { color: '#C9A96E' }
-              }
-            }}
-          >
-            <Tab label="Tất cả (1,284)" />
-            <Tab label="Chưa thanh toán (12)" />
-            <Tab label="Đang chuẩn bị (28)" />
-            <Tab label="Đang giao (56)" />
-            <Tab label="Hoàn thành (1,154)" />
-            <Tab label="Đã hủy (34)" />
+          <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ '& .MuiTabs-indicator': { bgcolor: '#C9A96E' }, '& .MuiTab-root': { fontWeight: 600, '&.Mui-selected': { color: '#C9A96E' } } }}>
+            <Tab label="Tất cả" /><Tab label="Chưa thanh toán" /><Tab label="Đang chuẩn bị" /><Tab label="Đang giao" /><Tab label="Hoàn thành" /><Tab label="Đã hủy" />
           </Tabs>
         </Box>
 
-        {/* Filter Bar */}
         <Box sx={{ p: 2, display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-          <TextField
-            placeholder="Tìm kiếm mã đơn hàng, tên khách hàng..."
-            size="small"
+          <TextField 
+            placeholder="Tìm kiếm mã đơn, khách hàng..." size="small" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
             sx={{ flexGrow: 1, '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#f9fafb' } }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ color: '#9ca3af' }} />
-                </InputAdornment>
-              ),
-            }}
+            InputProps={{ startAdornment: (<InputAdornment position="start"><Search sx={{ color: '#9ca3af' }} /></InputAdornment>) }}
           />
-          <Button
-            variant="outlined"
-            startIcon={<CalendarToday />}
-            sx={{ borderRadius: '10px', color: '#666', borderColor: '#e5e7eb', textTransform: 'none' }}
-          >
-            Thời gian
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<FilterList />}
-            sx={{ borderRadius: '10px', color: '#666', borderColor: '#e5e7eb', textTransform: 'none' }}
-          >
-            Lọc thêm
-          </Button>
+          <Button variant="outlined" startIcon={<CalendarToday />} onClick={handleDateClick} sx={{ borderRadius: '10px', textTransform: 'none' }}>{dateFilter}</Button>
+          <Menu anchorEl={dateAnchorEl} open={Boolean(dateAnchorEl)} onClose={() => handleDateClose()}>
+            <MenuItem onClick={() => handleDateClose('Tất cả thời gian')}>Tất cả thời gian</MenuItem>
+            <MenuItem onClick={() => handleDateClose('Hôm nay')}>Hôm nay</MenuItem>
+            <MenuItem onClick={() => handleDateClose('Tháng này')}>Tháng này</MenuItem>
+          </Menu>
+
+          <Button variant="outlined" startIcon={<FilterList />} onClick={handleFilterClick} sx={{ borderRadius: '10px', textTransform: 'none' }}>{paymentFilter}</Button>
+          <Menu anchorEl={filterAnchorEl} open={Boolean(filterAnchorEl)} onClose={() => handleFilterClose()}>
+            <MenuItem onClick={() => handleFilterClose('Tất cả thanh toán')}>Tất cả thanh toán</MenuItem>
+            <MenuItem onClick={() => handleFilterClose('Đã thanh toán')}>Đã thanh toán</MenuItem>
+            <MenuItem onClick={() => handleFilterClose('Chờ thanh toán')}>Chờ thanh toán</MenuItem>
+            <MenuItem onClick={() => handleFilterClose('Đã hoàn tiền')}>Đã hoàn tiền</MenuItem>
+          </Menu>
+
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><FileDownload /></IconButton>
-            <IconButton sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><Print /></IconButton>
+            <IconButton onClick={handleExport} sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><FileDownload /></IconButton>
+            <IconButton onClick={handlePrint} sx={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}><Print /></IconButton>
           </Box>
         </Box>
 
-        {/* Table */}
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#f9fafb' }}>
               <TableRow>
                 <TableCell padding="checkbox"><Checkbox size="small" /></TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>MÃ ĐƠN HÀNG</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>NGÀY TẠO</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>KHÁCH HÀNG</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>TỔNG TIỀN</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>THANH TOÁN</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }}>TRẠNG THÁI</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#666' }} align="right">THAO TÁC</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>MÃ ĐƠN HÀNG</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>NGÀY TẠO</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>KHÁCH HÀNG</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>TỔNG TIỀN</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>THANH TOÁN</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem' }}>TRẠNG THÁI</TableCell>
+                <TableCell align="right">THAO TÁC</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -198,57 +198,27 @@ const OrderList = () => {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Avatar sx={{ width: 32, height: 32, bgcolor: '#f0f4ff', color: '#002060', fontSize: '0.8rem', fontWeight: 700 }}>
-                        {order.customer.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase()}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{order.customer}</Typography>
-                        <Typography variant="caption" color="textSecondary">{order.email}</Typography>
-                      </Box>
+                      <Avatar sx={{ width: 32, height: 32, bgcolor: '#f0f4ff', color: '#002060', fontSize: '0.8rem', fontWeight: 700 }}>{order.customer[0]}</Avatar>
+                      <Box><Typography variant="body2" sx={{ fontWeight: 600 }}>{order.customer}</Typography><Typography variant="caption">{order.email}</Typography></Box>
                     </Box>
                   </TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>{order.total}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={order.payment}
-                      size="small"
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: '0.7rem',
-                        bgcolor: order.payment === 'Đã thanh toán' ? '#ecfdf5' : order.payment === 'Chờ thanh toán' ? '#fffbeb' : '#fef2f2',
-                        color: order.payment === 'Đã thanh toán' ? '#059669' : order.payment === 'Chờ thanh toán' ? '#d97706' : '#dc2626',
-                        borderRadius: '6px'
-                      }}
-                    />
+                    <Chip label={order.payment} size="small" sx={{ fontWeight: 700, borderRadius: '6px', bgcolor: order.payment === 'Đã thanh toán' ? '#ecfdf5' : '#fffbeb', color: order.payment === 'Đã thanh toán' ? '#059669' : '#d97706' }} />
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: order.statusColor }} />
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: order.statusColor }}>{order.status}</Typography>
-                    </Box>
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: order.statusColor }}>{order.status}</Typography>
                   </TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small"><MoreVert /></IconButton>
-                  </TableCell>
+                  <TableCell align="right"><IconButton size="small"><MoreVert /></IconButton></TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
 
-        {/* Footer / Pagination */}
         <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="body2" color="textSecondary">
-            Hiển thị 1 đến 10 trong 1,284 kết quả
-          </Typography>
-          <Pagination
-            count={129}
-            shape="rounded"
-            sx={{
-              '& .Mui-selected': { bgcolor: '#002060 !important', color: '#fff' },
-              '& .MuiPaginationItem-root': { fontWeight: 700 }
-            }}
-          />
+          <Typography variant="body2" color="textSecondary">Hiển thị {filteredOrders.length} kết quả</Typography>
+          <Pagination count={1} shape="rounded" />
         </Box>
       </Card>
     </Box>

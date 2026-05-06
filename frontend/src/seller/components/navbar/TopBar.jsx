@@ -13,7 +13,7 @@ import {
   ChatBubbleOutline 
 } from '@mui/icons-material';
 
-const TopBar = () => {
+const TopBar = ({ hideSearch }) => {
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -22,24 +22,26 @@ const TopBar = () => {
       p: 3,
       bgcolor: 'transparent'
     }}>
-      {/* Search bar */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        bgcolor: '#fff', 
-        px: 2, 
-        py: 1, 
-        borderRadius: '12px',
-        width: 400,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
-        border: '1px solid #EAEAEA'
-      }}>
-        <Search sx={{ color: 'gray', mr: 1, fontSize: 20 }} />
-        <InputBase 
-          placeholder="Tìm kiếm tồn kho, đơn hàng..." 
-          sx={{ flex: 1, fontSize: '0.9rem' }} 
-        />
-      </Box>
+      {/* Search bar - Hidden if hideSearch is true */}
+      {!hideSearch ? (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          bgcolor: '#fff', 
+          px: 2, 
+          py: 1, 
+          borderRadius: '12px',
+          width: 400,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+          border: '1px solid #EAEAEA'
+        }}>
+          <Search sx={{ color: 'gray', mr: 1, fontSize: 20 }} />
+          <InputBase 
+            placeholder="Tìm kiếm tồn kho, đơn hàng..." 
+            sx={{ flex: 1, fontSize: '0.9rem' }} 
+          />
+        </Box>
+      ) : <Box />}
 
       {/* Right side icons */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

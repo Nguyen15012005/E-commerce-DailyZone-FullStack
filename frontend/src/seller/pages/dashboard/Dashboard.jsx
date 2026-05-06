@@ -1,9 +1,9 @@
-import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  Card, 
+import React from "react";
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
   LinearProgress,
   Table,
   TableBody,
@@ -11,50 +11,71 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip
-} from '@mui/material';
-import { 
-  AttachMoney, 
-  ShoppingBagOutlined, 
-  PeopleOutline, 
+  Chip,
+} from "@mui/material";
+import {
+  AttachMoney,
+  ShoppingBagOutlined,
+  PeopleOutline,
   ArrowUpward,
-  ArrowDownward
-} from '@mui/icons-material';
-import TopBar from '../../components/navbar/TopBar';
-import RevenueChart from './components/RevenueChart';
-import CategoryChart from './components/CategoryChart';
-import ConversionChart from './components/ConversionChart';
+  ArrowDownward,
+} from "@mui/icons-material";
+import TopBar from "../../components/navbar/TopBar";
+import RevenueChart from "./components/RevenueChart";
+import CategoryChart from "./components/CategoryChart";
+import ConversionChart from "./components/ConversionChart";
 
 const StatCard = ({ title, value, percentage, isUp, icon, bgcolor }) => (
-  <Card sx={{ 
-    borderRadius: '24px', 
-    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-    border: '1px solid #F0F0F0',
-    bgcolor: bgcolor || '#fff'
-  }}>
+  <Card
+    sx={{
+      borderRadius: "24px",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+      border: "1px solid #F0F0F0",
+      bgcolor: bgcolor || "#fff",
+    }}
+  >
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="subtitle2" color="textSecondary" sx={{ fontWeight: 600 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <Typography
+          variant="subtitle2"
+          color="textSecondary"
+          sx={{ fontWeight: 600 }}
+        >
           {title}
         </Typography>
-        <Box sx={{ 
-          bgcolor: isUp ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)', 
-          p: 0.5, borderRadius: '50%', display: 'flex'
-        }}>
-          {React.cloneElement(icon, { sx: { fontSize: 18, color: isUp ? '#2ecc71' : '#e74c3c' } })}
+        <Box
+          sx={{
+            bgcolor: isUp
+              ? "rgba(46, 204, 113, 0.1)"
+              : "rgba(231, 76, 60, 0.1)",
+            p: 0.5,
+            borderRadius: "50%",
+            display: "flex",
+          }}
+        >
+          {React.cloneElement(icon, {
+            sx: { fontSize: 18, color: isUp ? "#2ecc71" : "#e74c3c" },
+          })}
         </Box>
       </Box>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
         {value}
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <Typography variant="caption" sx={{ 
-          color: isUp ? '#2ecc71' : '#e74c3c', 
-          fontWeight: 700,
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          {isUp ? <ArrowUpward sx={{ fontSize: 12 }} /> : <ArrowDownward sx={{ fontSize: 12 }} />}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: isUp ? "#2ecc71" : "#e74c3c",
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {isUp ? (
+            <ArrowUpward sx={{ fontSize: 12 }} />
+          ) : (
+            <ArrowDownward sx={{ fontSize: 12 }} />
+          )}
           {percentage}%
         </Typography>
         <Typography variant="caption" color="textSecondary">
@@ -67,9 +88,9 @@ const StatCard = ({ title, value, percentage, isUp, icon, bgcolor }) => (
 
 const Dashboard = () => {
   return (
-    <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', pb: 5 }}>
+    <Box sx={{ bgcolor: "#FAFAFA", minHeight: "100vh", pb: 5 }}>
       <TopBar />
-      
+
       <Box sx={{ px: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>
           Dashboard
@@ -81,13 +102,32 @@ const Dashboard = () => {
             <Grid container spacing={3}>
               {/* Stats Row */}
               <Grid item xs={12} md={4}>
-                <StatCard title="Tổng doanh thu" value="₫983.410k" percentage="3.34" isUp={true} icon={<AttachMoney />} bgcolor="#FFF2E6" />
+                <StatCard
+                  title="Tổng doanh thu"
+                  value="₫983.410k"
+                  percentage="3.34"
+                  isUp={true}
+                  icon={<AttachMoney />}
+                  bgcolor="#FFF2E6"
+                />
               </Grid>
               <Grid item xs={12} md={4}>
-                <StatCard title="Tổng đơn hàng" value="58.375" percentage="2.89" isUp={false} icon={<ShoppingBagOutlined />} />
+                <StatCard
+                  title="Tổng đơn hàng"
+                  value="58.375"
+                  percentage="2.89"
+                  isUp={false}
+                  icon={<ShoppingBagOutlined />}
+                />
               </Grid>
               <Grid item xs={12} md={4}>
-                <StatCard title="Khách ghé thăm" value="237.782" percentage="8.02" isUp={true} icon={<PeopleOutline />} />
+                <StatCard
+                  title="Khách ghé thăm"
+                  value="237.782"
+                  percentage="8.02"
+                  isUp={true}
+                  icon={<PeopleOutline />}
+                />
               </Grid>
 
               {/* Main Charts Row */}
@@ -95,64 +135,183 @@ const Dashboard = () => {
                 <RevenueChart />
               </Grid>
               <Grid item xs={12} md={4}>
-                <Card sx={{ borderRadius: '24px', p: 3, height: '100%', border: '1px solid #F0F0F0', boxShadow: 'none' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 3, textTransform: 'uppercase', letterSpacing: '1px' }}>Mục tiêu tháng</Typography>
-                  <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <Typography variant="h3" sx={{ fontWeight: 800, color: '#C9A96E' }}>85%</Typography>
-                    <Typography variant="body2" color="textSecondary">Tiến độ rất tốt! 🎉</Typography>
-                    <LinearProgress 
-                      variant="determinate" value={85} 
-                      sx={{ mt: 3, height: 10, borderRadius: 5, bgcolor: '#F0F0F0', '& .MuiLinearProgress-bar': { bgcolor: '#C9A96E' } }} 
+                <Card
+                  sx={{
+                    borderRadius: "24px",
+                    p: 3,
+                    height: "100%",
+                    border: "1px solid #F0F0F0",
+                    boxShadow: "none",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 800,
+                      mb: 3,
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    Mục tiêu tháng
+                  </Typography>
+                  <Box sx={{ textAlign: "center", py: 4 }}>
+                    <Typography
+                      variant="h3"
+                      sx={{ fontWeight: 800, color: "#C9A96E" }}
+                    >
+                      85%
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Tiến độ rất tốt! 🎉
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={85}
+                      sx={{
+                        mt: 3,
+                        height: 10,
+                        borderRadius: 5,
+                        bgcolor: "#F0F0F0",
+                        "& .MuiLinearProgress-bar": { bgcolor: "#C9A96E" },
+                      }}
                     />
                   </Box>
-                  <Box sx={{ mt: 4, bgcolor: '#FFF2E6', p: 2, borderRadius: '15px', display: 'flex', justifyContent: 'space-between' }}>
-                     <Box>
-                        <Typography variant="caption" color="textSecondary">Mục tiêu</Typography>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>600tr</Typography>
-                     </Box>
-                     <Box sx={{ textAlign: 'right' }}>
-                        <Typography variant="caption" color="textSecondary">Thực đạt</Typography>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#C9A96E' }}>510tr</Typography>
-                     </Box>
+                  <Box
+                    sx={{
+                      mt: 4,
+                      bgcolor: "#FFF2E6",
+                      p: 2,
+                      borderRadius: "15px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="caption" color="textSecondary">
+                        Mục tiêu
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        600tr
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Typography variant="caption" color="textSecondary">
+                        Thực đạt
+                      </Typography>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 700, color: "#C9A96E" }}
+                      >
+                        510tr
+                      </Typography>
+                    </Box>
                   </Box>
                 </Card>
               </Grid>
 
               {/* Bottom Row */}
               <Grid item xs={12} md={6}>
-                 <ConversionChart />
+                <ConversionChart />
               </Grid>
               <Grid item xs={12} md={6}>
-                 <Card sx={{ borderRadius: '24px', p: 3, border: '1px solid #F0F0F0', boxShadow: 'none', height: 400, display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, textTransform: 'uppercase', letterSpacing: '1px' }}>Người dùng tích cực</Typography>
-                    <Box sx={{ mt: 1.5 }}>
-                       {[
-                         { country: 'Việt Nam', value: 36, color: '#C9A96E' },
-                         { country: 'Hoa Kỳ', value: 24, color: '#FFB84D' },
-                         { country: 'Nhật Bản', value: 17.5, color: '#FFE0B3' },
-                         { country: 'Hàn Quốc', value: 15, color: '#FFF2E6' },
-                         { country: 'Khác', value: 7.5, color: '#F0F0F0' },
-                       ].map(item => (
-                         <Box key={item.country} sx={{ mb: 2 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                               <Typography variant="caption" sx={{ fontWeight: 600 }}>{item.country}</Typography>
-                               <Typography variant="caption" sx={{ fontWeight: 700 }}>{item.value}%</Typography>
-                            </Box>
-                            <LinearProgress 
-                              variant="determinate" value={item.value} 
-                              sx={{ height: 6, borderRadius: 3, bgcolor: '#F5F5F5', '& .MuiLinearProgress-bar': { bgcolor: item.color } }} 
-                            />
-                         </Box>
-                       ))}
+                <Card
+                  sx={{
+                    borderRadius: "24px",
+                    p: 3,
+                    border: "1px solid #F0F0F0",
+                    boxShadow: "none",
+                    height: 400,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 800,
+                      mb: 2,
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    Người dùng tích cực
+                  </Typography>
+                  <Box sx={{ mt: 1.5 }}>
+                    {[
+                      { country: "Việt Nam", value: 36, color: "#C9A96E" },
+                      { country: "Hoa Kỳ", value: 24, color: "#FFB84D" },
+                      { country: "Nhật Bản", value: 17.5, color: "#FFE0B3" },
+                      { country: "Hàn Quốc", value: 15, color: "#FFF2E6" },
+                      { country: "Khác", value: 7.5, color: "#F0F0F0" },
+                    ].map((item) => (
+                      <Box key={item.country} sx={{ mb: 2 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mb: 0.5,
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{ fontWeight: 600 }}
+                          >
+                            {item.country}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            sx={{ fontWeight: 700 }}
+                          >
+                            {item.value}%
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={item.value}
+                          sx={{
+                            height: 6,
+                            borderRadius: 3,
+                            bgcolor: "#F5F5F5",
+                            "& .MuiLinearProgress-bar": { bgcolor: item.color },
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                  <Box
+                    sx={{
+                      mt: "auto",
+                      pt: 1.5,
+                      borderTop: "1px solid #F5F5F5",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="caption" color="textSecondary">
+                        Đang trực tuyến
+                      </Typography>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 800, color: "#2ecc71" }}
+                      >
+                        1.284 người
+                      </Typography>
                     </Box>
-                    <Box sx={{ mt: 'auto', pt: 1.5, borderTop: '1px solid #F5F5F5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                       <Box>
-                          <Typography variant="caption" color="textSecondary">Đang trực tuyến</Typography>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#2ecc71' }}>1.284 người</Typography>
-                       </Box>
-                       <Typography variant="caption" sx={{ color: '#C9A96E', fontWeight: 700, cursor: 'pointer' }}>Xem bản đồ</Typography>
-                    </Box>
-                 </Card>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#C9A96E",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Xem bản đồ
+                    </Typography>
+                  </Box>
+                </Card>
               </Grid>
             </Grid>
           </Grid>
@@ -164,38 +323,100 @@ const Dashboard = () => {
                 <CategoryChart />
               </Grid>
               <Grid item xs={12}>
-                <Card sx={{ borderRadius: '24px', p: 3, border: '1px solid #F0F0F0', boxShadow: 'none', height: 400, display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, textTransform: 'uppercase', letterSpacing: '1px' }}>Nguồn truy cập</Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
+                <Card
+                  sx={{
+                    borderRadius: "24px",
+                    p: 3,
+                    border: "1px solid #F0F0F0",
+                    boxShadow: "none",
+                    height: 400,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 800,
+                      mb: 2,
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    Nguồn truy cập
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                      mt: 1,
+                    }}
+                  >
                     {[
-                      { name: 'Trực tiếp', value: 40 },
-                      { name: 'Tìm kiếm', value: 25 },
-                      { name: 'Mạng xã hội', value: 15 },
-                      { name: 'Quảng cáo FB', value: 10 },
-                      { name: 'Quảng cáo GG', value: 8 },
-                      { name: 'Khác', value: 2 },
+                      { name: "Trực tiếp", value: 40 },
+                      { name: "Tìm kiếm", value: 25 },
+                      { name: "Mạng xã hội", value: 15 },
+                      { name: "Quảng cáo FB", value: 10 },
+                      { name: "Quảng cáo GG", value: 8 },
+                      { name: "Khác", value: 2 },
                     ].map((source) => (
                       <Box key={source.name}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                          <Typography variant="caption">{source.name}</Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 700 }}>{source.value}%</Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mb: 0.5,
+                          }}
+                        >
+                          <Typography variant="caption">
+                            {source.name}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            sx={{ fontWeight: 700 }}
+                          >
+                            {source.value}%
+                          </Typography>
                         </Box>
-                        <LinearProgress 
-                          variant="determinate" value={source.value} 
-                          sx={{ height: 5, borderRadius: 3, bgcolor: '#F0F0F0', '& .MuiLinearProgress-bar': { bgcolor: '#C9A96E' } }} 
+                        <LinearProgress
+                          variant="determinate"
+                          value={source.value}
+                          sx={{
+                            height: 5,
+                            borderRadius: 3,
+                            bgcolor: "#F0F0F0",
+                            "& .MuiLinearProgress-bar": { bgcolor: "#C9A96E" },
+                          }}
                         />
                       </Box>
                     ))}
                   </Box>
-                  <Box sx={{ mt: 'auto', pt: 1.5, borderTop: '1px solid #F5F5F5', display: 'flex', justifyContent: 'space-between' }}>
-                     <Box>
-                        <Typography variant="caption" color="textSecondary">Tỉ lệ thoát</Typography>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>24.8%</Typography>
-                     </Box>
-                     <Box sx={{ textAlign: 'right' }}>
-                        <Typography variant="caption" color="textSecondary">Thời gian TB</Typography>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>4p 32s</Typography>
-                     </Box>
+                  <Box
+                    sx={{
+                      mt: "auto",
+                      pt: 1.5,
+                      borderTop: "1px solid #F5F5F5",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="caption" color="textSecondary">
+                        Tỉ lệ thoát
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+                        24.8%
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Typography variant="caption" color="textSecondary">
+                        Thời gian TB
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+                        4p 32s
+                      </Typography>
+                    </Box>
                   </Box>
                 </Card>
               </Grid>

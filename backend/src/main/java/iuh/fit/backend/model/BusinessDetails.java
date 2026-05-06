@@ -1,6 +1,5 @@
 package iuh.fit.backend.model;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
 public class BusinessDetails {
     private String businessName;
     private String businessAddress;

@@ -40,7 +40,7 @@ public class Seller {
 
     @OneToOne(cascade = CascadeType.ALL) //một seller có một địa chỉ, khi xóa seller thì xóa luôn địa chỉ
     @JsonIgnore
-    private Address pickupAddress;
+    private Address pickupAddress = new Address();
 
     private String GSTIN;
 

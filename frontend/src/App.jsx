@@ -7,6 +7,10 @@ import Footer from "./customer/components/footer/Footer";
 import SellerLayout from "./seller/components/SellerLayout";
 import Dashboard from "./seller/pages/dashboard/Dashboard";
 import Product from "./customer/pages/product/Product";
+import ProductList from "./seller/pages/products/ProductList";
+import OrderList from "./seller/pages/orders/OrderList";
+import CustomerList from "./seller/pages/customers/CustomerList";
+import SellerProfile from "./seller/pages/profile/SellerProfile";
 
 const App = () => {
   return (
@@ -31,27 +35,23 @@ const App = () => {
             <Route index element={<Dashboard />} />
             <Route
               path="products"
-              element={
-                <div className="p-10">Danh sách sản phẩm (Đang phát triển)</div>
-              }
+              element={<ProductList />}
             />
             <Route
               path="add-product"
-              element={
-                <div className="p-10">Thêm sản phẩm (Đang phát triển)</div>
-              }
+              element={<ProductList />}
             />
             <Route
               path="orders"
-              element={
-                <div className="p-10">Quản lý đơn hàng (Đang phát triển)</div>
-              }
+              element={<OrderList />}
+            />
+            <Route
+              path="customers"
+              element={<CustomerList />}
             />
             <Route
               path="profile"
-              element={
-                <div className="p-10">Hồ sơ người bán (Đang phát triển)</div>
-              }
+              element={<SellerProfile />}
             />
           </Route>
         </Routes>

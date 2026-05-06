@@ -15,14 +15,11 @@ import {
   TableHead,
   TableRow,
   Chip,
-  Skeleton,
   TextField,
   Avatar
 } from '@mui/material';
 import { 
   Download, 
-  ArrowUpward, 
-  ArrowDownward,
   DateRange,
   Inventory2Outlined
 } from '@mui/icons-material';
@@ -71,8 +68,18 @@ const formatNumber = (value) => {
     return num.toLocaleString('vi-VN');
 };
 
-// --- DỮ LIỆU MẪU ---
+// --- DỮ LIỆU MẪU ĐỘNG ---
 const getDataByRange = (range) => {
+  const getWeeklyStatus = (base) => [
+    { name: 'T2', "Thành công": base * 0.8, "Đã hủy": base * 0.1, "Trả hàng": base * 0.05 },
+    { name: 'T3', "Thành công": base * 0.6, "Đã hủy": base * 0.05, "Trả hàng": base * 0.02 },
+    { name: 'T4', "Thành công": base * 0.9, "Đã hủy": base * 0.12, "Trả hàng": base * 0.04 },
+    { name: 'T5', "Thành công": base * 1.1, "Đã hủy": base * 0.08, "Trả hàng": base * 0.03 },
+    { name: 'T6', "Thành công": base * 1.3, "Đã hủy": base * 0.06, "Trả hàng": base * 0.02 },
+    { name: 'T7', "Thành công": base * 1.8, "Đã hủy": base * 0.2, "Trả hàng": base * 0.1 },
+    { name: 'CN', "Thành công": base * 1.5, "Đã hủy": base * 0.15, "Trả hàng": base * 0.08 },
+  ];
+
   const ranges = {
     today: {
       metrics: [
@@ -83,16 +90,21 @@ const getDataByRange = (range) => {
       ],
       revenueTrend: [
         { name: '08h', "Doanh thu": 2000000, "Lợi nhuận": 800000 },
-        { name: '10h', "Doanh thu": 4500000, "Lợi nhuận": 1800000 },
         { name: '12h', "Doanh thu": 8200000, "Lợi nhuận": 3200000 },
-        { name: '14h', "Doanh thu": 12000000, "Lợi nhuận": 4800000 },
-        { name: '16h', "Doanh thu": 9000000, "Lợi nhuận": 3600000 },
-        { name: '18h', "Doanh thu": 15000000, "Lợi nhuận": 6000000 },
+        { name: '16h', "Doanh thu": 12000000, "Lợi nhuận": 4800000 },
         { name: '20h', "Doanh thu": 22000000, "Lợi nhuận": 8800000 },
       ],
+      paymentData: [{ name: 'Ví MoMo', value: 70, color: '#C9A96E' }, { name: 'Khác', value: 30, color: '#2C3E50' }],
+      performanceData: [
+        { subject: 'Giao hàng', A: 140, fullMark: 150 },
+        { subject: 'Chất lượng', A: 130, fullMark: 150 },
+        { subject: 'Phản hồi', A: 120, fullMark: 150 },
+        { subject: 'Giá cả', A: 110, fullMark: 150 },
+        { subject: 'Dịch vụ', A: 145, fullMark: 150 },
+      ],
+      statusData: getWeeklyStatus(20),
       products: [
         { id: 1, name: 'Váy Lụa Cao Cấp', img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=100', sold: 12, rev: 2400000, profit: 850000, stock: 45, status: 'Xu hướng', color: '#27AE60' },
-        { id: 2, name: 'Áo Sơ Mi Oxford', img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=100', sold: 8, rev: 1600000, profit: 520000, stock: 12, status: 'Sắp hết', color: '#E67E22' },
       ]
     },
     '7days': {
@@ -104,47 +116,80 @@ const getDataByRange = (range) => {
       ],
       revenueTrend: [
         { name: 'T2', "Doanh thu": 12000000, "Lợi nhuận": 4000000 },
-        { name: 'T3', "Doanh thu": 15000000, "Lợi nhuận": 5500000 },
         { name: 'T4', "Doanh thu": 11000000, "Lợi nhuận": 3200000 },
-        { name: 'T5', "Doanh thu": 18000000, "Lợi nhuận": 6800000 },
         { name: 'T6', "Doanh thu": 22000000, "Lợi nhuận": 8500000 },
-        { name: 'T7', "Doanh thu": 19000000, "Lợi nhuận": 7200000 },
         { name: 'CN', "Doanh thu": 25000000, "Lợi nhuận": 9800000 },
       ],
+      paymentData: [
+        { name: 'Ví MoMo', value: 40, color: '#C9A96E' },
+        { name: 'Thẻ Tín Dụng', value: 30, color: '#2C3E50' },
+        { name: 'COD', value: 20, color: '#27AE60' },
+        { name: 'Khác', value: 10, color: '#E67E22' },
+      ],
+      performanceData: [
+        { subject: 'Giao hàng', A: 120, fullMark: 150 },
+        { subject: 'Chất lượng', A: 98, fullMark: 150 },
+        { subject: 'Phản hồi', A: 86, fullMark: 150 },
+        { subject: 'Giá cả', A: 99, fullMark: 150 },
+        { subject: 'Dịch vụ', A: 85, fullMark: 150 },
+      ],
+      statusData: getWeeklyStatus(50),
       products: [
         { id: 1, name: 'Váy Lụa Cao Cấp', img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=100', sold: 125, rev: 25000000, profit: 8500000, stock: 45, status: 'Xu hướng', color: '#27AE60' },
         { id: 2, name: 'Áo Sơ Mi Oxford', img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=100', sold: 98, rev: 18200000, profit: 5200000, stock: 12, status: 'Sắp hết', color: '#E67E22' },
-        { id: 3, name: 'Túi Xách Da', img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=100', sold: 42, rev: 42000000, profit: 12000000, stock: 85, status: 'Bán chạy', color: '#C9A96E' },
       ]
+    },
+    month: {
+        metrics: [
+          { title: 'Doanh thu thuần', value: '5.4B', trend: '+15.2%', isUp: true, color: '#C9A96E' },
+          { title: 'Tổng đơn hàng', value: '18.4k', trend: '+10.5%', isUp: true, color: '#2C3E50' },
+          { title: 'Lợi nhuận dự tính', value: '1.8B', trend: '+8.1%', isUp: true, color: '#27AE60' },
+          { title: 'Khách hàng mới', value: '5.2k', trend: '+12.1%', isUp: true, color: '#E67E22' },
+        ],
+        revenueTrend: [
+          { name: 'Tuần 1', "Doanh thu": 850000000, "Lợi nhuận": 320000000 },
+          { name: 'Tuần 4', "Doanh thu": 1850000000, "Lợi nhuận": 700000000 },
+        ],
+        paymentData: [{ name: 'Thẻ', value: 50, color: '#2C3E50' }, { name: 'Ví', value: 50, color: '#C9A96E' }],
+        performanceData: [
+          { subject: 'Giao hàng', A: 110, fullMark: 150 },
+          { subject: 'Chất lượng', A: 120, fullMark: 150 },
+          { subject: 'Phản hồi', A: 115, fullMark: 150 },
+          { subject: 'Giá cả', A: 130, fullMark: 150 },
+          { subject: 'Dịch vụ', A: 105, fullMark: 150 },
+        ],
+        statusData: getWeeklyStatus(200),
+        products: [
+          { id: 1, name: 'Váy Lụa Cao Cấp', img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=100', sold: 850, rev: 175000000, profit: 62000000, stock: 45, status: 'Xu hướng', color: '#27AE60' },
+        ]
+    },
+    custom: {
+        metrics: [
+          { title: 'Doanh thu thuần', value: '820M', trend: 'Tùy chỉnh', isUp: true, color: '#C9A96E' },
+          { title: 'Tổng đơn hàng', value: '2.8k', trend: 'Tùy chỉnh', isUp: true, color: '#2C3E50' },
+          { title: 'Lợi nhuận dự tính', value: '310M', trend: 'Tùy chỉnh', isUp: true, color: '#27AE60' },
+          { title: 'Khách hàng mới', value: '850', trend: 'Tùy chỉnh', isUp: true, color: '#E67E22' },
+        ],
+        revenueTrend: [
+          { name: 'P1', "Doanh thu": 450000000, "Lợi nhuận": 180000000 },
+          { name: 'P2', "Doanh thu": 370000000, "Lợi nhuận": 130000000 },
+        ],
+        paymentData: [{ name: 'CK', value: 60, color: '#2C3E50' }, { name: 'Ví', value: 40, color: '#C9A96E' }],
+        performanceData: [
+          { subject: 'Giao hàng', A: 110, fullMark: 150 },
+          { subject: 'Chất lượng', A: 115, fullMark: 150 },
+          { subject: 'Phản hồi', A: 140, fullMark: 150 },
+          { subject: 'Giá cả', A: 100, fullMark: 150 },
+          { subject: 'Dịch vụ', A: 125, fullMark: 150 },
+        ],
+        statusData: getWeeklyStatus(100),
+        products: [
+          { id: 3, name: 'Túi Xách Da', img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=100', sold: 420, rev: 420000000, profit: 120000000, stock: 85, status: 'Bán chạy', color: '#C9A96E' },
+        ]
     }
   };
   return ranges[range] || ranges['7days'];
 };
-
-const paymentData = [
-  { name: 'Ví MoMo', value: 40, color: '#C9A96E' },
-  { name: 'Thẻ Tín Dụng', value: 30, color: '#2C3E50' },
-  { name: 'COD', value: 20, color: '#27AE60' },
-  { name: 'Chuyển khoản', value: 10, color: '#E67E22' },
-];
-
-const performanceData = [
-  { subject: 'Giao hàng', A: 120, fullMark: 150 },
-  { subject: 'Chất lượng', A: 98, fullMark: 150 },
-  { subject: 'Phản hồi', A: 86, fullMark: 150 },
-  { subject: 'Giá cả', A: 99, fullMark: 150 },
-  { subject: 'Dịch vụ', A: 85, fullMark: 150 },
-];
-
-const statusData = [
-  { name: 'T2', "Thành công": 40, "Đã hủy": 5, "Trả hàng": 2 },
-  { name: 'T3', "Thành công": 30, "Đã hủy": 2, "Trả hàng": 1 },
-  { name: 'T4', "Thành công": 45, "Đã hủy": 8, "Trả hàng": 3 },
-  { name: 'T5', "Thành công": 50, "Đã hủy": 4, "Trả hàng": 2 },
-  { name: 'T6', "Thành công": 60, "Đã hủy": 3, "Trả hàng": 1 },
-  { name: 'T7', "Thành công": 85, "Đã hủy": 10, "Trả hàng": 5 },
-  { name: 'CN', "Thành công": 75, "Đã hủy": 6, "Trả hàng": 4 },
-];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -170,7 +215,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const Reports = () => {
   const [timeRange, setTimeRange] = useState('7days');
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState(getDataByRange('7days'));
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -179,12 +223,16 @@ const Reports = () => {
     const newRange = event.target.value;
     setTimeRange(newRange);
     if (newRange !== 'custom') {
-        setLoading(true);
-        setTimeout(() => {
-          setData(getDataByRange(newRange));
-          setLoading(false);
-        }, 600);
+        setData(getDataByRange(newRange));
     }
+  };
+
+  const handleApplyCustomFilter = () => {
+    if (!startDate || !endDate) {
+        alert("Vui lòng chọn đầy đủ ngày!");
+        return;
+    }
+    setData(getDataByRange('custom'));
   };
 
   const handleExport = () => {
@@ -205,11 +253,11 @@ const Reports = () => {
       <TopBar hideSearch={true} />
       
       <Box sx={{ px: { xs: 2, md: 6 }, mt: 5 }}>
-        {/* Header Section */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 6 }}>
+        {/* Header Section - ĐÃ ĐIỀU CHỈNH KÍCH THƯỚC TIÊU ĐỀ ĐỒNG BỘ */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 6 }}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#111', letterSpacing: '-1.5px', mb: 0.5 }}>Phân Tích Kinh Doanh</Typography>
-            <Typography variant="body1" sx={{ color: '#666', fontWeight: 500 }}>Dữ liệu chi tiết giúp bạn tối ưu hóa lợi nhuận</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 800, color: '#111', letterSpacing: '-0.5px' }}>Phân Tích Kinh Doanh</Typography>
+            <Typography variant="body2" sx={{ color: '#666', fontWeight: 500, mt: 0.5 }}>Tổng hợp số liệu kinh doanh thực tế của cửa hàng</Typography>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
             <Box sx={{ display: 'flex', gap: 2 }}>
@@ -217,7 +265,7 @@ const Reports = () => {
                     variant="contained" 
                     startIcon={<Download />}
                     onClick={handleExport}
-                    sx={{ borderRadius: '16px', px: 3, py: 1.2, bgcolor: '#111', '&:hover': { bgcolor: '#222' }, textTransform: 'none', fontWeight: 700 }}
+                    sx={{ borderRadius: '16px', px: 3, py: 1, bgcolor: '#111', '&:hover': { bgcolor: '#222' }, textTransform: 'none', fontWeight: 700 }}
                 >
                     Xuất Báo Cáo
                 </Button>
@@ -237,10 +285,19 @@ const Reports = () => {
             </Box>
 
             {timeRange === 'custom' && (
-                <Box sx={{ display: 'flex', gap: 2, p: 2, bgcolor: '#fff', borderRadius: '20px', border: '1px solid #C9A96E' }}>
-                    <TextField type="date" size="small" label="Từ" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    <TextField type="date" size="small" label="Đến" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    <Button variant="contained" size="small" onClick={() => setLoading(true)} sx={{ bgcolor: '#C9A96E' }}>Lọc</Button>
+                <Box sx={{ 
+                    display: 'flex', 
+                    gap: 2, 
+                    p: 2, 
+                    bgcolor: '#fff', 
+                    borderRadius: '20px', 
+                    border: '1px solid #C9A96E',
+                    boxShadow: '0 4px 20px rgba(201, 169, 110, 0.15)',
+                    animation: 'fadeIn 0.2s ease'
+                }}>
+                    <TextField type="date" size="small" label="Từ ngày" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+                    <TextField type="date" size="small" label="Đến ngày" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+                    <Button variant="contained" onClick={handleApplyCustomFilter} sx={{ bgcolor: '#C9A96E', borderRadius: '12px', fontWeight: 700, px: 3, '&:hover': { bgcolor: '#B38F4D' } }}>Áp dụng</Button>
                 </Box>
             )}
           </Box>
@@ -253,7 +310,7 @@ const Reports = () => {
               <Card sx={{ p: 3.5, borderRadius: '28px', border: '1px solid #EAEAEA', boxShadow: 'none', position: 'relative', overflow: 'hidden' }}>
                 <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: item.color }} />
                 <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.title}</Typography>
-                {loading ? <Skeleton height={50} /> : <Typography variant="h4" sx={{ fontWeight: 900, my: 1.5, letterSpacing: '-1px' }}>{item.title.includes('đơn') || item.title.includes('Khách') ? item.value : `₫${item.value}`}</Typography>}
+                <Typography variant="h4" sx={{ fontWeight: 900, my: 1.5, letterSpacing: '-1px' }}>{item.title.includes('đơn') || item.title.includes('Khách') ? item.value : `₫${item.value}`}</Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="caption" sx={{ color: item.isUp ? '#27AE60' : '#E74C3C', fontWeight: 800 }}>{item.trend}</Typography>
                   <Typography variant="caption" color="textSecondary">so với kỳ trước</Typography>
@@ -294,7 +351,7 @@ const Reports = () => {
               <Typography variant="h6" sx={{ fontWeight: 900, mb: 4 }}>BIỂU ĐỒ SAO</Typography>
               <Box sx={{ width: '100%', height: 350 }}>
                 <ResponsiveContainer>
-                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={performanceData}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data.performanceData}>
                     <PolarGrid stroke="#E0E0E0" />
                     <PolarAngleAxis dataKey="subject" tick={{ fontSize: 13, fontWeight: 700, fill: '#444' }} />
                     <Radar name="Chỉ số" dataKey="A" stroke="#C9A96E" fill="#C9A96E" fillOpacity={0.65} />
@@ -318,7 +375,7 @@ const Reports = () => {
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie
-                      data={paymentData}
+                      data={data.paymentData}
                       cx="50%"
                       cy="50%"
                       innerRadius={80}
@@ -326,7 +383,7 @@ const Reports = () => {
                       paddingAngle={10}
                       dataKey="value"
                     >
-                      {paymentData.map((entry, index) => (
+                      {data.paymentData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} cornerRadius={8} />
                       ))}
                     </Pie>
@@ -335,7 +392,7 @@ const Reports = () => {
                 </ResponsiveContainer>
               </Box>
               <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 3 }}>
-                {paymentData.map((item) => (
+                {data.paymentData.map((item) => (
                   <Box key={item.name} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box sx={{ width: 12, height: 12, borderRadius: '4px', bgcolor: item.color }} />
                     <Typography variant="caption" sx={{ fontWeight: 700, color: '#444' }}>{item.name}</Typography>
@@ -351,7 +408,7 @@ const Reports = () => {
               <Typography variant="h6" sx={{ fontWeight: 900, mb: 4 }}>TRẠNG THÁI ĐƠN HÀNG TRONG TUẦN</Typography>
               <Box sx={{ width: '100%', height: 350 }}>
                 <ResponsiveContainer>
-                  <BarChart data={statusData}>
+                  <BarChart data={data.statusData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} />
                     <YAxis axisLine={false} tickLine={false} />
@@ -387,12 +444,12 @@ const Reports = () => {
                   </TableHead>
                   <TableBody>
                     {data.products.map((row) => (
-                      <TableRow key={row.id} hover sx={{ '& td': { borderBottom: '1px solid #F5F5F5' } }}>
+                    <TableRow key={row.id} hover sx={{ '& td': { borderBottom: '1px solid #F5F5F5' } }}>
                         <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
                             <Avatar src={row.img} variant="rounded" sx={{ width: 55, height: 55, borderRadius: '14px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }} />
                             <Typography sx={{ fontWeight: 700, fontSize: '0.95rem' }}>{row.name}</Typography>
-                          </Box>
+                        </Box>
                         </TableCell>
                         <TableCell sx={{ fontWeight: 700 }}>{formatNumber(row.sold)}</TableCell>
                         <TableCell sx={{ fontWeight: 800 }}>{formatVND(row.rev)}</TableCell>
@@ -401,35 +458,14 @@ const Reports = () => {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                 <Typography sx={{ fontWeight: 800, color: row.stock < 15 ? '#E74C3C' : '#111' }}>{formatNumber(row.stock)}</Typography>
                                 {row.stock < 15 && (
-                                    <Chip 
-                                        label="Sắp hết" 
-                                        size="small" 
-                                        sx={{ 
-                                            fontSize: '10px', 
-                                            height: '20px', 
-                                            bgcolor: '#FDEDEC', 
-                                            color: '#E74C3C', 
-                                            fontWeight: 800,
-                                            borderRadius: '6px'
-                                        }} 
-                                    />
+                                    <Chip label="Sắp hết" size="small" sx={{ fontSize: '10px', height: '20px', bgcolor: '#FDEDEC', color: '#E74C3C', fontWeight: 800, borderRadius: '6px' }} />
                                 )}
                             </Box>
                         </TableCell>
                         <TableCell>
-                          <Chip 
-                            label={row.status} 
-                            size="small" 
-                            sx={{ 
-                                bgcolor: `${row.color}15`, 
-                                color: row.color, 
-                                fontWeight: 800, 
-                                borderRadius: '8px',
-                                px: 1
-                            }} 
-                          />
+                        <Chip label={row.status} size="small" sx={{ bgcolor: `${row.color}15`, color: row.color, fontWeight: 800, borderRadius: '8px', px: 1 }} />
                         </TableCell>
-                      </TableRow>
+                    </TableRow>
                     ))}
                   </TableBody>
                 </Table>
@@ -438,6 +474,15 @@ const Reports = () => {
           </Grid>
         </Grid>
       </Box>
+
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}
+      </style>
     </Box>
   );
 };

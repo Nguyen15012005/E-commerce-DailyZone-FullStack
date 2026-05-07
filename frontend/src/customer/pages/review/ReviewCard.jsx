@@ -12,8 +12,13 @@ const ReviewCard = () => {
           <Box>
             <Avatar
               className="text-white"
-              sx={{ width: 56, height: 56, bgcolor: "#9155FD" }}
-              alt=""
+              sx={{
+                width: { xs: 40, sm: 48, lg: 56 },
+                height: { xs: 40, sm: 48, lg: 56 },
+                bgcolor: "#9155FD",
+                fontSize: { xs: 14, sm: 16, lg: 20 },
+              }}
+              alt="Nguyen"
               src=""
             >
               N
@@ -52,7 +57,7 @@ const ReviewCard = () => {
 
       <div className="">
         <IconButton>
-          <MdDelete  className="text-red-500 hover:text-red-700"/>
+          <MdDelete className="text-red-500 hover:text-red-700" />
         </IconButton>
       </div>
     </div>

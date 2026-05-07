@@ -13,6 +13,7 @@ import CustomerList from "./seller/pages/customers/CustomerList";
 import SellerProfile from "./seller/pages/profile/SellerProfile";
 import Reports from "./seller/pages/reports/Reports";
 import ProductDetail from "./customer/pages/product/product_detail/ProductDetail";
+import Review from "./customer/pages/review/Review";
 
 const App = () => {
   return (
@@ -26,7 +27,8 @@ const App = () => {
               <Navbar />
               {/* <Home /> */}
               {/* <Product /> */}
-              <ProductDetail />
+              {/* <ProductDetail /> */}
+              <Review />
               <Footer />
             </div>
           }

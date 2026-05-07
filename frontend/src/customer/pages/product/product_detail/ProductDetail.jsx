@@ -165,8 +165,9 @@ const ProductDetail = () => {
             </p>
           </div>
 
-          <div className="mt-7">
+          <div className="mt-12 space-y-5">
             <ReviewCard />
+            <Divider />
           </div>
         </section>
       </div>

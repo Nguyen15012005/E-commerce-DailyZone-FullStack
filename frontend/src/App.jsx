@@ -15,6 +15,8 @@ import Reports from "./seller/pages/reports/Reports";
 import ProductDetail from "./customer/pages/product/product_detail/ProductDetail";
 import Review from "./customer/pages/review/Review";
 import Cart from "./customer/pages/cart/Cart";
+import { Add } from "@mui/icons-material";
+import Checkout from "./customer/pages/checkout/Checkout";
 
 const App = () => {
   return (
@@ -30,7 +32,8 @@ const App = () => {
               {/* <Product /> */}
               {/* <ProductDetail /> */}
               {/* <Review /> */}
-              <Cart />
+              {/* <Cart /> */}
+              <Checkout />
               <Footer />
             </div>
           }

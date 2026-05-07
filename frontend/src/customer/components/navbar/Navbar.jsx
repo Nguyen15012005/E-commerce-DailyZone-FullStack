@@ -103,12 +103,13 @@ const Navbar = () => {
 
               {/* MENU DESKTOP */}
               {isLarge && (
-                <ul className="flex items-center ml-6 text-gray-700">
+                <ul className="flex items-center ml-6 space-x-3 text-gray-700">
                   {[
+                    { name: "Home", key: "home" },
                     { name: "Men", key: "men" },
                     { name: "Women", key: "women" },
                     { name: "Electric", key: "electronics" },
-                    { name: "Home & Furniture", key: "home_furnitures" },
+                    { name: "Furniture", key: "home_furnitures" },
                   ].map((item) => (
                     <li
                       key={item.key}
@@ -217,10 +218,11 @@ const Navbar = () => {
           <h2 className="text-lg font-semibold mb-2">Danh mục</h2>
 
           {[
+            { name: "Home", key: "home" },
             { name: "Men", key: "men" },
             { name: "Women", key: "women" },
             { name: "Electric", key: "electronics" },
-            { name: "Home & Furniture", key: "home_furnitures" },
+            { name: "Furniture", key: "home_furnitures" },
           ].map((item) => (
             <div
               key={item.key}

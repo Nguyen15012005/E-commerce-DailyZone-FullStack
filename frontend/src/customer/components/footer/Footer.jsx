@@ -3,7 +3,7 @@ import { Facebook, Instagram, YouTube, Twitter } from "@mui/icons-material";
 
 const Footer = () => {
   return (
-    <footer className="mt-16 bg-gray-50 text-gray-700">
+    <footer className="mt-12 bg-gray-50 text-gray-700">
       {/* CTA */}
       <div className="px-5 lg:px-20 py-12 border-b border-gray-300">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">

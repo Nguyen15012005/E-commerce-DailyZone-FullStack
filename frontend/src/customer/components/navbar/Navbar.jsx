@@ -158,17 +158,21 @@ const Navbar = () => {
                   ].map((item) => (
                     <li
                       key={item.key}
+                      onClick={() => navigate("/product-list")}
                       onMouseEnter={() => {
                         clearTimeout(timeoutRef.current);
                         setSelectedCategory(item.key);
                         setShowSheet(true);
                       }}
+                      onMouseLeave={() => {
+                        timeoutRef.current = setTimeout(() => {
+                          setShowSheet(false);
+                        }, 200);
+                      }}
                       className="
-                        relative px-4 h-[70px] flex items-center cursor-pointer font-semibold
-                        after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 
-                        after:bg-black after:transition-all after:duration-300
-                        hover:after:w-full hover:text-black
-                      "
+    relative z-50 px-4 h-[70px] flex items-center
+    cursor-pointer font-semibold
+  "
                     >
                       {item.name}
                     </li>
@@ -378,6 +382,7 @@ const Navbar = () => {
               key={item.key}
               onClick={() => {
                 setSelectedCategory(item.key);
+                navigate("/product-list");
                 setShowSheet(true);
                 setOpenMenu(false);
               }}

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const DealCard = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden cursor-pointer group">
       {/* Image */}
@@ -29,7 +31,7 @@ const DealCard = () => {
         </div>
 
         {/* CTA */}
-        <button className="w-full mt-3 bg-gradient-to-r from-orange-400 to-red-500 text-white py-2 px-3 rounded-lg text-xs font-semibold hover:opacity-90 transition active:scale-95">
+        <button onClick={() => navigate("/product-detail")} className="w-full mt-3 bg-gradient-to-r from-orange-400 to-red-500 text-white py-2 px-3 rounded-lg text-xs font-semibold hover:opacity-90 transition active:scale-95">
           Mua ngay
         </button>
       </div>

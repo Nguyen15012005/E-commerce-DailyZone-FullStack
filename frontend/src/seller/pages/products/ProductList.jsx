@@ -294,7 +294,7 @@ const ProductList = () => {
             fontWeight: 700,
             textTransform: "none",
             transition: "all 0.3s ease",
-            "&:hover": { 
+            "&:hover": {
               bgcolor: "#C9A96E",
               transform: "translateY(-2px)",
               boxShadow: "0 6px 20px rgba(201, 169, 110, 0.4)",

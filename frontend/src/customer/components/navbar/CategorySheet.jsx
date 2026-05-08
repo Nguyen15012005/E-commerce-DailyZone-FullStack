@@ -1,10 +1,12 @@
 import React from "react";
-
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 import { womenLevelTwo } from "./../../../data/category/level_two/womenLevelTwo";
 import { menLevelTwo } from "./../../../data/category/level_two/menLevelTwo";
 import { electronicsLevelTwo } from "./../../../data/category/level_two/electronicsLevelTwo";
 import { furnitureLevelTwo } from "./../../../data/category/level_two/furnitureLevelTwo";
+
 import { menLevelThree } from "./../../../data/category/level_three/menLevelThree";
 import { womenLevelThree } from "./../../../data/category/level_three/womenLevelThree";
 import { electronicsLevelThree } from "./../../../data/category/level_three/electronicsLevelThree";
@@ -25,18 +27,29 @@ const categoryThree = {
 };
 
 const CategorySheet = ({ selectedCategory, setShowSheet }) => {
+  const navigate = useNavigate();
+
   const childCategory = (category, parentCategoryId) => {
     return category.filter(
       (item) => item.parentCategoryId === parentCategoryId,
     );
   };
 
+  const handleNavigate = (child) => {
+    console.log("Clicked:", child);
+
+    // đóng menu
+    setShowSheet(false);
+
+    // chuyển trang
+    navigate("/product-list");
+  };
+
   return (
     <Box
-      sx={{ zIndex: 2 }}
+      sx={{ zIndex: 999 }}
       onMouseEnter={() => setShowSheet(true)}
-      onMouseLeave={() => setShowSheet(false)}
-      className="bg-white shadow-lg lg:h-[500px] overflow-y-auto"
+      className="bg-white shadow-lg lg:h-[500px] overflow-y-auto relative"
     >
       <div className="flex text-sm flex-wrap">
         {categoryTwo[selectedCategory]?.map((item, index) => (
@@ -46,8 +59,10 @@ const CategorySheet = ({ selectedCategory, setShowSheet }) => {
               index % 2 === 0 ? "bg-slate-50" : "bg-white"
             }`}
           >
-            <p className="text-[#C9A96E] mb-5 font-semibold">{item.name}</p>
+            {/* category level 2 */}
+            <p className="text-yellow-700 mb-5 font-semibold">{item.name}</p>
 
+            {/* category level 3 */}
             <ul className="space-y-3">
               {childCategory(
                 categoryThree[selectedCategory],
@@ -55,7 +70,8 @@ const CategorySheet = ({ selectedCategory, setShowSheet }) => {
               ).map((child) => (
                 <li
                   key={child.categoryId}
-                  className="hover:text-[#C9A96E] cursor-pointer"
+                  onClick={() => handleNavigate(child)}
+                  className="cursor-pointer hover:text-yellow-700 transition duration-200"
                 >
                   {child.name}
                 </li>

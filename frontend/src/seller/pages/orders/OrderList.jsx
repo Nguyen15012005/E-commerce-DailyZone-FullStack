@@ -209,26 +209,45 @@ const OrderList = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        {stats.map((item, index) => (
+        {[
+          { label: "TỔNG ĐƠN HÀNG", value: "1,284", change: "+12%", isPositive: true, color: "#C9A96E" },
+          { label: "ĐÃ XỬ LÝ", value: "1,154", change: "+8.4%", isPositive: true, color: "#2C3E50" },
+          { label: "ĐANG CHỜ XỬ LÝ", value: "42", change: "-5.2%", isPositive: false, color: "#27AE60" },
+          { label: "ĐÃ HỦY", value: "10", change: "-2.5%", isPositive: false, color: "#E67E22" },
+          { label: "TỶ LỆ HỦY ĐƠN", value: "0.8%", change: "+0.2%", isPositive: true, color: "#E74C3C" },
+        ].map((item, index) => (
           <Grid item xs={12} sm={6} md={2.4} key={index}>
             <Card
               sx={{
                 p: 3,
-                borderRadius: "16px",
+                borderRadius: "28px",
                 border: "1px solid #f0f0f0",
                 boxShadow: "none",
+                position: "relative",
+                overflow: "hidden",
+                bgcolor: "#fff",
               }}
             >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: 4,
+                  height: "100%",
+                  bgcolor: item.color,
+                }}
+              />
               <Typography
                 variant="caption"
-                sx={{ fontWeight: 700, color: "#666" }}
+                sx={{ fontWeight: 800, color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.5px" }}
               >
                 {item.label}
               </Typography>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
               >
-                <Typography variant="h4" sx={{ fontWeight: 800 }}>
+                <Typography variant="h4" sx={{ fontWeight: 900, color: "#111" }}>
                   {item.value}
                 </Typography>
                 <Typography
@@ -355,16 +374,35 @@ const OrderList = () => {
             </MenuItem>
           </Menu>
 
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Button
+              variant="contained"
+              startIcon={<FileDownload />}
               onClick={handleExport}
-              sx={{ border: "1px solid #e5e7eb", borderRadius: "10px" }}
+              sx={{
+                bgcolor: "#111",
+                color: "#fff",
+                borderRadius: "10px",
+                px: 2.5,
+                fontWeight: 700,
+                textTransform: "none",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  bgcolor: "#C9A96E",
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 6px 20px rgba(201, 169, 110, 0.4)",
+                },
+              }}
             >
-              <FileDownload />
-            </IconButton>
+              Xuất dữ liệu
+            </Button>
             <IconButton
               onClick={handlePrint}
-              sx={{ border: "1px solid #e5e7eb", borderRadius: "10px" }}
+              sx={{ 
+                border: "1px solid #e5e7eb", 
+                borderRadius: "10px",
+                "&:hover": { bgcolor: "#f5f5f5" }
+              }}
             >
               <Print />
             </IconButton>

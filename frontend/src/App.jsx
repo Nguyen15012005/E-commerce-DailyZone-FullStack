@@ -12,6 +12,7 @@ import OrderList from "./seller/pages/orders/OrderList";
 import CustomerList from "./seller/pages/customers/CustomerList";
 import SellerProfile from "./seller/pages/profile/SellerProfile";
 import Reports from "./seller/pages/reports/Reports";
+import Discounts from "./seller/pages/discounts/Discounts";
 import ProductDetail from "./customer/pages/product/product_detail/ProductDetail";
 import Review from "./customer/pages/review/Review";
 import Cart from "./customer/pages/cart/Cart";
@@ -50,6 +51,7 @@ const App = () => {
           <Route path="customers" element={<CustomerList />} />
           <Route path="profile" element={<SellerProfile />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="discounts" element={<Discounts />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -25,21 +25,33 @@ import RevenueChart from "./components/RevenueChart";
 import CategoryChart from "./components/CategoryChart";
 import ConversionChart from "./components/ConversionChart";
 
-const StatCard = ({ title, value, percentage, isUp, icon, bgcolor }) => (
+const StatCard = ({ title, value, percentage, isUp, icon, sideColor }) => (
   <Card
     sx={{
-      borderRadius: "24px",
-      boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
-      border: "1px solid #F0F0F0",
-      bgcolor: bgcolor || "#fff",
+      borderRadius: "28px",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.02)",
+      border: "1px solid #EAEAEA",
+      bgcolor: "#fff",
+      position: "relative",
+      overflow: "hidden",
     }}
   >
+    <Box
+      sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: 4,
+        height: "100%",
+        bgcolor: sideColor || "#C9A96E",
+      }}
+    />
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography
           variant="subtitle2"
           color="textSecondary"
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 600, textTransform: "uppercase", fontSize: "0.7rem", letterSpacing: "0.5px" }}
         >
           {title}
         </Typography>
@@ -58,7 +70,7 @@ const StatCard = ({ title, value, percentage, isUp, icon, bgcolor }) => (
           })}
         </Box>
       </Box>
-      <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+      <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, color: "#111" }}>
         {value}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -89,7 +101,7 @@ const StatCard = ({ title, value, percentage, isUp, icon, bgcolor }) => (
 const Dashboard = () => {
   return (
     <Box sx={{ bgcolor: "#FAFAFA", minHeight: "100vh", pb: 5 }}>
-      <TopBar />
+      <TopBar hideSearch={true} />
 
       <Box sx={{ px: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>
@@ -108,7 +120,7 @@ const Dashboard = () => {
                   percentage="3.34"
                   isUp={true}
                   icon={<AttachMoney />}
-                  bgcolor="#FFF2E6"
+                  sideColor="#C9A96E"
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -118,6 +130,7 @@ const Dashboard = () => {
                   percentage="2.89"
                   isUp={false}
                   icon={<ShoppingBagOutlined />}
+                  sideColor="#2C3E50"
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -127,6 +140,7 @@ const Dashboard = () => {
                   percentage="8.02"
                   isUp={true}
                   icon={<PeopleOutline />}
+                  sideColor="#27AE60"
                 />
               </Grid>
 

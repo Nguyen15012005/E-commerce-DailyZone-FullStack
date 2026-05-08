@@ -221,11 +221,17 @@ const CustomerList = () => {
             onClick={handleExport}
             startIcon={<FilterList />}
             sx={{ 
-              bgcolor: '#002060', 
+              bgcolor: '#111', 
+              color: '#fff',
               borderRadius: '10px', 
               textTransform: 'none',
               px: 3,
-              '&:hover': { bgcolor: '#001a4d' },
+              transition: 'all 0.3s ease',
+              '&:hover': { 
+                bgcolor: '#C9A96E',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(201, 169, 110, 0.4)',
+              },
               '&.Mui-disabled': { bgcolor: '#e2e8f0' }
             }}
           >

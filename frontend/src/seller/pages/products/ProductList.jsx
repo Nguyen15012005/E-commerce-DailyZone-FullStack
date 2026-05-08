@@ -286,11 +286,19 @@ const ProductList = () => {
           startIcon={<Add />}
           onClick={handleOpenAdd}
           sx={{
-            bgcolor: "#002060",
+            bgcolor: "#111",
+            color: "#fff",
             borderRadius: "12px",
             px: 3,
             py: 1.5,
             fontWeight: 700,
+            textTransform: "none",
+            transition: "all 0.3s ease",
+            "&:hover": { 
+              bgcolor: "#C9A96E",
+              transform: "translateY(-2px)",
+              boxShadow: "0 6px 20px rgba(201, 169, 110, 0.4)",
+            },
           }}
         >
           Thêm sản phẩm mới

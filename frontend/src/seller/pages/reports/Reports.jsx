@@ -527,7 +527,13 @@ const Reports = () => {
                   px: 3,
                   py: 1,
                   bgcolor: "#111",
-                  "&:hover": { bgcolor: "#222" },
+                  color: "#fff",
+                  transition: "all 0.3s ease",
+                  "&:hover": { 
+                    bgcolor: "#C9A96E",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 20px rgba(201, 169, 110, 0.4)",
+                  },
                   textTransform: "none",
                   fontWeight: 700,
                 }}
@@ -591,15 +597,21 @@ const Reports = () => {
                   variant="contained"
                   onClick={handleApplyCustomFilter}
                   sx={{
+                  bgcolor: "#111",
+                  color: "#fff",
+                  borderRadius: "12px",
+                  fontWeight: 700,
+                  px: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": { 
                     bgcolor: "#C9A96E",
-                    borderRadius: "12px",
-                    fontWeight: 700,
-                    px: 3,
-                    "&:hover": { bgcolor: "#B38F4D" },
-                  }}
-                >
-                  Áp dụng
-                </Button>
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 20px rgba(201, 169, 110, 0.4)",
+                  },
+                }}
+              >
+                Áp dụng
+              </Button>
               </Box>
             )}
           </Box>

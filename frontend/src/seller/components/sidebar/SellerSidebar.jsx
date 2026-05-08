@@ -34,7 +34,6 @@ const menuItems = [
 ];
 
 const subItems = [
-  { text: "Tích hợp", icon: <IntegrationIcon />, path: "/seller/integrations" },
   { text: "Trợ giúp", icon: <HelpIcon />, path: "/seller/help" },
   { text: "Cài đặt", icon: <SettingIcon />, path: "/seller/settings" },
 ];

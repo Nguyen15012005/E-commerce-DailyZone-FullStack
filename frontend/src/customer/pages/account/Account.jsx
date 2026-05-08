@@ -2,6 +2,7 @@ import { Alert, Divider, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IoLogOut } from "react-icons/io5";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import Order from "../order/Order";
 
 const menu = [
   { name: "Hồ sơ", path: "/account/profile" },
@@ -32,12 +33,12 @@ const Account = () => {
 
         <Divider />
 
-        {/* Left */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 mt-5">
           {/* SIDEBAR */}
           <div className="bg-white shadow-md rounded-2xl p-3 flex lg:flex-col flex-row flex-wrap gap-2 h-fit">
+            {/*  Left  */}
             {menu.map((item, index) => {
-              const isActive = location.pathname.includes(item.path);
+              const isActive = location.pathname.includes(item.path)
 
               return (
                 <div
@@ -58,9 +59,11 @@ const Account = () => {
               );
             })}
           </div>
+          {/* Right */}
+          <div className="right lg:col-span-2 lg:pl-5 py-5">
+            <Order />
+          </div>
         </div>
-
-        {/* Right */}
       </div>
     </div>
   );

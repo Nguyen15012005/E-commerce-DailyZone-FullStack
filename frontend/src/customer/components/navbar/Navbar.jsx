@@ -6,18 +6,34 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
-  Drawer, // ✅ thêm
+  Drawer,
+  Menu,
+  MenuItem,
+  Avatar,
+  Divider,
+  ListItemIcon,
 } from "@mui/material";
+
 import {
   AddShoppingCart,
   Favorite,
   FavoriteBorder,
   Search,
   Storefront,
+  Person,
+  ShoppingBag,
+  Logout,
 } from "@mui/icons-material";
+
+import { useSelector, useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
-import CategorySheet from "./CategorySheet";
+
 import { red } from "@mui/material/colors";
+
+import CategorySheet from "./CategorySheet";
+
+import { logout } from "../../../store/authSlice";
 
 const Navbar = () => {
   const theme = useTheme();
@@ -29,13 +45,23 @@ const Navbar = () => {
   const [showSheet, setShowSheet] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("men");
 
-  // ✅ NEW STATE (mobile menu)
+  // ✅ MOBILE MENU
   const [openMenu, setOpenMenu] = useState(false);
+
+  // ✅ USER MENU
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const openUserMenu = Boolean(anchorEl);
 
   const searchRef = useRef(null);
   const timeoutRef = useRef(null);
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  // ✅ AUTH STATE
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -53,6 +79,25 @@ const Navbar = () => {
     };
   }, [openSearch]);
 
+  // ✅ OPEN USER MENU
+  const handleOpenUserMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // ✅ CLOSE USER MENU
+  const handleCloseUserMenu = () => {
+    setAnchorEl(null);
+  };
+
+  // ✅ LOGOUT
+  const handleLogout = () => {
+    dispatch(logout());
+
+    localStorage.removeItem("token");
+
+    navigate("/");
+  };
+
   return (
     <div className="navbar sticky top-0 z-50 bg-white shadow-sm text-gray-700">
       <Box sx={{ zIndex: 2 }} className="sticky top-0 left-0 right-0 bg-white">
@@ -68,7 +113,6 @@ const Navbar = () => {
           <div className="flex items-center justify-between px-4 md:px-6 lg:px-20 h-[70px] border-b border-gray-200">
             {/* LEFT */}
             <div className="flex items-center gap-3">
-              {/* ✅ FIX: thêm action */}
               {!isLarge && (
                 <IconButton
                   onClick={() => setOpenMenu(true)}
@@ -84,6 +128,7 @@ const Navbar = () => {
                   <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E]">
                     D
                   </span>
+
                   <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E] -mt-4 lg:-mt-6 ml-2 lg:ml-3">
                     Z
                   </span>
@@ -94,7 +139,6 @@ const Navbar = () => {
                     DAILY ZONE
                   </h1>
 
-                  {/* ✅ ẨN TRÊN MOBILE */}
                   <span className="hidden sm:block text-[8px] lg:text-[9px] tracking-[5px] text-gray-400 uppercase">
                     Style your life
                   </span>
@@ -105,7 +149,6 @@ const Navbar = () => {
               {isLarge && (
                 <ul className="flex items-center ml-6 space-x-3 text-gray-700">
                   {[
-                    { name: "Home", key: "home" },
                     { name: "Men", key: "men" },
                     { name: "Women", key: "women" },
                     { name: "Electric", key: "electronics" },
@@ -147,24 +190,128 @@ const Navbar = () => {
 
               <IconButton className="hover:bg-gray-100 relative">
                 <AddShoppingCart sx={{ fontSize: 24 }} />
+
                 <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center text-[10px] bg-black text-white rounded-full">
                   2
                 </span>
               </IconButton>
 
-              <Button
-                onClick={() => navigate("/login")}
-                variant="contained"
-                className="
-                normal-case 
-                px-3 lg:px-6 
-                py-1.5 lg:py-2 
-                text-xs lg:text-sm 
-                bg-black text-white border border-black rounded-md
-              "
-              >
-                Đăng nhập
-              </Button>
+              {/* ✅ LOGIN / USER MENU */}
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    onClick={handleOpenUserMenu}
+                    className="
+                      normal-case
+                      flex
+                      items-center
+                      gap-2
+                      text-black
+                    "
+                  >
+                    <Avatar
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        bgcolor: "#111",
+                        fontSize: 14,
+                      }}
+                    >
+                      {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
+                    </Avatar>
+
+                    <span className="hidden lg:block font-medium">
+                      {user?.fullName || "User"}
+                    </span>
+                  </Button>
+
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={openUserMenu}
+                    onClose={handleCloseUserMenu}
+                    PaperProps={{
+                      elevation: 3,
+                      sx: {
+                        mt: 1.5,
+                        minWidth: 220,
+                        borderRadius: 3,
+                      },
+                    }}
+                  >
+                    <div className="px-4 py-3">
+                      <p className="font-semibold text-sm">{user?.fullName}</p>
+
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                    </div>
+
+                    <Divider />
+
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/account");
+                        handleCloseUserMenu();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Person fontSize="small" />
+                      </ListItemIcon>
+                      Tài khoản
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/orders");
+                        handleCloseUserMenu();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <ShoppingBag fontSize="small" />
+                      </ListItemIcon>
+                      Đơn hàng
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/wishlist");
+                        handleCloseUserMenu();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <FavoriteBorder fontSize="small" />
+                      </ListItemIcon>
+                      Yêu thích
+                    </MenuItem>
+
+                    <Divider />
+
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        handleLogout();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Đăng xuất
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  onClick={() => navigate("/login")}
+                  variant="contained"
+                  className="
+                    normal-case 
+                    px-3 lg:px-6 
+                    py-1.5 lg:py-2 
+                    text-xs lg:text-sm 
+                    bg-black text-white border border-black rounded-md
+                  "
+                >
+                  Đăng nhập
+                </Button>
+              )}
 
               {isLarge && (
                 <Button
@@ -185,12 +332,13 @@ const Navbar = () => {
               className="w-full bg-white border-b px-4 md:px-6 lg:px-20 py-4 flex items-center gap-3"
             >
               <Search />
+
               <input className="flex-1 outline-none" autoFocus />
             </div>
           )}
         </div>
 
-        {/* CATEGORY SHEET (ẩn mobile) */}
+        {/* CATEGORY SHEET */}
         {isLarge && showSheet && (
           <div
             onMouseEnter={() => {
@@ -212,13 +360,12 @@ const Navbar = () => {
         )}
       </Box>
 
-      {/* ✅ MOBILE DRAWER MENU */}
+      {/* MOBILE DRAWER MENU */}
       <Drawer anchor="left" open={openMenu} onClose={() => setOpenMenu(false)}>
         <div className="w-[260px] p-4 space-y-3">
           <h2 className="text-lg font-semibold mb-2">Danh mục</h2>
 
           {[
-            { name: "Home", key: "home" },
             { name: "Men", key: "men" },
             { name: "Women", key: "women" },
             { name: "Electric", key: "electronics" },

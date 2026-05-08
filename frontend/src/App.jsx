@@ -13,6 +13,8 @@ import CustomerList from "./seller/pages/customers/CustomerList";
 import SellerProfile from "./seller/pages/profile/SellerProfile";
 import Reports from "./seller/pages/reports/Reports";
 import Discounts from "./seller/pages/discounts/Discounts";
+import Help from "./seller/pages/help/Help";
+import Settings from "./seller/pages/settings/Settings";
 import ProductDetail from "./customer/pages/product/product_detail/ProductDetail";
 import Review from "./customer/pages/review/Review";
 import Cart from "./customer/pages/cart/Cart";
@@ -52,6 +54,8 @@ const App = () => {
           <Route path="profile" element={<SellerProfile />} />
           <Route path="reports" element={<Reports />} />
           <Route path="discounts" element={<Discounts />} />
+          <Route path="help" element={<Help />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -12,8 +12,11 @@ import {
   NotificationsNone,
   ChatBubbleOutline,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const TopBar = ({ hideSearch }) => {
+  const navigate = useNavigate();
+
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -57,21 +60,42 @@ const TopBar = ({ hideSearch }) => {
           </Badge>
         </IconButton>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, ml: 1 }}>
+        <Box 
+          onClick={() => navigate("/seller/settings")}
+          sx={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: 1.5, 
+            ml: 1, 
+            cursor: "pointer",
+            p: 0.5,
+            borderRadius: "16px",
+            transition: "all 0.2s ease",
+            "&:hover": {
+              bgcolor: "rgba(0,0,0,0.02)"
+            }
+          }}
+        >
           <Box sx={{ textAlign: "right" }}>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 700, lineHeight: 1 }}
+              sx={{ fontWeight: 800, lineHeight: 1.2, color: "#111", fontSize: "0.95rem" }}
             >
               Nguyễn Thành Long
             </Typography>
-            <Typography variant="caption" color="textSecondary">
+            <Typography variant="caption" sx={{ color: "#666", fontWeight: 500 }}>
               Chủ cửa hàng
             </Typography>
           </Box>
           <Avatar
-            src="https://mui.com/static/images/avatar/1.jpg"
-            sx={{ width: 40, height: 40, borderRadius: "12px" }}
+            src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=100"
+            sx={{ 
+              width: 45, 
+              height: 45, 
+              borderRadius: "14px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              border: "2px solid #fff"
+            }}
           />
         </Box>
       </Box>

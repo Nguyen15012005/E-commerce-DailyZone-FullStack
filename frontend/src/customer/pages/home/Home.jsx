@@ -5,8 +5,10 @@ import ElectricCategory from "./electric_category/ElectricCategory";
 import ShopByCategory from "./shop_by_category/ShopByCategory";
 import { Storefront } from "@mui/icons-material";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div>
       {/* CATEGORY QUICK */}
@@ -39,6 +41,7 @@ const Home = () => {
         {/* BUTTON */}
         <div className="absolute bottom-14 left-2 lg:left-[4rem]">
           <Button
+            onClick={() => navigate("/seller")}
             startIcon={<Storefront />}
             variant="contained"
             className="

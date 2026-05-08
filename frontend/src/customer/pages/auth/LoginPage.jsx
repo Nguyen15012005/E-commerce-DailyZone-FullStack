@@ -404,7 +404,7 @@ const LoginPage = () => {
   const step = otpSent ? 2 : 1;
 
   return (
-    <div className="dz-auth-page">
+    <div className="dz-auth-page mt-5 -mb-5">
       {/* ── Left decorative panel ── */}
       <div className="dz-auth-left">
         <div className="dz-circle dz-c1" />

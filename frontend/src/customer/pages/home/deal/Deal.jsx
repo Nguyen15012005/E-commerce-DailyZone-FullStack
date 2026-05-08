@@ -2,37 +2,46 @@ import React from "react";
 import DealCard from "./DealCard";
 import Slider from "react-slick";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const NextArrow = ({ onClick }) => (
-  <div
-    onClick={onClick}
-    className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
-  >
-    <ChevronRight size={18} />
-  </div>
-);
+const NextArrow = (props) => {
+  const { className, style, onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      className="absolute -right-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
+      style={{ ...style, display: "block" }}
+    >
+      <ChevronRight size={18} />
+    </button>
+  );
+};
 
-const PrevArrow = ({ onClick }) => (
-  <div
-    onClick={onClick}
-    className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
-  >
-    <ChevronLeft size={18} />
-  </div>
-);
+const PrevArrow = (props) => {
+  const { className, style, onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      className="absolute -left-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
+      style={{ ...style, display: "block" }}
+    >
+      <ChevronLeft size={18} />
+    </button>
+  );
+};
 
 const Deal = () => {
   const settings = {
     dots: false,
     infinite: true,
+    speed: 600,
     slidesToShow: 5,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 600,
     autoplaySpeed: 2500,
-    cssEase: "ease-in-out",
-    swipeToSlide: true,
     pauseOnHover: true,
+    swipeToSlide: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
@@ -44,14 +53,14 @@ const Deal = () => {
   };
 
   return (
-    <div className="py-10 lg:px-20 relative">
-      {/* 🔥 HEADER XỊN HƠN */}
-      <div className="flex items-end justify-between mb-6">
+    <div className="py-10 px-3 md:px-5 lg:px-20 relative">
+      {/* HEADER */}
+      <div className="flex items-end justify-between mb-8">
         <div>
           <p className="text-sm text-red-500 font-semibold tracking-widest uppercase">
             Flash Sale
           </p>
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-400 to-red-500 text-transparent bg-clip-text">
+          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-400 to-red-500 text-transparent bg-clip-text mt-2">
             🔥 Deal Hot Hôm Nay
           </h2>
         </div>
@@ -61,13 +70,8 @@ const Deal = () => {
         </button>
       </div>
 
-      {/* Container để tránh dính mép */}
-      <div className="relative ">
-        {/* Gradient fade mềm hơn */}
-        <div className="absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
-
-        {/* Slider */}
+      {/* Slider Container */}
+      <div className="relative px-8">
         <Slider {...settings}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
             <div key={index} className="px-2">

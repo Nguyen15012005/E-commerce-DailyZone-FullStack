@@ -2,7 +2,7 @@ import React from "react";
 import { ThemeProvider } from "@mui/material";
 
 import CustomeTheme from "./theme/CustomeThem";
-import AppRoutes from "../routes/AppRoutes";
+import AppRoutes from "./routes/AppRoutes";
 
 const App = () => {
   return (

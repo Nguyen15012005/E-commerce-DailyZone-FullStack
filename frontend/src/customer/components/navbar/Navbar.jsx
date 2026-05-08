@@ -123,27 +123,29 @@ const Navbar = () => {
               )}
 
               {/* LOGO */}
-              <div className="flex items-center gap-2 lg:gap-3 cursor-pointer">
-                <div className="flex flex-col leading-none">
-                  <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E]">
-                    D
-                  </span>
+              <button onClick={() => navigate("/")}>
+                <div className="flex items-center gap-2 lg:gap-3 cursor-pointer">
+                  <div className="flex flex-col leading-none">
+                    <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E]">
+                      D
+                    </span>
 
-                  <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E] -mt-4 lg:-mt-6 ml-2 lg:ml-3">
-                    Z
-                  </span>
+                    <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E] -mt-4 lg:-mt-6 ml-2 lg:ml-3">
+                      Z
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <h1 className="text-[14px] sm:text-[16px] lg:text-[20px] font-serif tracking-[2px] lg:tracking-[3px] text-[#111] mb-1 lg:mb-2">
+                      DAILY ZONE
+                    </h1>
+
+                    <span className="hidden sm:block text-[8px] lg:text-[9px] tracking-[5px] text-gray-400 uppercase">
+                      Style your life
+                    </span>
+                  </div>
                 </div>
-
-                <div className="flex flex-col">
-                  <h1 className="text-[14px] sm:text-[16px] lg:text-[20px] font-serif tracking-[2px] lg:tracking-[3px] text-[#111] mb-1 lg:mb-2">
-                    DAILY ZONE
-                  </h1>
-
-                  <span className="hidden sm:block text-[8px] lg:text-[9px] tracking-[5px] text-gray-400 uppercase">
-                    Style your life
-                  </span>
-                </div>
-              </div>
+              </button>
 
               {/* MENU DESKTOP */}
               {isLarge && (
@@ -315,6 +317,7 @@ const Navbar = () => {
 
               {isLarge && (
                 <Button
+                  onClick={() => navigate("/seller")}
                   startIcon={<Storefront />}
                   variant="outlined"
                   className="normal-case px-6 py-2 border border-[#C6A15B] text-[#C6A15B]"

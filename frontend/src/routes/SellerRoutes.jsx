@@ -1,5 +1,17 @@
 import React from "react";
 
+import SellerLayout from "../seller/components/SellerLayout";
+
+import Dashboard from "../seller/pages/dashboard/Dashboard";
+import ProductList from "../seller/pages/products/ProductList";
+import OrderList from "../seller/pages/orders/OrderList";
+import CustomerList from "../seller/pages/customers/CustomerList";
+import SellerProfile from "../seller/pages/profile/SellerProfile";
+import Reports from "../seller/pages/reports/Reports";
+import Discounts from "../seller/pages/discounts/Discounts";
+import Help from "../seller/pages/help/Help";
+import Settings from "../seller/pages/settings/Settings";
+
 export const sellerRoutes = [
   {
     path: "/seller",

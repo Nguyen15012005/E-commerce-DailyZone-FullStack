@@ -3,11 +3,6 @@ package iuh.fit.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * @author TrungNguyen
- * @created 4/11/2026
- * @description
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,7 +10,7 @@ import lombok.*;
 @Entity
 public class VerificationCode {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String otp;
@@ -27,5 +22,4 @@ public class VerificationCode {
 
     @OneToOne
     private Seller seller;
-
 }

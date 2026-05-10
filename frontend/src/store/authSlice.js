@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "e-commerce-dailyzone-fullstack-production.up.railway.app";
 
 // ─── Async Thunks ─────────────────────────────────────────────────────────────
 
@@ -18,7 +18,7 @@ export const sendLoginOtp = createAsyncThunk(
         {
           email: `signing_${email}`,
           role: "CUSTOMER",
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -28,7 +28,7 @@ export const sendLoginOtp = createAsyncThunk(
         "Không thể gửi OTP. Vui lòng thử lại.";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 /**
@@ -44,7 +44,7 @@ export const sendRegisterOtp = createAsyncThunk(
         {
           email,
           role: "CUSTOMER",
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -54,7 +54,7 @@ export const sendRegisterOtp = createAsyncThunk(
         "Không thể gửi OTP. Vui lòng thử lại.";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 /**
@@ -80,7 +80,7 @@ export const loginWithOtp = createAsyncThunk(
         "OTP không hợp lệ hoặc đã hết hạn.";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 /**
@@ -108,7 +108,7 @@ export const registerUser = createAsyncThunk(
         "Đăng ký thất bại. Vui lòng kiểm tra OTP và thử lại.";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // ─── Slice ────────────────────────────────────────────────────────────────────

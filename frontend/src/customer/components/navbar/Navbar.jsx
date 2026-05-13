@@ -26,13 +26,9 @@ import {
 } from "@mui/icons-material";
 
 import { useSelector, useDispatch } from "react-redux";
-
 import { useNavigate } from "react-router-dom";
-
 import { red } from "@mui/material/colors";
-
 import CategorySheet from "./CategorySheet";
-
 import { logout } from "../../../store/authSlice";
 
 const Navbar = () => {
@@ -40,15 +36,9 @@ const Navbar = () => {
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
 
   const [openSearch, setOpenSearch] = useState(false);
-
-  // ✅ STATE
   const [showSheet, setShowSheet] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("men");
-
-  // ✅ MOBILE MENU
   const [openMenu, setOpenMenu] = useState(false);
-
-  // ✅ USER MENU
   const [anchorEl, setAnchorEl] = useState(null);
 
   const openUserMenu = Boolean(anchorEl);
@@ -57,10 +47,8 @@ const Navbar = () => {
   const timeoutRef = useRef(null);
 
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
-  // ✅ AUTH STATE
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -79,68 +67,64 @@ const Navbar = () => {
     };
   }, [openSearch]);
 
-  // ✅ OPEN USER MENU
   const handleOpenUserMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // ✅ CLOSE USER MENU
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
   };
 
-  // ✅ LOGOUT
   const handleLogout = () => {
     dispatch(logout());
-
     localStorage.removeItem("token");
-
+    localStorage.removeItem("jwt");
     navigate("/");
   };
 
   return (
-    <div className="navbar sticky top-0 z-50 bg-white shadow-sm text-gray-700">
+    <div className="navbar sticky top-0 z-50 bg-white text-[#6B4F1D] shadow-sm">
       <Box sx={{ zIndex: 2 }} className="sticky top-0 left-0 right-0 bg-white">
         <div>
           {/* Announcement */}
-          <div className="bg-gradient-to-r from-[#100d0d] to-[#1a1614] h-8 flex items-center justify-center">
-            <span className="text-[11px] tracking-[2px] uppercase text-white">
+          <div className="flex h-8 items-center justify-center bg-gradient-to-r from-[#D6B57A] via-[#C9A96E] to-[#B88A44]">
+            <span className="text-[11px] uppercase tracking-[2px] text-white">
               ✦ Miễn phí vận chuyển cho đơn hàng trên 500.000đ ✦
             </span>
           </div>
 
           {/* MAIN NAV */}
-          <div className="flex items-center justify-between px-4 md:px-6 lg:px-20 h-[70px] border-b border-gray-200">
+          <div className="flex h-[70px] items-center justify-between border-b border-[#F2E8D7] px-4 md:px-6 lg:px-20">
             {/* LEFT */}
             <div className="flex items-center gap-3">
               {!isLarge && (
                 <IconButton
                   onClick={() => setOpenMenu(true)}
-                  className="hover:bg-gray-100"
+                  className="hover:bg-[#FFF7E8]"
                 >
-                  <MenuIcon />
+                  <MenuIcon sx={{ color: "#B88A44" }} />
                 </IconButton>
               )}
 
               {/* LOGO */}
               <button onClick={() => navigate("/")}>
-                <div className="flex items-center gap-2 lg:gap-3 cursor-pointer">
+                <div className="flex cursor-pointer items-center gap-2 lg:gap-3">
                   <div className="flex flex-col leading-none">
-                    <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E]">
+                    <span className="font-serif text-[26px] text-[#C9A96E] lg:text-[40px]">
                       D
                     </span>
 
-                    <span className="text-[26px] lg:text-[40px] font-serif text-[#C9A96E] -mt-4 lg:-mt-6 ml-2 lg:ml-3">
+                    <span className="-mt-4 ml-2 font-serif text-[26px] text-[#C9A96E] lg:-mt-6 lg:ml-3 lg:text-[40px]">
                       Z
                     </span>
                   </div>
 
                   <div className="flex flex-col">
-                    <h1 className="text-[14px] sm:text-[16px] lg:text-[20px] font-serif tracking-[2px] lg:tracking-[3px] text-[#111] mb-1 lg:mb-2">
+                    <h1 className="mb-1 font-serif text-[14px] tracking-[2px] text-[#3B2B12] sm:text-[16px] lg:mb-2 lg:text-[20px] lg:tracking-[3px]">
                       DAILY ZONE
                     </h1>
 
-                    <span className="hidden sm:block text-[8px] lg:text-[9px] tracking-[5px] text-gray-400 uppercase">
+                    <span className="hidden text-[8px] uppercase tracking-[5px] text-[#8B7355] sm:block lg:text-[9px]">
                       Style your life
                     </span>
                   </div>
@@ -149,8 +133,9 @@ const Navbar = () => {
 
               {/* MENU DESKTOP */}
               {isLarge && (
-                <ul className="flex items-center ml-6 space-x-3 text-gray-700">
+                <ul className="ml-6 flex items-center space-x-3 text-[#6B4F1D]">
                   {[
+                    { name: "Trang Chủ", key: "/" },
                     { name: "Men", key: "men" },
                     { name: "Women", key: "women" },
                     { name: "Electric", key: "electronics" },
@@ -158,7 +143,16 @@ const Navbar = () => {
                   ].map((item) => (
                     <li
                       key={item.key}
-                      onClick={() => navigate("/product-list")}
+                      onClick={() => {
+                        if (item.key === "/") {
+                          navigate("/");
+                        } else {
+                          setSelectedCategory(item.key);
+                          navigate("/product-list");
+                        }
+
+                        setOpenMenu(false);
+                      }}
                       onMouseEnter={() => {
                         clearTimeout(timeoutRef.current);
                         setSelectedCategory(item.key);
@@ -169,10 +163,7 @@ const Navbar = () => {
                           setShowSheet(false);
                         }, 200);
                       }}
-                      className="
-    relative z-50 px-4 h-[70px] flex items-center
-    cursor-pointer font-semibold
-  "
+                      className="relative z-50 flex h-[70px] cursor-pointer items-center px-4 font-semibold transition-colors duration-300 hover:text-[#B88A44]"
                     >
                       {item.name}
                     </li>
@@ -185,48 +176,43 @@ const Navbar = () => {
             <div className="flex items-center gap-2 lg:gap-4">
               <IconButton
                 onClick={() => setOpenSearch(true)}
-                className="hover:bg-gray-100"
+                className="hover:bg-[#FFF7E8]"
               >
-                <Search />
+                <Search sx={{ color: "#6B4F1D" }} />
               </IconButton>
 
-              <IconButton className="hover:bg-gray-100">
+              <IconButton className="hover:bg-[#FFF7E8]">
                 <Favorite sx={{ fontSize: 24, color: red[500] }} />
               </IconButton>
 
-              <IconButton className="hover:bg-gray-100 relative">
-                <AddShoppingCart sx={{ fontSize: 24 }} />
+              <IconButton className="relative hover:bg-[#FFF7E8]">
+                <AddShoppingCart sx={{ fontSize: 24, color: "#6B4F1D" }} />
 
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center text-[10px] bg-black text-white rounded-full">
+                <span className="absolute -right-1 -top-1 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-[#C9A96E] text-[10px] text-white">
                   2
                 </span>
               </IconButton>
 
-              {/* ✅ LOGIN / USER MENU */}
+              {/* LOGIN / USER MENU */}
               {isAuthenticated ? (
                 <>
                   <Button
                     onClick={handleOpenUserMenu}
-                    className="
-                      normal-case
-                      flex
-                      items-center
-                      gap-2
-                      text-black
-                    "
+                    className="normal-case flex items-center gap-2 text-[#3B2B12]"
                   >
                     <Avatar
                       sx={{
                         width: 34,
                         height: 34,
-                        bgcolor: "#111",
+                        bgcolor: "#C9A96E",
                         fontSize: 14,
+                        color: "#fff",
                       }}
                     >
                       {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
                     </Avatar>
 
-                    <span className="hidden lg:block font-medium">
+                    <span className="hidden font-medium lg:block">
                       {user?.fullName || "User"}
                     </span>
                   </Button>
@@ -241,16 +227,19 @@ const Navbar = () => {
                         mt: 1.5,
                         minWidth: 220,
                         borderRadius: 3,
+                        border: "1px solid #F2E8D7",
                       },
                     }}
                   >
                     <div className="px-4 py-3">
-                      <p className="font-semibold text-sm">{user?.fullName}</p>
+                      <p className="text-sm font-semibold text-[#3B2B12]">
+                        {user?.fullName}
+                      </p>
 
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-[#8B7355]">{user?.email}</p>
                     </div>
 
-                    <Divider />
+                    <Divider sx={{ borderColor: "#F2E8D7" }} />
 
                     <MenuItem
                       onClick={() => {
@@ -266,7 +255,7 @@ const Navbar = () => {
 
                     <MenuItem
                       onClick={() => {
-                        navigate("/orders");
+                        navigate("/account/orders");
                         handleCloseUserMenu();
                       }}
                     >
@@ -288,7 +277,7 @@ const Navbar = () => {
                       Yêu thích
                     </MenuItem>
 
-                    <Divider />
+                    <Divider sx={{ borderColor: "#F2E8D7" }} />
 
                     <MenuItem
                       onClick={() => {
@@ -307,13 +296,7 @@ const Navbar = () => {
                 <Button
                   onClick={() => navigate("/login")}
                   variant="contained"
-                  className="
-                    normal-case 
-                    px-3 lg:px-6 
-                    py-1.5 lg:py-2 
-                    text-xs lg:text-sm 
-                    bg-black text-white border border-black rounded-md
-                  "
+                  className="normal-case rounded-md px-3 py-1.5 text-xs lg:px-6 lg:py-2 lg:text-sm"
                 >
                   Đăng nhập
                 </Button>
@@ -324,7 +307,7 @@ const Navbar = () => {
                   onClick={() => navigate("/seller")}
                   startIcon={<Storefront />}
                   variant="outlined"
-                  className="normal-case px-6 py-2 border border-[#C6A15B] text-[#C6A15B]"
+                  className="normal-case border border-[#C9A96E] px-6 py-2 text-[#B88A44]"
                 >
                   Bán hàng
                 </Button>
@@ -336,11 +319,15 @@ const Navbar = () => {
           {openSearch && (
             <div
               ref={searchRef}
-              className="w-full bg-white border-b px-4 md:px-6 lg:px-20 py-4 flex items-center gap-3"
+              className="flex w-full items-center gap-3 border-b border-[#F2E8D7] bg-white px-4 py-4 md:px-6 lg:px-20"
             >
-              <Search />
+              <Search sx={{ color: "#B88A44" }} />
 
-              <input className="flex-1 outline-none" autoFocus />
+              <input
+                className="flex-1 bg-transparent text-[#3B2B12] outline-none placeholder:text-[#8B7355]"
+                placeholder="Tìm kiếm sản phẩm..."
+                autoFocus
+              />
             </div>
           )}
         </div>
@@ -357,7 +344,7 @@ const Navbar = () => {
                 setShowSheet(false);
               }, 200);
             }}
-            className="categorySheet absolute top-[5.5rem] left-20 right-20 z-40"
+            className="categorySheet absolute left-20 right-20 top-[5.5rem] z-40"
           >
             <CategorySheet
               selectedCategory={selectedCategory}
@@ -369,10 +356,13 @@ const Navbar = () => {
 
       {/* MOBILE DRAWER MENU */}
       <Drawer anchor="left" open={openMenu} onClose={() => setOpenMenu(false)}>
-        <div className="w-[260px] p-4 space-y-3">
-          <h2 className="text-lg font-semibold mb-2">Danh mục</h2>
+        <div className="w-[260px] space-y-3 bg-[#FFFDF8] p-4">
+          <h2 className="mb-2 text-lg font-semibold text-[#3B2B12]">
+            Danh mục
+          </h2>
 
           {[
+            { name: "Trang Chủ", key: "/home" },
             { name: "Men", key: "men" },
             { name: "Women", key: "women" },
             { name: "Electric", key: "electronics" },
@@ -381,12 +371,16 @@ const Navbar = () => {
             <div
               key={item.key}
               onClick={() => {
-                setSelectedCategory(item.key);
-                navigate("/product-list");
-                setShowSheet(true);
+                if (item.key === "/") {
+                  navigate("/");
+                } else {
+                  setSelectedCategory(item.key);
+                  navigate("/product-list");
+                }
+
                 setOpenMenu(false);
               }}
-              className="py-3 px-3 rounded-lg cursor-pointer hover:bg-gray-100"
+              className="cursor-pointer rounded-lg px-3 py-3 text-[#6B4F1D] hover:bg-[#FFF7E8] hover:text-[#B88A44]"
             >
               {item.name}
             </div>

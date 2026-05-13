@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./ProductCard.css";
 import { IconButton, Button } from "@mui/material";
 import { Favorite, ModeComment, ShoppingCart } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const images = [
   "https://images.pexels.com/photos/8485550/pexels-photo-8485550.jpeg",
@@ -22,9 +23,10 @@ const ProductCard = () => {
     }
     return () => clearInterval(interval);
   }, [isHovered]);
+  const navigate = useNavigate();
 
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={() => navigate("/product-detail")}>
       <div
         className="card"
         onMouseEnter={() => setIsHovered(true)}

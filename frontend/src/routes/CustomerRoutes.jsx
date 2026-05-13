@@ -4,55 +4,76 @@ import RegisterPage from "../customer/pages/auth/RegisterPage";
 import Navbar from "../customer/components/navbar/Navbar";
 import Home from "../customer/pages/home/Home";
 import Footer from "../customer/components/footer/Footer";
-import ProductDetail from "./../customer/pages/product/product_detail/ProductDetail";
-import Product from './../customer/pages/product/Product';
+import ProductDetail from "../customer/pages/product/product_detail/ProductDetail";
+import Product from "../customer/pages/product/Product";
+import Account from "../customer/pages/account/Account";
+import OrderDetails from "../customer/pages/account/OrderDetails";
+
+const CustomerLayout = ({ children }) => {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+};
 
 export const customerRoutes = [
   {
-    path: "/login",
+    path: "/",
     element: (
-      <div className="">
-        <Navbar />
-        <LoginPage />
-        <Footer />
-      </div>
+      <CustomerLayout>
+        <Home />
+      </CustomerLayout>
     ),
   },
-
+  {
+    path: "/login",
+    element: (
+      <CustomerLayout>
+        <LoginPage />
+      </CustomerLayout>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <CustomerLayout>
+        <RegisterPage />
+      </CustomerLayout>
+    ),
+  },
   {
     path: "/product-detail",
     element: (
-      <div className="">
-        <Navbar />
+      <CustomerLayout>
         <ProductDetail />
-        <Footer />
-      </div>
+      </CustomerLayout>
     ),
   },
-
   {
     path: "/product-list",
     element: (
-      <div className="">
-        <Navbar />
+      <CustomerLayout>
         <Product />
-        <Footer />
-      </div>
+      </CustomerLayout>
     ),
   },
-
   {
-    path: "/register",
-    element: <RegisterPage />,
+    path: "/account",
+    element: (
+      <CustomerLayout>
+        <Account />
+      </CustomerLayout>
+    ),
   },
   {
-    path: "/",
+    path: "/account/orders/:id",
     element: (
-      <>
-        <Navbar />
-        <Home />
-        <Footer />
-      </>
+      <CustomerLayout>
+        <OrderDetails />
+      </CustomerLayout>
     ),
   },
 ];

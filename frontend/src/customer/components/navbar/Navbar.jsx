@@ -226,7 +226,7 @@ const Navbar = () => {
                       sx: {
                         mt: 1.5,
                         minWidth: 220,
-                        borderRadius: 3,
+                        // borderRadius: 3,
                         border: "1px solid #F2E8D7",
                       },
                     }}

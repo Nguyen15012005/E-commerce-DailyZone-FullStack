@@ -61,7 +61,7 @@ export const customerRoutes = [
     ),
   },
   {
-    path: "/account",
+    path: "/account/*",
     element: (
       <CustomerLayout>
         <Account />

@@ -6,8 +6,21 @@ import {
   FaLocationDot,
   FaCreditCard,
 } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import Order from "./Order";
+import SavedCards from "./SavedCards";
+import UserDetails from "./UserDetails";
+import Addresses from "./Addresses";
+import OrderDetails from "./OrderDetails";
+import { logout } from "../../../store/authSlice";
 
 const menu = [
   { name: "Hồ sơ", path: "/account/profile", icon: <FaUser /> },
@@ -18,96 +31,112 @@ const menu = [
     path: "/account/saved-card",
     icon: <FaCreditCard />,
   },
-  { name: "Đăng xuất", path: "/", icon: <IoLogOut /> },
+  { name: "Đăng xuất", path: "/", icon: <IoLogOut />, action: "logout" },
 ];
 
 const Account = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    localStorage.removeItem("jwt");
+    navigate("/");
+  };
 
   const handleClick = (item) => {
+    if (item.action === "logout") {
+      handleLogout();
+      return;
+    }
+
     navigate(item.path);
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] px-4 py-8 lg:px-20">
-      <div className="mx-auto max-w-7xl rounded-[32px] border border-[#F2E8D7] bg-white p-5 shadow-[0_20px_60px_rgba(201,169,110,0.14)] lg:p-8">
-        {/* HEADER */}
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="min-h-screen bg-[#FAF8F3] px-3 py-5 sm:px-5 lg:px-16 xl:px-20">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-[#F2E8D7] bg-white shadow-[0_20px_60px_rgba(201,169,110,0.14)]">
+        <div className="flex flex-col gap-4 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8">
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#B88A44]">
               My Account
             </p>
 
-            <h1 className="text-2xl font-bold tracking-tight text-[#3B2B12] lg:text-3xl">
-              Nguyễn Nam Trung Nguyên
+            <h1 className="text-2xl font-bold tracking-tight text-[#3B2B12] sm:text-3xl">
+              {user?.fullName || "Người dùng"}
             </h1>
 
-            <p className="mt-1 text-sm text-[#8B7355]">
+            <p className="mt-1 text-sm leading-6 text-[#8B7355]">
               Quản lý hồ sơ, đơn hàng, địa chỉ và phương thức thanh toán
             </p>
           </div>
 
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#D6B57A] via-[#C9A96E] to-[#B88A44] text-xl font-bold text-white shadow-[0_10px_24px_rgba(201,169,110,0.35)]">
-            N
+            {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
           </div>
         </div>
 
         <Divider sx={{ borderColor: "#EEE4D2" }} />
 
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4">
-          {/* SIDEBAR */}
-          <div className="h-fit rounded-[28px] border border-[#F2E8D7] bg-[#FFFDF8] p-3 shadow-[0_8px_30px_rgba(201,169,110,0.08)]">
-            <div className="flex flex-row flex-wrap gap-2 lg:flex-col">
+        <div className="grid grid-cols-1 gap-5 p-4 sm:p-5 lg:grid-cols-[280px_1fr] lg:p-6">
+          <aside className="h-fit rounded-[24px] border border-[#F2E8D7] bg-[#FFFDF8] p-2 shadow-[0_8px_30px_rgba(201,169,110,0.08)] lg:sticky lg:top-24">
+            <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
               {menu.map((item, index) => {
+                const isLogout = item.action === "logout";
                 const isActive =
-                  item.path !== "/" && location.pathname.includes(item.path);
-
-                const isLogout = item.name === "Đăng xuất";
+                  !isLogout && location.pathname.includes(item.path);
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     onClick={() => handleClick(item)}
                     key={index}
-                    className={`group flex min-w-fit flex-1 cursor-pointer items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-all duration-300 lg:flex-none
+                    className={`group flex min-w-max items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 lg:w-full
                     ${
                       isActive
                         ? "bg-gradient-to-r from-[#D6B57A] via-[#C9A96E] to-[#B88A44] text-white shadow-[0_10px_24px_rgba(201,169,110,0.35)]"
                         : isLogout
                           ? "text-red-500 hover:bg-red-50"
                           : "text-[#6B4F1D] hover:bg-white hover:text-[#B88A44] hover:shadow-[0_8px_24px_rgba(201,169,110,0.14)]"
-                    }
-                  `}
+                    }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-3">
                       <span
                         className={`text-base transition-transform duration-300 group-hover:scale-110 ${
-                          isActive ? "text-white" : "text-[#B88A44]"
+                          isActive
+                            ? "text-white"
+                            : isLogout
+                              ? "text-red-500"
+                              : "text-[#B88A44]"
                         }`}
                       >
                         {item.icon}
                       </span>
 
-                      <span className="text-sm font-semibold lg:text-base">
-                        {item.name}
-                      </span>
-                    </div>
+                      <span className="text-sm font-semibold">{item.name}</span>
+                    </span>
 
-                    {isLogout && (
-                      <IoLogOut className="text-lg transition-transform duration-300 group-hover:translate-x-1" />
-                    )}
-                  </div>
+                    {isLogout && <IoLogOut className="text-lg" />}
+                  </button>
                 );
               })}
             </div>
-          </div>
+          </aside>
 
-          {/* RIGHT */}
-          <div className="right lg:col-span-3">
-            <div className="min-h-[500px] rounded-[28px] border border-[#F2E8D7] bg-white p-4 shadow-[0_8px_30px_rgba(201,169,110,0.08)] lg:p-6">
-              <Order />
-            </div>
-          </div>
+          <main className="min-h-[520px] rounded-[24px] border border-[#F2E8D7] bg-white p-3 shadow-[0_8px_30px_rgba(201,169,110,0.08)] sm:p-5 lg:p-6">
+            <Routes>
+              <Route path="/" element={<Navigate to="profile" replace />} />
+              <Route path="profile" element={<UserDetails />} />
+              <Route path="orders" element={<Order />} />
+              <Route path="orders/:id" element={<OrderDetails />} />
+              <Route path="addresses" element={<Addresses />} />
+              <Route path="saved-card" element={<SavedCards />} />
+            </Routes>
+          </main>
         </div>
       </div>
     </div>

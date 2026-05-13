@@ -57,10 +57,10 @@ const Deal = () => {
       {/* HEADER */}
       <div className="flex items-end justify-between mb-8">
         <div>
-          <p className="text-sm text-red-500 font-semibold tracking-widest uppercase">
+          <p className="text-sm text-[#C6A15B] font-semibold tracking-widest uppercase">
             Flash Sale
           </p>
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-400 to-red-500 text-transparent bg-clip-text mt-2">
+          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-00 text-[#d7a343] bg-clip-text mt-2">
             🔥 Deal Hot Hôm Nay
           </h2>
         </div>

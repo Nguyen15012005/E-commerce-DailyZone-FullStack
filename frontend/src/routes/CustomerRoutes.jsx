@@ -10,6 +10,7 @@ import Account from "../customer/pages/account/Account";
 import Cart from "../customer/pages/cart/Cart";
 import Checkout from "../customer/pages/checkout/Checkout";
 import Payment from "../customer/pages/checkout/Payment";
+import Review from "../customer/pages/review/Review";
 
 const CustomerLayout = ({ children }) => {
   return (
@@ -91,6 +92,14 @@ export const customerRoutes = [
     element: (
       <CustomerLayout>
         <Account />
+      </CustomerLayout>
+    ),
+  },
+  {
+    path: "/product/:id/reviews",
+    element: (
+      <CustomerLayout>
+        <Review />
       </CustomerLayout>
     ),
   },

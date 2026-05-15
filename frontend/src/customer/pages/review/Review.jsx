@@ -1,49 +1,49 @@
 import React from "react";
 import ReviewCard from "./ReviewCard";
 import { Divider } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Review = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="p-5 lg:p-15 flex flex-col lg:flex-row gap-10 bg-gray-50">
-      {/* LEFT */}
-      <section className="w-full md:w-1/2 lg:w-[30%] space-y-4 bg-white p-4 rounded-xl shadow-sm">
+    <div className="flex flex-col gap-10 bg-gray-50 p-5 lg:flex-row lg:p-15">
+      <section
+        onClick={() => navigate("/product-detail/1")}
+        className="w-full cursor-pointer space-y-4 rounded-xl bg-white p-4 shadow-sm md:w-1/2 lg:w-[30%]"
+      >
         <img
-          className="w-full h-[280px] object-cover rounded-lg"
+          className="h-[280px] w-full rounded-lg object-cover"
           src="https://cdn.prod.website-files.com/622488277ab5ee818d179d9f/6851ef68b64528a9ee3e9af3_6633f57bd5f74992577ce526_pasted_image_0-5.webp"
-          alt=""
+          alt="Camera SamSung"
         />
 
         <div className="space-y-1">
-          <p className="font-semibold text-lg">Camera SamSung</p>
+          <p className="text-lg font-semibold">Camera SamSung</p>
           <p className="text-sm text-gray-500">
             High-quality camera for professional photography
           </p>
         </div>
 
-        {/* PRICE */}
-        <div className="flex items-center gap-3 mt-3">
-          <span className="font-bold text-xl text-red-500">999.999 VNĐ</span>
-
-          {/* ❌ sửa lỗi ở đây */}
-          <span className="line-through text-gray-400 text-sm">
+        <div className="mt-3 flex items-center gap-3">
+          <span className="text-xl font-bold text-red-500">999.999 VNĐ</span>
+          <span className="text-sm text-gray-400 line-through">
             1.999.999 VNĐ
           </span>
-
-          <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
+          <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-600">
             -50%
           </span>
         </div>
       </section>
 
-      {/* RIGHT */}
-      <section className="w-full md:w-1/2 lg:w-[70%] bg-white p-5 rounded-xl shadow-sm">
-        <h1 className="font-semibold text-2xl pb-4 border-b">
+      <section className="w-full rounded-xl bg-white p-5 shadow-sm md:w-1/2 lg:w-[70%]">
+        <h1 className="border-b pb-4 text-2xl font-semibold">
           Đánh giá & Xếp hạng
         </h1>
 
-        <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto scrollbar-hide">
-          {[1, 1, 1, 1, 1].map((item, i) => (
-            <div key={i} className="space-y-4">
+        <div className="scrollbar-hide flex max-h-[500px] flex-col gap-3 overflow-y-auto">
+          {[1, 2, 3, 4, 5].map((item, i) => (
+            <div key={item} className="space-y-4">
               <ReviewCard />
               {i !== 4 && <Divider />}
             </div>

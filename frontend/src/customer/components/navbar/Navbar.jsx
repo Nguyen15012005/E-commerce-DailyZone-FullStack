@@ -136,10 +136,10 @@ const Navbar = () => {
                 <ul className="ml-6 flex items-center space-x-3 text-[#6B4F1D]">
                   {[
                     { name: "Trang Chủ", key: "/" },
-                    { name: "Men", key: "men" },
-                    { name: "Women", key: "women" },
-                    { name: "Electric", key: "electronics" },
-                    { name: "Furniture", key: "home_furnitures" },
+                    { name: "Nam", key: "men" },
+                    { name: "Nữ", key: "women" },
+                    { name: "Điện Tử", key: "electronics" },
+                    { name: "Nhà Bếp", key: "home_furnitures" },
                   ].map((item) => (
                     <li
                       key={item.key}
@@ -363,10 +363,10 @@ const Navbar = () => {
 
           {[
             { name: "Trang Chủ", key: "/home" },
-            { name: "Men", key: "men" },
-            { name: "Women", key: "women" },
-            { name: "Electric", key: "electronics" },
-            { name: "Furniture", key: "home_furnitures" },
+            { name: "Nam", key: "men" },
+            { name: "Nữ", key: "women" },
+            { name: "Điện Tử", key: "electronics" },
+            { name: "Nhà Bếp", key: "home_furnitures" },
           ].map((item) => (
             <div
               key={item.key}

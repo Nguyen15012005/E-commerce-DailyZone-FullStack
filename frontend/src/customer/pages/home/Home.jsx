@@ -13,7 +13,7 @@ const Home = () => {
     <div>
       {/* CATEGORY QUICK */}
       <section>
-        <ElectricCategory />
+        {/* <ElectricCategory /> */}
       </section>
 
       {/* TREND GRID */}

@@ -29,29 +29,27 @@ const categoryThree = {
 const CategorySheet = ({ selectedCategory, setShowSheet }) => {
   const navigate = useNavigate();
 
-  const childCategory = (category, parentCategoryId) => {
+  const childCategory = (category = [], parentCategoryId) => {
     return category.filter(
       (item) => item.parentCategoryId === parentCategoryId,
     );
   };
 
   const handleNavigate = (child) => {
-    console.log("Clicked:", child);
-
-    // đóng menu
     setShowSheet(false);
 
-    // chuyển trang
-    navigate("/product-list");
+    navigate(
+      `/product-list?category=${selectedCategory}&type=${child.categoryId}`,
+    );
   };
 
   return (
     <Box
       sx={{ zIndex: 999 }}
       onMouseEnter={() => setShowSheet(true)}
-      className="bg-white shadow-lg lg:h-[500px] overflow-y-auto relative"
+      className="relative overflow-y-auto bg-white shadow-lg lg:h-[500px]"
     >
-      <div className="flex text-sm flex-wrap">
+      <div className="flex flex-wrap text-sm">
         {categoryTwo[selectedCategory]?.map((item, index) => (
           <div
             key={item.categoryId}
@@ -59,10 +57,8 @@ const CategorySheet = ({ selectedCategory, setShowSheet }) => {
               index % 2 === 0 ? "bg-slate-50" : "bg-white"
             }`}
           >
-            {/* category level 2 */}
-            <p className="text-yellow-700 mb-5 font-semibold">{item.name}</p>
+            <p className="mb-5 font-semibold text-yellow-700">{item.name}</p>
 
-            {/* category level 3 */}
             <ul className="space-y-3">
               {childCategory(
                 categoryThree[selectedCategory],
@@ -71,7 +67,7 @@ const CategorySheet = ({ selectedCategory, setShowSheet }) => {
                 <li
                   key={child.categoryId}
                   onClick={() => handleNavigate(child)}
-                  className="cursor-pointer hover:text-yellow-700 transition duration-200"
+                  className="cursor-pointer transition duration-200 hover:text-yellow-700"
                 >
                   {child.name}
                 </li>

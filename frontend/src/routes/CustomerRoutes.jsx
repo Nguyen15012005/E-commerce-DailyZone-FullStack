@@ -7,7 +7,9 @@ import Footer from "../customer/components/footer/Footer";
 import ProductDetail from "../customer/pages/product/product_detail/ProductDetail";
 import Product from "../customer/pages/product/Product";
 import Account from "../customer/pages/account/Account";
-import OrderDetails from "../customer/pages/account/OrderDetails";
+import Cart from "../customer/pages/cart/Cart";
+import Checkout from "../customer/pages/checkout/Checkout";
+import Payment from "../customer/pages/checkout/Payment";
 
 const CustomerLayout = ({ children }) => {
   return (
@@ -45,7 +47,7 @@ export const customerRoutes = [
     ),
   },
   {
-    path: "/product-detail",
+    path: "/product-detail/:id",
     element: (
       <CustomerLayout>
         <ProductDetail />
@@ -61,18 +63,34 @@ export const customerRoutes = [
     ),
   },
   {
-    path: "/account/*",
+    path: "/payment",
     element: (
       <CustomerLayout>
-        <Account />
+        <Payment />
       </CustomerLayout>
     ),
   },
   {
-    path: "/account/orders/:id",
+    path: "/cart",
     element: (
       <CustomerLayout>
-        <OrderDetails />
+        <Cart />
+      </CustomerLayout>
+    ),
+  },
+  {
+    path: "/checkout",
+    element: (
+      <CustomerLayout>
+        <Checkout />
+      </CustomerLayout>
+    ),
+  },
+  {
+    path: "/account/*",
+    element: (
+      <CustomerLayout>
+        <Account />
       </CustomerLayout>
     ),
   },

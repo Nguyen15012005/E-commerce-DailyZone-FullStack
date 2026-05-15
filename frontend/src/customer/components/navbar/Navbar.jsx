@@ -51,6 +51,14 @@ const Navbar = () => {
 
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
+  const menuItems = [
+    { name: "Trang Chủ", key: "/" },
+    { name: "Nam", key: "men" },
+    { name: "Nữ", key: "women" },
+    { name: "Điện Tử", key: "electronics" },
+    { name: "Nhà Bếp", key: "home_furnitures" },
+  ];
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -75,27 +83,46 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const requireLoginNavigate = (path) => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(path);
+  };
+
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token");
     localStorage.removeItem("jwt");
+    handleCloseUserMenu();
     navigate("/");
+  };
+
+  const handleCategoryNavigate = (key) => {
+    if (key === "/") {
+      navigate("/");
+    } else {
+      setSelectedCategory(key);
+      navigate(`/product-list?category=${key}`);
+    }
+
+    setOpenMenu(false);
+    setShowSheet(false);
   };
 
   return (
     <div className="navbar sticky top-0 z-50 bg-white text-[#6B4F1D] shadow-sm">
-      <Box sx={{ zIndex: 2 }} className="sticky top-0 left-0 right-0 bg-white">
+      <Box sx={{ zIndex: 2 }} className="sticky left-0 right-0 top-0 bg-white">
         <div>
-          {/* Announcement */}
           <div className="flex h-8 items-center justify-center bg-gradient-to-r from-[#D6B57A] via-[#C9A96E] to-[#B88A44]">
             <span className="text-[11px] uppercase tracking-[2px] text-white">
               ✦ Miễn phí vận chuyển cho đơn hàng trên 500.000đ ✦
             </span>
           </div>
 
-          {/* MAIN NAV */}
           <div className="flex h-[70px] items-center justify-between border-b border-[#F2E8D7] px-4 md:px-6 lg:px-20">
-            {/* LEFT */}
             <div className="flex items-center gap-3">
               {!isLarge && (
                 <IconButton
@@ -106,7 +133,6 @@ const Navbar = () => {
                 </IconButton>
               )}
 
-              {/* LOGO */}
               <button onClick={() => navigate("/")}>
                 <div className="flex cursor-pointer items-center gap-2 lg:gap-3">
                   <div className="flex flex-col leading-none">
@@ -131,29 +157,15 @@ const Navbar = () => {
                 </div>
               </button>
 
-              {/* MENU DESKTOP */}
               {isLarge && (
                 <ul className="ml-6 flex items-center space-x-3 text-[#6B4F1D]">
-                  {[
-                    { name: "Trang Chủ", key: "/" },
-                    { name: "Nam", key: "men" },
-                    { name: "Nữ", key: "women" },
-                    { name: "Điện Tử", key: "electronics" },
-                    { name: "Nhà Bếp", key: "home_furnitures" },
-                  ].map((item) => (
+                  {menuItems.map((item) => (
                     <li
                       key={item.key}
-                      onClick={() => {
-                        if (item.key === "/") {
-                          navigate("/");
-                        } else {
-                          setSelectedCategory(item.key);
-                          navigate("/product-list");
-                        }
-
-                        setOpenMenu(false);
-                      }}
+                      onClick={() => handleCategoryNavigate(item.key)}
                       onMouseEnter={() => {
+                        if (item.key === "/") return;
+
                         clearTimeout(timeoutRef.current);
                         setSelectedCategory(item.key);
                         setShowSheet(true);
@@ -172,7 +184,6 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* RIGHT */}
             <div className="flex items-center gap-2 lg:gap-4">
               <IconButton
                 onClick={() => setOpenSearch(true)}
@@ -181,11 +192,17 @@ const Navbar = () => {
                 <Search sx={{ color: "#6B4F1D" }} />
               </IconButton>
 
-              <IconButton className="hover:bg-[#FFF7E8]">
+              <IconButton
+                onClick={() => requireLoginNavigate("/wishlist")}
+                className="hover:bg-[#FFF7E8]"
+              >
                 <Favorite sx={{ fontSize: 24, color: red[500] }} />
               </IconButton>
 
-              <IconButton className="relative hover:bg-[#FFF7E8]">
+              <IconButton
+                onClick={() => requireLoginNavigate("/cart")}
+                className="relative hover:bg-[#FFF7E8]"
+              >
                 <AddShoppingCart sx={{ fontSize: 24, color: "#6B4F1D" }} />
 
                 <span className="absolute -right-1 -top-1 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-[#C9A96E] text-[10px] text-white">
@@ -193,7 +210,6 @@ const Navbar = () => {
                 </span>
               </IconButton>
 
-              {/* LOGIN / USER MENU */}
               {isAuthenticated ? (
                 <>
                   <Button
@@ -226,17 +242,18 @@ const Navbar = () => {
                       sx: {
                         mt: 1.5,
                         minWidth: 220,
-                        // borderRadius: 3,
                         border: "1px solid #F2E8D7",
                       },
                     }}
                   >
                     <div className="px-4 py-3">
                       <p className="text-sm font-semibold text-[#3B2B12]">
-                        {user?.fullName}
+                        {user?.fullName || "User"}
                       </p>
 
-                      <p className="text-xs text-[#8B7355]">{user?.email}</p>
+                      <p className="text-xs text-[#8B7355]">
+                        {user?.email || ""}
+                      </p>
                     </div>
 
                     <Divider sx={{ borderColor: "#F2E8D7" }} />
@@ -279,12 +296,7 @@ const Navbar = () => {
 
                     <Divider sx={{ borderColor: "#F2E8D7" }} />
 
-                    <MenuItem
-                      onClick={() => {
-                        handleCloseUserMenu();
-                        handleLogout();
-                      }}
-                    >
+                    <MenuItem onClick={handleLogout}>
                       <ListItemIcon>
                         <Logout fontSize="small" />
                       </ListItemIcon>
@@ -304,7 +316,7 @@ const Navbar = () => {
 
               {isLarge && (
                 <Button
-                  onClick={() => navigate("/seller")}
+                  onClick={() => requireLoginNavigate("/seller")}
                   startIcon={<Storefront />}
                   variant="outlined"
                   className="normal-case border border-[#C9A96E] px-6 py-2 text-[#B88A44]"
@@ -315,7 +327,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* SEARCH */}
           {openSearch && (
             <div
               ref={searchRef}
@@ -332,7 +343,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* CATEGORY SHEET */}
         {isLarge && showSheet && (
           <div
             onMouseEnter={() => {
@@ -354,32 +364,16 @@ const Navbar = () => {
         )}
       </Box>
 
-      {/* MOBILE DRAWER MENU */}
       <Drawer anchor="left" open={openMenu} onClose={() => setOpenMenu(false)}>
         <div className="w-[260px] space-y-3 bg-[#FFFDF8] p-4">
           <h2 className="mb-2 text-lg font-semibold text-[#3B2B12]">
             Danh mục
           </h2>
 
-          {[
-            { name: "Trang Chủ", key: "/home" },
-            { name: "Nam", key: "men" },
-            { name: "Nữ", key: "women" },
-            { name: "Điện Tử", key: "electronics" },
-            { name: "Nhà Bếp", key: "home_furnitures" },
-          ].map((item) => (
+          {menuItems.map((item) => (
             <div
               key={item.key}
-              onClick={() => {
-                if (item.key === "/") {
-                  navigate("/");
-                } else {
-                  setSelectedCategory(item.key);
-                  navigate("/product-list");
-                }
-
-                setOpenMenu(false);
-              }}
+              onClick={() => handleCategoryNavigate(item.key)}
               className="cursor-pointer rounded-lg px-3 py-3 text-[#6B4F1D] hover:bg-[#FFF7E8] hover:text-[#B88A44]"
             >
               {item.name}

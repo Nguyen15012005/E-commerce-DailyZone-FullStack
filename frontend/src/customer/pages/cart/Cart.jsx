@@ -1,62 +1,62 @@
 import { Alert, Button, IconButton, Snackbar, TextField } from "@mui/material";
 import React, { useState } from "react";
 import PricingCard from "./PricingCard";
-import { Close, Favorite, FavoriteBorder, LocalOffer } from "@mui/icons-material";
+import { Close, Favorite, LocalOffer } from "@mui/icons-material";
 import CartItem from "./CartItem";
 import { red } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+  const navigate = useNavigate();
+
+  const cartItems = [1, 1, 1];
+
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // 👉 APPLY COUPON
   const handleApplyCoupon = () => {
     if (!couponInput.trim()) return;
 
-    // giả lập check mã
     if (couponInput === "SAVE20") {
       setAppliedCoupon(couponInput);
-      setErrorMessage(""); // 👈 thêm dòng này
-      setOpenSnackbar(true);
+      setErrorMessage("");
     } else {
       setErrorMessage("Mã không hợp lệ");
-      setOpenSnackbar(true);
     }
+
+    setOpenSnackbar(true);
   };
 
-  // 👉 REMOVE COUPON
   const handleRemoveCoupon = () => {
     setAppliedCoupon("");
     setCouponInput("");
   };
 
   return (
-    <div>
-      <div className="pt-10 px-5 sm:px-10 md:px-20 lg:px-30 min-h-screen bg-gray-50">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Cart Items */}
-          <div className="cartItemSection lg:col-span-2 space-y-4">
-            {[1, 1, 1, 1, 1, 1].map((item, index) => (
-              <div key={index}>
-                <CartItem item={item} />
-              </div>
+    <div className="min-h-screen bg-gray-50 px-5 py-10 sm:px-10 md:px-20 lg:px-28">
+      {cartItems.length > 0 ? (
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+          {/* LEFT */}
+          <div className="space-y-4 lg:col-span-2">
+            {cartItems.map((item, index) => (
+              <CartItem key={index} item={item} />
             ))}
           </div>
 
-          {/* Pricing Summary */}
-          <div className="col-span-1 text-sm space-y-4">
-            {/* COUPON */}
-            <div className="bg-white border rounded-xl px-5 py-4 space-y-4 shadow-sm">
-              <div className="flex text-center justify-center items-center gap-2 font-medium text-gray-700">
-                <LocalOffer sx={{ color: red[700], fontSize: "30px" }} />
-                <span className="text-2xl font-bold text-gray-600">
+          {/* RIGHT */}
+          <div className="space-y-4 lg:sticky lg:top-24">
+            <div className="space-y-4 rounded-2xl border bg-white px-5 py-5 shadow-sm">
+              <div className="flex items-center justify-center gap-2 text-center font-medium text-gray-700">
+                <LocalOffer sx={{ color: red[700], fontSize: "28px" }} />
+
+                <span className="text-xl font-bold text-gray-700">
                   Áp dụng mã giảm giá
                 </span>
               </div>
 
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <TextField
                   size="small"
                   fullWidth
@@ -64,6 +64,7 @@ const Cart = () => {
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value)}
                 />
+
                 <Button
                   onClick={handleApplyCoupon}
                   variant="contained"
@@ -80,13 +81,13 @@ const Cart = () => {
                 </Button>
               </div>
 
-              {/* Applied coupon */}
               {appliedCoupon && (
                 <div className="flex">
-                  <div className="px-3 py-1 border rounded-full flex items-center gap-2 bg-gray-100">
+                  <div className="flex items-center gap-2 rounded-full border bg-gray-100 px-3 py-1">
                     <span className="text-xs font-medium text-gray-700">
                       {appliedCoupon}
                     </span>
+
                     <IconButton size="small" onClick={handleRemoveCoupon}>
                       <Close className="text-red-500" />
                     </IconButton>
@@ -95,11 +96,12 @@ const Cart = () => {
               )}
             </div>
 
-            {/* PRICING */}
-            <section className="bg-white border rounded-xl shadow-sm">
+            <section className="rounded-2xl border bg-white shadow-sm">
               <PricingCard coupon={appliedCoupon} />
+
               <div className="p-5 pt-0">
                 <Button
+                  onClick={() => navigate("/checkout")}
                   sx={{
                     py: "12px",
                     borderRadius: "10px",
@@ -115,45 +117,49 @@ const Cart = () => {
               </div>
             </section>
 
-            {/* WISHLIST */}
-            <div className="bg-white border rounded-xl px-5 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition">
+            <div
+              onClick={() => navigate("/wishlist")}
+              className="flex cursor-pointer items-center justify-between rounded-2xl border bg-white px-5 py-4 shadow-sm transition hover:bg-gray-50"
+            >
               <span className="font-medium text-gray-700">
                 Thêm từ danh sách yêu thích
               </span>
-              <Favorite sx={{ fontSize: 24, color:red[500] }} />
+
+              <Favorite sx={{ fontSize: 24, color: red[500] }} />
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex h-[70vh] flex-col items-center justify-center rounded-2xl bg-white shadow-sm">
+          <div className="py-5 text-center">
+            <h1 className="text-xl font-semibold text-gray-800">
+              Giỏ hàng của bạn đang trống
+            </h1>
 
-      {/* EMPTY CART */}
-      <div className="h-[85vh] flex justify-center items-center flex-col bg-gray-50">
-        <div className="text-center py-5">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Giỏ hàng của bạn đang trống
-          </h1>
-          <p className="text-gray-500 text-sm mt-2">
-            Hãy thêm sản phẩm để tiếp tục mua sắm
-          </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Hãy thêm sản phẩm để tiếp tục mua sắm
+            </p>
+          </div>
+
+          <Button
+            onClick={() => navigate("/wishlist")}
+            variant="outlined"
+            sx={{
+              py: "11px",
+              borderRadius: "8px",
+              textTransform: "none",
+            }}
+          >
+            Thêm từ danh sách yêu thích
+          </Button>
         </div>
+      )}
 
-        <Button
-          variant="outlined"
-          sx={{
-            py: "11px",
-            borderRadius: "8px",
-          }}
-        >
-          Thêm từ danh sách yêu thích
-        </Button>
-      </div>
-
-      {/* SNACKBAR */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={2000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }} // 👈 thêm dòng này
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert severity={errorMessage ? "error" : "success"}>
           {errorMessage || "Áp dụng mã thành công"}

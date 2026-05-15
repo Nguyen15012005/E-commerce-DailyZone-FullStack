@@ -6,15 +6,26 @@ import ShopByCategory from "./shop_by_category/ShopByCategory";
 import { Storefront } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  const handleBecomeSeller = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    navigate("/seller");
+  };
+
   return (
     <div>
       {/* CATEGORY QUICK */}
-      <section>
-        {/* <ElectricCategory /> */}
-      </section>
+      <section>{/* <ElectricCategory /> */}</section>
 
       {/* TREND GRID */}
       <section>
@@ -31,9 +42,9 @@ const Home = () => {
         <ShopByCategory />
       </section>
 
-      <section className="pt-20 relative">
+      <section className="relative pt-20">
         <img
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
           src="/assets/image/become_seller-new.png"
           alt=""
         />
@@ -41,23 +52,24 @@ const Home = () => {
         {/* BUTTON */}
         <div className="absolute bottom-14 left-2 lg:left-[4rem]">
           <Button
-            onClick={() => navigate("/seller")}
+            onClick={handleBecomeSeller}
             startIcon={<Storefront />}
             variant="contained"
             className="
-            normal-case
-            px-8 py-3
-            bg-black text-white
-            border border-black
-            rounded-none
-            tracking-wider
-            shadow-none
-            transition-all duration-300
+              normal-case
+              rounded-none
+              border border-black
+              bg-black
+              px-8 py-3
+              tracking-wider
+              text-white
+              shadow-none
+              transition-all duration-300
 
-            hover:bg-transparent
-            hover:text-[#C6A15B]
-            hover:border-[#C6A15B]
-          "
+              hover:border-[#C6A15B]
+              hover:bg-transparent
+              hover:text-[#C6A15B]
+            "
           >
             Bắt đầu bán hàng
           </Button>

@@ -19,6 +19,7 @@ const ProductDetail = () => {
 
   const handleAddCart = () => {
     console.log("Add to cart");
+    navigate("/");
   };
 
   return (

@@ -11,6 +11,7 @@ import {
 import AddressForm from "./AddresssForm";
 import AddressCard from "./AddressCard";
 import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -64,8 +65,10 @@ const Checkout = () => {
     setValue(event.target.value);
   };
 
+  const navigate = useNavigate();
+
   const handleCreateOrder = () => {
-    console.log("Checkout UI only");
+    navigate("/payment");
   };
 
   const handlePaymentChange = (event) => {

@@ -2,6 +2,10 @@ import React from "react";
 import AddCardIcon from "@mui/icons-material/AddCard";
 
 const SavedCards = () => {
+  const handleAddCard = () => {
+    alert("Chức năng thêm thẻ sẽ được hoàn thiện sau");
+  };
+
   return (
     <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 rounded-[24px] border border-[#F2E8D7] bg-[#FFFDF8] px-5 py-14 text-center shadow-[0_8px_30px_rgba(201,169,110,0.08)]">
       <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#FFF7E8] text-[#B88A44] sm:h-32 sm:w-32">
@@ -19,7 +23,10 @@ const SavedCards = () => {
         </p>
       </div>
 
-      <button className="rounded-2xl bg-gradient-to-r from-[#D6B57A] via-[#C9A96E] to-[#B88A44] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(201,169,110,0.25)]">
+      <button
+        onClick={handleAddCard}
+        className="rounded-2xl bg-gradient-to-r from-[#D6B57A] via-[#C9A96E] to-[#B88A44] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(201,169,110,0.25)]"
+      >
         + Thêm thẻ mới
       </button>
     </div>

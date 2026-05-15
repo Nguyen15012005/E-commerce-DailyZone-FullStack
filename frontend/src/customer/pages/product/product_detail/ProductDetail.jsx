@@ -13,13 +13,15 @@ import {
 import React, { useState } from "react";
 import SimilarProduct from "../SimilarProduct/SimilarProduct";
 import ReviewCard from "../../review/ReviewCard";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   const handleAddCart = () => {
     console.log("Add to cart");
-    navigate("/");
+    navigate("/cart");
   };
 
   return (
@@ -147,6 +149,7 @@ const ProductDetail = () => {
             </Button>
 
             <Button
+              onClick={() => navigate("/wishlist")}
               variant="outlined"
               fullWidth
               sx={{ py: "0.9rem" }}
@@ -174,10 +177,7 @@ const ProductDetail = () => {
       </div>
 
       <div className="mt-20">
-        <h1 className="text-5xl mb-10 font-bold">Sản Phẩm Tương Tự</h1>
-        <div className="pt-5">
-          <SimilarProduct />
-        </div>
+        <SimilarProduct />
       </div>
     </div>
   );

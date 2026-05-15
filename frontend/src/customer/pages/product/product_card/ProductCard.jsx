@@ -10,29 +10,37 @@ const images = [
   "https://images.pexels.com/photos/26425581/pexels-photo-26425581.jpeg",
 ];
 
-const ProductCard = () => {
+const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
   const [currentImage, setCurrentImage] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  const productId = product?.id || 1;
+
   useEffect(() => {
     let interval;
+
     if (isHovered) {
       interval = setInterval(() => {
         setCurrentImage((prev) => (prev + 1) % images.length);
       }, 1200);
     }
+
     return () => clearInterval(interval);
   }, [isHovered]);
-  const navigate = useNavigate();
+
+  const goToDetail = () => {
+    navigate(`/product-detail/${productId}`);
+  };
 
   return (
-    <div className="product-card" onClick={() => navigate("/product-detail")}>
+    <div className="product-card" onClick={goToDetail}>
       <div
         className="card"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* IMAGE AREA */}
         <div className="card-image">
           <span className="badge">-25%</span>
 
@@ -51,10 +59,23 @@ const ProductCard = () => {
           <div className="overlay" />
 
           <div className="actions">
-            <IconButton className="icon-btn favorite">
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/wishlist");
+              }}
+              className="icon-btn favorite"
+            >
               <Favorite />
             </IconButton>
-            <IconButton className="icon-btn comment">
+
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                goToDetail();
+              }}
+              className="icon-btn comment"
+            >
               <ModeComment />
             </IconButton>
           </div>
@@ -69,7 +90,6 @@ const ProductCard = () => {
           </div>
         </div>
 
-        {/* INFO */}
         <div className="info">
           <h3 className="title">Áo Thun Local Brand Form Rộng Unisex</h3>
 
@@ -82,8 +102,11 @@ const ProductCard = () => {
             <span className="old">399.000₫</span>
           </div>
 
-          {/* ADD TO CART (đưa xuống đây) */}
           <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate("/cart");
+            }}
             variant="contained"
             startIcon={<ShoppingCart />}
             fullWidth

@@ -12,6 +12,10 @@ const UserDetails = () => {
     mobile: "0909 999 999",
   };
 
+  const handleEditProfile = () => {
+    alert("Chức năng chỉnh sửa hồ sơ sẽ được hoàn thiện sau");
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-5 rounded-[24px] border border-[#F2E8D7] bg-gradient-to-r from-[#FFFDF8] to-[#FAF5EA] p-5 shadow-[0_10px_35px_rgba(201,169,110,0.10)] lg:flex-row lg:items-center lg:justify-between">
@@ -33,16 +37,29 @@ const UserDetails = () => {
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#B88A44]">
               Personal Profile
             </p>
+
             <h1 className="text-2xl font-bold text-[#3B2B12]">
               {user.fullName}
             </h1>
+
             <p className="mt-1 text-sm text-[#8B7355]">
               Quản lý thông tin tài khoản cá nhân
             </p>
           </div>
         </div>
 
-        <Button startIcon={<EditIcon />} variant="contained">
+        <Button
+          onClick={handleEditProfile}
+          startIcon={<EditIcon />}
+          variant="contained"
+          sx={{
+            borderRadius: "14px",
+            background:
+              "linear-gradient(135deg, #D6B57A 0%, #C9A96E 50%, #B88A44 100%)",
+            textTransform: "none",
+            fontWeight: 700,
+          }}
+        >
           Chỉnh sửa
         </Button>
       </div>
@@ -75,6 +92,7 @@ const UserDetails = () => {
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#B88A44]">
                   {item.label}
                 </p>
+
                 <p className="mt-1 break-words text-base font-semibold text-[#3B2B12]">
                   {item.value}
                 </p>

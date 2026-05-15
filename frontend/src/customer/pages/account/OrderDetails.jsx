@@ -4,9 +4,14 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import RateReviewIcon from "@mui/icons-material/RateReview";
+import { useNavigate } from "react-router-dom";
 import OrderStepper from "./OrderStepper";
 
 const OrderDetails = () => {
+  const navigate = useNavigate();
+
   const orderItem = {
     product: {
       id: 1,
@@ -41,15 +46,32 @@ const OrderDetails = () => {
   };
 
   const handleCancelOrder = () => {
-    console.log("Cancel order");
+    alert("Đã gửi yêu cầu hủy đơn hàng");
+    navigate("/account/orders");
+  };
+
+  const handleReview = () => {
+    navigate(`/product-detail/${orderItem.product.id}`);
   };
 
   return (
     <Box className="min-h-screen bg-[#FAF8F3] px-4 py-8 lg:px-10">
       <div className="mx-auto max-w-5xl space-y-6">
-        {/* PRODUCT SUMMARY */}
+        <Button
+          onClick={() => navigate("/account/orders")}
+          startIcon={<ArrowBackIcon />}
+          variant="outlined"
+          sx={{
+            borderRadius: "14px",
+            textTransform: "none",
+            borderColor: "#C9A96E",
+            color: "#B88A44",
+          }}
+        >
+          Quay lại đơn hàng
+        </Button>
+
         <section className="overflow-hidden rounded-[32px] border border-[#F2E8D7] bg-white shadow-[0_20px_60px_rgba(201,169,110,0.14)]">
-          {/* HEADER */}
           <div className="bg-gradient-to-r from-[#E6C58A] via-[#D6B57A] to-[#B88A44] px-6 py-6 text-white">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#FFF7E8]">
               Order Details
@@ -64,9 +86,13 @@ const OrderDetails = () => {
             </p>
           </div>
 
-          {/* BODY */}
           <div className="flex flex-col items-center gap-6 p-6 text-center lg:flex-row lg:text-left">
-            <div className="overflow-hidden rounded-3xl bg-[#FFFDF8] p-4 shadow-inner">
+            <div
+              onClick={() =>
+                navigate(`/product-detail/${orderItem.product.id}`)
+              }
+              className="cursor-pointer overflow-hidden rounded-3xl bg-[#FFFDF8] p-4 shadow-inner"
+            >
               <img
                 className="h-[150px] w-[150px] object-cover transition-transform duration-500 hover:scale-105"
                 src={orderItem.product.image}
@@ -77,11 +103,16 @@ const OrderDetails = () => {
             <div className="flex-1 space-y-2">
               <div className="flex justify-center lg:justify-start">
                 <span className="rounded-full bg-[#FFF3DD] px-4 py-1 text-xs font-semibold text-[#B88A44]">
-                  Đang giao hàng
+                  Đã giao hàng
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold text-[#3B2B12]">
+              <h2
+                onClick={() =>
+                  navigate(`/product-detail/${orderItem.product.id}`)
+                }
+                className="cursor-pointer text-2xl font-bold text-[#3B2B12] hover:text-[#B88A44]"
+              >
                 {orderItem.product.title}
               </h2>
 
@@ -102,6 +133,8 @@ const OrderDetails = () => {
             </div>
 
             <Button
+              onClick={handleReview}
+              startIcon={<RateReviewIcon />}
               variant="contained"
               sx={{
                 background:
@@ -109,7 +142,7 @@ const OrderDetails = () => {
                 borderRadius: "14px",
                 px: 3,
                 py: 1.2,
-
+                textTransform: "none",
                 "&:hover": {
                   background: "#fff",
                   color: "#B88A44",
@@ -122,7 +155,6 @@ const OrderDetails = () => {
           </div>
         </section>
 
-        {/* STEPPER */}
         <section className="rounded-[28px] border border-[#F2E8D7] bg-white p-5 shadow-[0_8px_30px_rgba(201,169,110,0.08)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#D6B57A] via-[#C9A96E] to-[#B88A44] text-white">
@@ -143,7 +175,6 @@ const OrderDetails = () => {
           <OrderStepper orderStatus={order.orderStatus} />
         </section>
 
-        {/* ADDRESS */}
         <section className="rounded-[28px] border border-[#F2E8D7] bg-white p-5 shadow-[0_8px_30px_rgba(201,169,110,0.08)]">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FAF5EA] text-[#B88A44]">
@@ -161,12 +192,10 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-[#FFFCF6] p-5 text-sm border border-[#F2E8D7]">
+          <div className="rounded-2xl border border-[#F2E8D7] bg-[#FFFCF6] p-5 text-sm">
             <div className="mb-3 flex flex-wrap items-center gap-4 font-semibold text-[#3B2B12]">
               <p>{order.shippingAddress.name}</p>
-
               <Divider flexItem orientation="vertical" />
-
               <p>{order.shippingAddress.mobile}</p>
             </div>
 
@@ -177,7 +206,6 @@ const OrderDetails = () => {
           </div>
         </section>
 
-        {/* PAYMENT */}
         <section className="overflow-hidden rounded-[28px] border border-[#F2E8D7] bg-white shadow-[0_8px_30px_rgba(201,169,110,0.08)]">
           <div className="flex justify-between gap-5 p-5 text-sm">
             <div className="space-y-1">
@@ -223,7 +251,7 @@ const OrderDetails = () => {
                 fontWeight: 700,
                 borderColor: "#C9A96E",
                 color: "#B88A44",
-
+                textTransform: "none",
                 "&:hover": {
                   background: "#C9A96E",
                   color: "#fff",

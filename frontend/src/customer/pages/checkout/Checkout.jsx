@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PricingCard from "../Cart/PricingCard";
 import {
   Box,
   Button,
@@ -168,7 +167,7 @@ const Checkout = () => {
 
           {/* Pricing */}
           <section className="border rounded-xl bg-white shadow-sm">
-            <PricingCard />
+            {/* <PricingCard /> */}
 
             <div className="p-5">
               <Button

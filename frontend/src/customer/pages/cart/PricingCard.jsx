@@ -1,62 +1,68 @@
-import { Button, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
-const PricingCard = ({ coupon }) => {
-  const navigate = useNavigate();
+const PricingCard = ({ cart, coupon }) => {
+  // Dữ liệu từ cart API: totalPrice, totalDiscountedPrice, discount, totalItem
+  const subtotal = cart?.totalPrice || 0;
+  const platformDiscount = cart?.discount || 0;
+  const shipping = subtotal > 500000 ? 0 : 79000; // miễn phí ship khi > 500k
 
-  // 👉 fake data (sau này thay bằng cart thật)
-  const subtotal = 500000; // tạm tính
-  const shipping = 79000;
-
-  // 👉 logic giảm giá
-  let discount = 0;
-
+  // Giảm thêm theo coupon
+  let couponDiscount = 0;
   if (coupon === "SAVE20") {
-    discount = subtotal * 0.2; // giảm 20%
+    couponDiscount = Math.round(subtotal * 0.2);
   }
 
-  const total = subtotal - discount + shipping;
+  const totalDiscount = platformDiscount + couponDiscount;
+  const total = subtotal - totalDiscount + shipping;
+
+  const formatPrice = (price) =>
+    price ? price.toLocaleString("vi-VN") + "đ" : "0đ";
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border">
+    <div className="rounded-xl border bg-white shadow-sm">
       {/* CONTENT */}
       <div className="space-y-4 p-5 text-sm">
-        <div className="flex justify-between items-center text-gray-600">
-          <span>Tạm tính</span>
-          <span className="font-medium text-gray-800">
-            {subtotal.toLocaleString()}đ
+        <div className="flex items-center justify-between text-gray-600">
+          <span>Tạm tính ({cart?.totalItem || 0} sản phẩm)</span>
+          <span className="font-medium text-gray-800">{formatPrice(subtotal)}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-gray-600">
+          <span>Giảm giá sản phẩm</span>
+          <span className="font-medium text-green-600">
+            -{formatPrice(platformDiscount)}
           </span>
         </div>
 
-        <div className="flex justify-between items-center text-gray-600">
-          <span>Giảm giá</span>
-          <span className="text-green-600 font-medium">
-            -{discount.toLocaleString()}đ
-          </span>
-        </div>
+        {couponDiscount > 0 && (
+          <div className="flex items-center justify-between text-gray-600">
+            <span>Mã giảm giá ({coupon})</span>
+            <span className="font-medium text-green-600">
+              -{formatPrice(couponDiscount)}
+            </span>
+          </div>
+        )}
 
-        <div className="flex justify-between items-center text-gray-600">
+        <div className="flex items-center justify-between text-gray-600">
           <span>Phí vận chuyển</span>
-          <span className="font-medium text-gray-800">
-            {shipping.toLocaleString()}đ
+          <span className={`font-medium ${shipping === 0 ? "text-teal-600" : "text-gray-800"}`}>
+            {shipping === 0 ? "Miễn phí" : formatPrice(shipping)}
           </span>
         </div>
 
-        <div className="flex justify-between items-center text-gray-600">
+        <div className="flex items-center justify-between text-gray-600">
           <span>Phí nền tảng</span>
-          <span className="text-teal-600 font-medium">Miễn phí</span>
+          <span className="font-medium text-teal-600">Miễn phí</span>
         </div>
       </div>
 
       <Divider />
 
       {/* TOTAL */}
-      <div className="px-5 py-4 flex justify-between items-center bg-gray-50 rounded-b-xl">
-        <span className="font-semibold text-lg">Tổng tiền</span>
-        <span className="font-bold text-lg text-red-500">
-          {total.toLocaleString()}đ
-        </span>
+      <div className="flex items-center justify-between rounded-b-xl bg-gray-50 px-5 py-4">
+        <span className="text-lg font-semibold">Tổng tiền</span>
+        <span className="text-lg font-bold text-red-500">{formatPrice(total)}</span>
       </div>
     </div>
   );

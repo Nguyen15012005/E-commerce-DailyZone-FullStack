@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -24,6 +24,12 @@ import TopBar from "../../components/navbar/TopBar";
 import RevenueChart from "./components/RevenueChart";
 import CategoryChart from "./components/CategoryChart";
 import ConversionChart from "./components/ConversionChart";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSellerOrders,
+  fetchSellerProducts,
+  fetchSellerReport,
+} from "../../../store/sellerSlice";
 
 const StatCard = ({ title, value, percentage, isUp, icon, sideColor }) => (
   <Card
@@ -99,6 +105,23 @@ const StatCard = ({ title, value, percentage, isUp, icon, sideColor }) => (
 );
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { report, products, orders } = useSelector((state) => state.seller);
+
+  useEffect(() => {
+    dispatch(fetchSellerReport());
+    dispatch(fetchSellerProducts());
+    dispatch(fetchSellerOrders());
+  }, [dispatch]);
+
+  const formatVnd = (value) =>
+    `${Number(value || 0).toLocaleString("vi-VN")}đ`;
+  const pendingOrders = orders.filter((order) => order.orderStatus === "PENDING").length;
+  const completedPercent =
+    orders.length > 0
+      ? Math.round(((orders.length - pendingOrders) / orders.length) * 100)
+      : 0;
+
   return (
     <Box sx={{ bgcolor: "#FAFAFA", minHeight: "100vh", pb: 5 }}>
       <TopBar hideSearch={true} />
@@ -116,7 +139,7 @@ const Dashboard = () => {
               <Grid item xs={12} md={4}>
                 <StatCard
                   title="Tổng doanh thu"
-                  value="₫983.410k"
+                  value={formatVnd(report?.totalEarnings)}
                   percentage="3.34"
                   isUp={true}
                   icon={<AttachMoney />}
@@ -126,7 +149,7 @@ const Dashboard = () => {
               <Grid item xs={12} md={4}>
                 <StatCard
                   title="Tổng đơn hàng"
-                  value="58.375"
+                  value={report?.totalOrders ?? orders.length}
                   percentage="2.89"
                   isUp={false}
                   icon={<ShoppingBagOutlined />}
@@ -135,8 +158,8 @@ const Dashboard = () => {
               </Grid>
               <Grid item xs={12} md={4}>
                 <StatCard
-                  title="Khách ghé thăm"
-                  value="237.782"
+                  title="Sản phẩm"
+                  value={products.length}
                   percentage="8.02"
                   isUp={true}
                   icon={<PeopleOutline />}
@@ -174,14 +197,14 @@ const Dashboard = () => {
                       variant="h3"
                       sx={{ fontWeight: 800, color: "#C9A96E" }}
                     >
-                      85%
+                      {completedPercent}%
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Tiến độ rất tốt! 🎉
                     </Typography>
                     <LinearProgress
                       variant="determinate"
-                      value={85}
+                      value={completedPercent}
                       sx={{
                         mt: 3,
                         height: 10,
@@ -206,7 +229,7 @@ const Dashboard = () => {
                         Mục tiêu
                       </Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        600tr
+                        {orders.length}
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: "right" }}>
@@ -217,7 +240,7 @@ const Dashboard = () => {
                         variant="subtitle2"
                         sx={{ fontWeight: 700, color: "#C9A96E" }}
                       >
-                        510tr
+                        {orders.length - pendingOrders}
                       </Typography>
                     </Box>
                   </Box>

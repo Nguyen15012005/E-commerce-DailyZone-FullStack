@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -20,8 +20,65 @@ import {
   LocationOn,
   VerifiedUser,
 } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSellerProfile,
+  updateSellerProfile,
+} from "../../../store/sellerSlice";
 
 const SellerProfile = () => {
+  const dispatch = useDispatch();
+  const { profile } = useSelector((state) => state.seller);
+  const [form, setForm] = useState({
+    sellerName: "",
+    email: "",
+    phone: "",
+    GSTIN: "",
+    businessName: "",
+    businessEmail: "",
+    businessMobile: "",
+  });
+
+  useEffect(() => {
+    dispatch(fetchSellerProfile());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile) {
+      setForm({
+        sellerName: profile.sellerName || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        GSTIN: profile.GSTIN || "",
+        businessName: profile.businessDetails?.businessName || "",
+        businessEmail: profile.businessDetails?.businessEmail || "",
+        businessMobile: profile.businessDetails?.businessMobile || "",
+      });
+    }
+  }, [profile]);
+
+  const handleChange = (field) => (event) => {
+    setForm((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const handleSave = () => {
+    dispatch(
+      updateSellerProfile({
+        ...profile,
+        sellerName: form.sellerName,
+        email: form.email,
+        phone: form.phone,
+        GSTIN: form.GSTIN,
+        businessDetails: {
+          ...(profile?.businessDetails || {}),
+          businessName: form.businessName,
+          businessEmail: form.businessEmail,
+          businessMobile: form.businessMobile,
+        },
+      }),
+    );
+  };
+
   return (
     <Box sx={{ p: 4, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       <Box sx={{ mb: 4 }}>
@@ -79,7 +136,7 @@ const SellerProfile = () => {
               </IconButton>
             </Box>
             <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
-              DailyZone Store
+              {form.businessName || form.sellerName || "DailyZone Store"}
             </Typography>
             <Stack
               direction="row"
@@ -110,7 +167,7 @@ const SellerProfile = () => {
                     Tên cửa hàng
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    DailyZone Official
+                    {form.businessName || "DailyZone Official"}
                   </Typography>
                 </Box>
               </Box>
@@ -121,7 +178,7 @@ const SellerProfile = () => {
                     Email liên hệ
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    contact@dailyzone.com
+                    {form.email || form.businessEmail || "contact@dailyzone.com"}
                   </Typography>
                 </Box>
               </Box>
@@ -132,7 +189,7 @@ const SellerProfile = () => {
                     Số điện thoại
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    +84 988 777 666
+                    {form.phone || form.businessMobile || "+84 988 777 666"}
                   </Typography>
                 </Box>
               </Box>
@@ -184,7 +241,8 @@ const SellerProfile = () => {
                 <TextField
                   fullWidth
                   label="Tên cửa hàng"
-                  defaultValue="DailyZone Official"
+                  value={form.businessName}
+                  onChange={handleChange("businessName")}
                   variant="outlined"
                 />
               </Grid>
@@ -192,7 +250,8 @@ const SellerProfile = () => {
                 <TextField
                   fullWidth
                   label="Mã số thuế"
-                  defaultValue="0312345678"
+                  value={form.GSTIN}
+                  onChange={handleChange("GSTIN")}
                   variant="outlined"
                 />
               </Grid>
@@ -209,14 +268,16 @@ const SellerProfile = () => {
                 <TextField
                   fullWidth
                   label="Email nhận thông báo"
-                  defaultValue="admin@dailyzone.com"
+                  value={form.businessEmail || form.email}
+                  onChange={handleChange("businessEmail")}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Số hotline"
-                  defaultValue="1900 1234"
+                  value={form.businessMobile || form.phone}
+                  onChange={handleChange("businessMobile")}
                 />
               </Grid>
             </Grid>
@@ -224,6 +285,7 @@ const SellerProfile = () => {
             <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
               <Button
                 variant="contained"
+                onClick={handleSave}
                 sx={{
                   bgcolor: "#002060",
                   px: 4,

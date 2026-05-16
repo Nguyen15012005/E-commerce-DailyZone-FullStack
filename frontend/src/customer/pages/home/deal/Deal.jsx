@@ -5,15 +5,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const deals = [
+// ─── Dữ liệu tĩnh fallback ────────────────────────────────────────────────────
+const FALLBACK_DEALS = [
   {
     id: 1,
     category: "Sneaker",
     name: "Giày Sneaker Thời Trang Cao Cấp",
     discount: 20,
     oldPrice: "500K",
-    image:
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&q=80",
   },
   {
     id: 2,
@@ -21,8 +21,7 @@ const deals = [
     name: "Laptop Gaming Hiệu Năng Cao",
     discount: 15,
     oldPrice: "25.000K",
-    image:
-      "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=500&q=80",
   },
   {
     id: 3,
@@ -30,8 +29,7 @@ const deals = [
     name: "Điện Thoại Smartphone Màn Hình Lớn",
     discount: 10,
     oldPrice: "12.000K",
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80",
   },
   {
     id: 4,
@@ -39,8 +37,7 @@ const deals = [
     name: "Tai Nghe Bluetooth Chống Ồn",
     discount: 30,
     oldPrice: "1.200K",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
   },
   {
     id: 5,
@@ -48,8 +45,7 @@ const deals = [
     name: "Đồng Hồ Thời Trang Nam Nữ",
     discount: 25,
     oldPrice: "2.000K",
-    image:
-      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=500&q=80",
   },
   {
     id: 6,
@@ -57,8 +53,7 @@ const deals = [
     name: "Balo Laptop Chống Nước Cao Cấp",
     discount: 18,
     oldPrice: "700K",
-    image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80",
   },
   {
     id: 7,
@@ -66,8 +61,7 @@ const deals = [
     name: "Áo Khoác Streetwear Unisex",
     discount: 35,
     oldPrice: "900K",
-    image:
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80",
   },
   {
     id: 8,
@@ -75,36 +69,35 @@ const deals = [
     name: "Máy Ảnh Du Lịch Mini Cao Cấp",
     discount: 12,
     oldPrice: "8.500K",
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80",
   },
 ];
 
-const NextArrow = ({ style, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="absolute -right-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
-      style={{ ...style, display: "block" }}
-    >
-      <ChevronRight size={18} />
-    </button>
-  );
-};
+const NextArrow = ({ style, onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute -right-6 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full bg-white p-2 shadow-lg transition hover:scale-110"
+    style={{ ...style, display: "block" }}
+  >
+    <ChevronRight size={18} />
+  </button>
+);
 
-const PrevArrow = ({ style, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="absolute -left-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg p-2 rounded-full cursor-pointer hover:scale-110 transition"
-      style={{ ...style, display: "block" }}
-    >
-      <ChevronLeft size={18} />
-    </button>
-  );
-};
+const PrevArrow = ({ style, onClick }) => (
+  <button
+    onClick={onClick}
+    className="absolute -left-6 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full bg-white p-2 shadow-lg transition hover:scale-110"
+    style={{ ...style, display: "block" }}
+  >
+    <ChevronLeft size={18} />
+  </button>
+);
 
 const Deal = () => {
+  // Luôn dùng fallback deals (dữ liệu tĩnh đẹp)
+  // Khi DB có endpoint deals riêng thì thay thế bằng useSelector
+  const deals = FALLBACK_DEALS;
+
   const settings = {
     dots: false,
     infinite: true,
@@ -126,18 +119,17 @@ const Deal = () => {
   };
 
   return (
-    <div className="py-10 px-3 md:px-5 lg:px-20 relative">
-      <div className="flex items-end justify-between mb-8">
+    <div className="relative px-3 py-10 md:px-5 lg:px-20">
+      <div className="mb-8 flex items-end justify-between">
         <div>
-          <p className="text-sm text-[#C6A15B] font-semibold tracking-widest uppercase">
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#C6A15B]">
             Flash Sale
           </p>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#d7a343] mt-2">
+          <h2 className="mt-2 text-3xl font-extrabold text-[#d7a343] md:text-4xl">
             🔥 Deal Hot Hôm Nay
           </h2>
         </div>
-
-        <button className="text-sm text-gray-600 hover:text-black transition">
+        <button className="text-sm text-gray-600 transition hover:text-black">
           Xem tất cả →
         </button>
       </div>

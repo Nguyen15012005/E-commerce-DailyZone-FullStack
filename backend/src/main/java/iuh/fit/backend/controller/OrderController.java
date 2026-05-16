@@ -48,7 +48,10 @@ public class OrderController {
 
         PaymentLinkResponse res = new PaymentLinkResponse();
 
-        if (paymentMethod.equals(PaymentMethod.RAZORPAY)){
+        if (paymentMethod.equals(PaymentMethod.COD)) {
+            res.setPayment_link_url(null);
+        }
+        else if (paymentMethod.equals(PaymentMethod.RAZORPAY)){
             PaymentLink payment = paymentService.createRazorpayPaymentLink(user, paymentOrder.getAmount(), paymentOrder.getId());
             String paymentUrl = payment.get("short_url");
             String paymentUrlId = payment.get("id");

@@ -74,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
         product.setTitle(req.getTitle());
         product.setColor(req.getColor());
         product.setSellingPrice(req.getSellingPrice());
+        product.setQuantity(req.getQuantity());
         product.setImages(req.getImages());
         product.setMrpPrice(req.getMrpPrice());
         product.setSizes(req.getSize());
@@ -99,10 +100,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(Long productId, Product product) throws ProductException {
-        findProductById(productId);
-        product.setId(productId);
+        Product existingProduct = findProductById(productId);
 
-        return productRepository.save(product);
+        existingProduct.setTitle(product.getTitle());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setMrpPrice(product.getMrpPrice());
+        existingProduct.setSellingPrice(product.getSellingPrice());
+        existingProduct.setDiscountPercent(caculatorDiscountPercentage(product.getMrpPrice(), product.getSellingPrice()));
+        existingProduct.setQuantity(product.getQuantity());
+        existingProduct.setColor(product.getColor());
+        existingProduct.setImages(product.getImages());
+        existingProduct.setSizes(product.getSizes());
+
+        return productRepository.save(existingProduct);
     }
 
     @Override

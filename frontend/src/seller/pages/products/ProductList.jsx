@@ -36,6 +36,12 @@ import {
   ChevronRight,
   Style,
 } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createSellerProduct,
+  fetchSellerProducts,
+  updateSellerProduct,
+} from "../../../store/sellerSlice";
 
 const initialProducts = [
   {
@@ -114,7 +120,46 @@ const initialProducts = [
   },
 ];
 
+const mapApiProductToUi = (product) => {
+  const stock = product.quantity ?? 0;
+  return {
+    id: product.id,
+    name: product.title || "",
+    category: product.category?.categoryId || "Thời trang",
+    sku: `PRD-${product.id}`,
+    price: String(product.sellingPrice || 0),
+    stock,
+    status: stock === 0 ? "HẾT HÀNG" : stock <= 10 ? "SẮP HẾT" : "ĐANG BÁN",
+    images: product.images || [],
+    variants: [
+      {
+        type: "Biến thể",
+        value: product.sizes || product.color || "Mặc định",
+        stock,
+      },
+    ],
+    description: product.description || "",
+    raw: product,
+  };
+};
+
+const mapUiProductToApi = (product) => ({
+  title: product.name,
+  description: product.description,
+  mrpPrice: Number(product.price || 0),
+  sellingPrice: Number(product.price || 0),
+  quantity: Number(product.stock || 0),
+  color: product.variants?.[0]?.value || "Mặc định",
+  images: product.images || [],
+  category: product.category || "fashion",
+  category2: product.category || "fashion",
+  category3: product.category || "fashion",
+  size: product.variants?.map((variant) => variant.value).join(", ") || "FREE",
+});
+
 const ProductList = () => {
+  const dispatch = useDispatch();
+  const { products: sellerProducts } = useSelector((state) => state.seller);
   const [productList, setProductList] = useState(() => {
     const savedProducts = localStorage.getItem("seller_products_v3");
     return savedProducts ? JSON.parse(savedProducts) : initialProducts;
@@ -126,6 +171,16 @@ const ProductList = () => {
   useEffect(() => {
     localStorage.setItem("seller_products_v3", JSON.stringify(productList));
   }, [productList]);
+
+  useEffect(() => {
+    dispatch(fetchSellerProducts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (sellerProducts.length > 0) {
+      setProductList(sellerProducts.map(mapApiProductToUi));
+    }
+  }, [sellerProducts]);
 
   // Dialog State
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -178,13 +233,33 @@ const ProductList = () => {
       stock: totalStock,
       status: getStatusInfo(totalStock).label,
     };
+    const apiProduct = mapUiProductToApi(updatedProduct);
 
     if (isEdit) {
+      if (updatedProduct.id) {
+        dispatch(
+          updateSellerProduct({
+            productId: updatedProduct.id,
+            product: {
+              ...updatedProduct.raw,
+              title: apiProduct.title,
+              description: apiProduct.description,
+              mrpPrice: apiProduct.mrpPrice,
+              sellingPrice: apiProduct.sellingPrice,
+              quantity: apiProduct.quantity,
+              color: apiProduct.color,
+              images: apiProduct.images,
+              sizes: apiProduct.size,
+            },
+          }),
+        );
+      }
       setProductList((prev) =>
         prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
       );
       setEditDialogOpen(false);
     } else {
+      dispatch(createSellerProduct(apiProduct));
       setProductList([{ ...updatedProduct, id: Date.now() }, ...productList]);
       setAddDialogOpen(false);
     }

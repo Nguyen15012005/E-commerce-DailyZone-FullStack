@@ -13,9 +13,14 @@ import {
   ChatBubbleOutline,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const TopBar = ({ hideSearch }) => {
   const navigate = useNavigate();
+  const { profile } = useSelector((state) => state.seller);
+  const sellerName =
+    profile?.sellerName || profile?.businessDetails?.businessName || "Người bán";
+  const sellerEmail = profile?.email || "Chủ cửa hàng";
 
   return (
     <Box sx={{ 
@@ -81,10 +86,10 @@ const TopBar = ({ hideSearch }) => {
               variant="subtitle2"
               sx={{ fontWeight: 800, lineHeight: 1.2, color: "#111", fontSize: "0.95rem" }}
             >
-              Nguyễn Thành Long
+              {sellerName}
             </Typography>
             <Typography variant="caption" sx={{ color: "#666", fontWeight: 500 }}>
-              Chủ cửa hàng
+              {sellerEmail}
             </Typography>
           </Box>
           <Avatar

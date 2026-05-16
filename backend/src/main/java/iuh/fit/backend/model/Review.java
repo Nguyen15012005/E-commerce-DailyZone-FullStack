@@ -37,7 +37,6 @@ public class Review {
     private Product product;
 
     @ManyToOne
-    @JsonIgnore
     private User user;
 
     @Column(nullable = false)

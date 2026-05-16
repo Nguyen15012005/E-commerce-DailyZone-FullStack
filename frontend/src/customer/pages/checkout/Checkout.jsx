@@ -1,29 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControlLabel,
   Modal,
   Radio,
   RadioGroup,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddressForm from "./AddresssForm";
 import AddressCard from "./AddressCard";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserProfile } from "../../../store/userSlice";
+import { createOrder, clearOrderMessages } from "../../../store/orderSlice";
+import PricingCard from "../cart/PricingCard";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "90vw", // 👈 full gần màn hình
-  maxWidth: "900px", // 👈 giới hạn đẹp
+  width: "90vw",
+  maxWidth: "900px",
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 2, // 👈 giảm padding để form rộng hơn
+  p: 2,
   borderRadius: "16px",
 };
+
 const paymentGatwayList = [
   {
     value: "COD",
@@ -31,90 +39,111 @@ const paymentGatwayList = [
     label: "Thanh toán khi nhận hàng",
   },
   {
-    value: "MOMO",
-    image:
-      "https://developers.momo.vn/v3/assets/images/MOMO-Logo-App-6262c3743a290ef02396a24ea2b66c35.png",
-    label: "Ví MoMo",
+    value: "RAZORPAY",
+    image: "https://razorpay.com/favicon.ico",
+    label: "Razorpay",
   },
   {
-    value: "ZALOPAY",
-    image:
-      "https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ZaloPay.png",
-    label: "ZaloPay",
-  },
-  {
-    value: "VNPAY",
-    image:
-      "https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png",
-    label: "VNPay",
+    value: "STRIPE",
+    image: "https://stripe.com/favicon.ico",
+    label: "Stripe",
   },
 ];
 
-// mock UI
-const mockAddresses = [1, 2, 3];
-
 const Checkout = () => {
-  const [value, setValue] = useState(0);
-  const [paymentGateway, setPaymentGateway] = useState(
-    paymentGatwayList[0].value,
-  );
-  const [open, setOpen] = useState(false);
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleCreateOrder = () => {
-    navigate("/payment");
-  };
+  const { profile } = useSelector((s) => s.user);
+  const { cart } = useSelector((s) => s.cart);
+  const { createLoading, paymentUrl, error, successMessage } = useSelector(
+    (s) => s.order
+  );
 
-  const handlePaymentChange = (event) => {
-    setPaymentGateway(event.target.value);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+  const [paymentGateway, setPaymentGateway] = useState("COD");
+  const [open, setOpen] = useState(false);
+  const [snackOpen, setSnackOpen] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("jwt")) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch]);
+
+  // Redirect sang payment URL khi đặt hàng thành công và có link
+  useEffect(() => {
+    if (paymentUrl) {
+      window.location.href = paymentUrl;
+    }
+    if (successMessage && !paymentUrl) {
+      setSnackOpen(true);
+      setTimeout(() => navigate("/account/orders"), 1500);
+    }
+  }, [paymentUrl, successMessage, navigate]);
+
+  // Lấy addresses từ user profile
+  const addresses = profile?.addresses || [];
+
+  const handleCreateOrder = () => {
+    if (!localStorage.getItem("jwt")) {
+      navigate("/login");
+      return;
+    }
+
+    // Nếu có địa chỉ đã lưu, dùng địa chỉ đó
+    if (addresses.length > 0 && addresses[selectedAddressIndex]) {
+      const address = addresses[selectedAddressIndex];
+      dispatch(createOrder({ address, paymentMethod: paymentGateway }));
+    } else {
+      // Chưa có địa chỉ, mở form
+      setOpen(true);
+    }
   };
 
   return (
-    <div className="pt-10 px-5 sm:px-10 md:px-20 lg:px-20 min-h-screen ">
-      <div className="space-y-5 lg:space-y-0 lg:grid grid-cols-3 lg:gap-9 bg-gray-50 p-10 rounded-lg">
+    <div className="min-h-screen px-5 pt-10 sm:px-10 md:px-20 lg:px-20">
+      <div className="grid grid-cols-1 gap-9 rounded-lg bg-gray-50 p-10 lg:grid-cols-3 lg:space-y-0">
         {/* LEFT */}
         <div className="col-span-2 space-y-5">
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-2xl text-gray-700">
+          <div className="flex items-center justify-between">
+            <span className="text-2xl font-semibold text-gray-700">
               Chọn địa chỉ giao hàng
             </span>
-
             <Button
               onClick={() => setOpen(true)}
               variant="outlined"
-              sx={{
-                borderRadius: "10px",
-                textTransform: "none",
-              }}
+              sx={{ borderRadius: "10px", textTransform: "none" }}
             >
               Thêm địa chỉ
             </Button>
           </div>
 
-          {/* Address list */}
           <div className="text-sm font-medium space-y-4">
             <p className="text-gray-600">Địa chỉ đã lưu</p>
 
-            <div className="space-y-3 border border-gray-300 rounded-xl p-4">
-              {mockAddresses.map((_, index) => (
-                <AddressCard
-                  key={index}
-                  selectedValue={value}
-                  value={index}
-                  handleChange={handleChange}
-                />
-              ))}
+            <div className="space-y-3 rounded-xl border border-gray-300 p-4">
+              {addresses.length > 0 ? (
+                addresses.map((addr, index) => (
+                  <AddressCard
+                    key={index}
+                    address={addr}
+                    selectedValue={selectedAddressIndex}
+                    value={index}
+                    handleChange={(e) =>
+                      setSelectedAddressIndex(Number(e.target.value))
+                    }
+                  />
+                ))
+              ) : (
+                <p className="py-4 text-center text-sm text-gray-400">
+                  Bạn chưa có địa chỉ nào. Hãy thêm địa chỉ giao hàng.
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Add address */}
-          <div className="py-4 px-5 rounded-xl border border-dashed bg-white hover:bg-gray-50 transition">
+          <div className="rounded-xl border border-dashed bg-white px-5 py-4 transition hover:bg-gray-50">
             <Button
               onClick={() => setOpen(true)}
               startIcon={<AddIcon />}
@@ -126,24 +155,23 @@ const Checkout = () => {
         </div>
 
         {/* RIGHT */}
-        <div className="col-span-1 text-sm space-y-4">
+        <div className="col-span-1 space-y-4 text-sm">
           {/* Payment */}
-          <section className="space-y-3 border p-5 rounded-xl bg-white shadow-sm">
-            <h1 className="font-semibold text-center text-gray-700 text-lg">
+          <section className="space-y-3 rounded-xl border bg-white p-5 shadow-sm">
+            <h1 className="text-center text-lg font-semibold text-gray-700">
               Chọn phương thức thanh toán
             </h1>
 
             <RadioGroup
               name="payment"
               className="space-y-3"
-              onChange={handlePaymentChange}
+              onChange={(e) => setPaymentGateway(e.target.value)}
               value={paymentGateway}
             >
               {paymentGatwayList.map((item) => (
                 <label
                   key={item.value}
-                  className={`flex items-center justify-between border rounded-xl px-4 py-3 cursor-pointer transition-all
-                  ${
+                  className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 transition-all ${
                     paymentGateway === item.value
                       ? "border-2 bg-gray-200 shadow"
                       : "hover:border-gray-400"
@@ -151,13 +179,11 @@ const Checkout = () => {
                 >
                   <div className="flex items-center gap-3">
                     <Radio value={item.value} />
-
                     <img
-                      className="w-10 h-10 object-contain"
+                      className="h-10 w-10 object-contain"
                       src={item.image}
                       alt={item.label}
                     />
-
                     <span className="font-medium">{item.label}</span>
                   </div>
                 </label>
@@ -166,34 +192,54 @@ const Checkout = () => {
           </section>
 
           {/* Pricing */}
-          <section className="border rounded-xl bg-white shadow-sm">
-            {/* <PricingCard /> */}
-
+          <section className="rounded-xl border bg-white shadow-sm">
+            <PricingCard cart={cart} coupon="" />
             <div className="p-5">
               <Button
                 onClick={handleCreateOrder}
+                disabled={createLoading}
                 sx={{
                   py: "12px",
                   borderRadius: "10px",
                   textTransform: "none",
                   fontWeight: "bold",
+                  background: "#C6A15B",
+                  "&:hover": { background: "#a07830" },
                 }}
                 variant="contained"
                 fullWidth
               >
-                Đặt hàng
+                {createLoading ? (
+                  <CircularProgress size={20} sx={{ color: "#fff" }} />
+                ) : (
+                  "Đặt hàng"
+                )}
               </Button>
             </div>
           </section>
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* MODAL - FORM THÊM ĐỊA CHỈ */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={style}>
           <AddressForm handleClose={() => setOpen(false)} />
         </Box>
       </Modal>
+
+      <Snackbar
+        open={snackOpen || !!error}
+        autoHideDuration={3000}
+        onClose={() => {
+          setSnackOpen(false);
+          dispatch(clearOrderMessages());
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity={error ? "error" : "success"}>
+          {error || successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -4,7 +4,8 @@ import { IconButton, Button } from "@mui/material";
 import { Favorite, ModeComment, ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const images = [
+// ảnh fallback khi sản phẩm không có ảnh
+const FALLBACK_IMAGES = [
   "https://images.pexels.com/photos/8485550/pexels-photo-8485550.jpeg",
   "https://images.pexels.com/photos/8485551/pexels-photo-8485551.jpeg",
   "https://images.pexels.com/photos/26425581/pexels-photo-26425581.jpeg",
@@ -18,38 +19,56 @@ const ProductCard = ({ product }) => {
 
   const productId = product?.id || 1;
 
+  // Lấy mảng ảnh từ sản phẩm thật, fallback nếu không có
+  const images =
+    Array.isArray(product?.images) && product.images.length > 0
+      ? product.images
+      : FALLBACK_IMAGES;
+
+  const discountPercent =
+    product?.discountPercent ||
+    (product?.mrpPrice && product?.sellingPrice
+      ? Math.round(
+          ((product.mrpPrice - product.sellingPrice) / product.mrpPrice) * 100
+        )
+      : 25);
+
   useEffect(() => {
     let interval;
-
-    if (isHovered) {
+    if (isHovered && images.length > 1) {
       interval = setInterval(() => {
         setCurrentImage((prev) => (prev + 1) % images.length);
       }, 1200);
     }
-
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isHovered, images.length]);
 
-  const goToDetail = () => {
-    navigate(`/product-detail/${productId}`);
-  };
+  const goToDetail = () => navigate(`/product-detail/${productId}`);
+
+  const formatPrice = (price) =>
+    price ? price.toLocaleString("vi-VN") + "₫" : "—";
 
   return (
     <div className="product-card" onClick={goToDetail}>
       <div
         className="card"
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setCurrentImage(0);
+        }}
       >
         <div className="card-image">
-          <span className="badge">-25%</span>
+          {discountPercent > 0 && (
+            <span className="badge">-{discountPercent}%</span>
+          )}
 
           {images.map((item, index) => (
             <img
               key={index}
               className="card-media"
               src={item}
-              alt=""
+              alt={product?.title || "Sản phẩm"}
               style={{
                 transform: `translateX(${(index - currentImage) * 100}%)`,
               }}
@@ -80,26 +99,35 @@ const ProductCard = ({ product }) => {
             </IconButton>
           </div>
 
-          <div className="indicator">
-            {images.map((_, i) => (
-              <span
-                key={i}
-                className={`dot ${i === currentImage ? "active" : ""}`}
-              />
-            ))}
-          </div>
+          {images.length > 1 && (
+            <div className="indicator">
+              {images.map((_, i) => (
+                <span
+                  key={i}
+                  className={`dot ${i === currentImage ? "active" : ""}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="info">
-          <h3 className="title">Áo Thun Local Brand Form Rộng Unisex</h3>
+          <h3 className="title line-clamp-2">
+            {product?.title || "Áo Thun Local Brand Form Rộng Unisex"}
+          </h3>
 
-          <p className="desc">
-            Chất cotton 100%, mềm mịn, thoáng mát. Phù hợp mặc hằng ngày.
+          <p className="desc line-clamp-2">
+            {product?.description ||
+              "Chất cotton 100%, mềm mịn, thoáng mát. Phù hợp mặc hằng ngày."}
           </p>
 
           <div className="price">
-            <span className="new">299.000₫</span>
-            <span className="old">399.000₫</span>
+            <span className="new">
+              {formatPrice(product?.sellingPrice || 299000)}
+            </span>
+            {product?.mrpPrice && product.mrpPrice !== product.sellingPrice && (
+              <span className="old">{formatPrice(product.mrpPrice)}</span>
+            )}
           </div>
 
           <Button

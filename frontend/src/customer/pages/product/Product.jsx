@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import {
+  CircularProgress,
   Divider,
   FormControl,
   InputLabel,
@@ -11,22 +12,45 @@ import {
 } from "@mui/material";
 import ProductCard from "./product_card/ProductCard";
 import FilterSection from "./filter_product/FilterSection";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../../../store/productSlice";
+import { useSearchParams } from "react-router-dom";
 
 const Product = () => {
   const theme = useTheme();
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+
+  const { products, totalPages, loading } = useSelector((s) => s.product);
 
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
 
-  const products = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  useEffect(() => {
+    const params = {
+      category: searchParams.get("category") || undefined,
+      brand: searchParams.get("brand") || undefined,
+      colors: searchParams.get("colors") || undefined,
+      sizes: searchParams.get("sizes") || undefined,
+      minPrice: searchParams.get("minPrice") || undefined,
+      maxPrice: searchParams.get("maxPrice") || undefined,
+      minDiscount: searchParams.get("minDiscount") || undefined,
+      sort: sort || undefined,
+      stock: searchParams.get("stock") || undefined,
+      pageNumber: page - 1,
+    };
+    dispatch(fetchProducts(params));
+  }, [dispatch, searchParams, sort, page]);
 
   const handleSortChange = (event) => {
     setSort(event.target.value);
+    setPage(1);
   };
 
   const handlePageChange = (event, value) => {
     setPage(value);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -47,7 +71,9 @@ const Product = () => {
             </p>
 
             <h2 className="mt-1 text-xl font-bold leading-tight sm:text-2xl lg:text-6xl">
-              Đưa tên sản phẩm
+              {searchParams.get("category")
+                ? searchParams.get("category").toUpperCase()
+                : "Tất cả sản phẩm"}
             </h2>
 
             <p className="mt-2 text-xs opacity-90 sm:text-sm lg:text-base lg:text-gray-600">
@@ -72,8 +98,8 @@ const Product = () => {
               <InputLabel>Sắp Xếp</InputLabel>
               <Select value={sort} label="Sắp Xếp" onChange={handleSortChange}>
                 <MenuItem value="">Mặc định</MenuItem>
-                <MenuItem value="low_to_high">Giá: Thấp → Cao</MenuItem>
-                <MenuItem value="high_to_low">Giá: Cao → Thấp</MenuItem>
+                <MenuItem value="price_low">Giá: Thấp → Cao</MenuItem>
+                <MenuItem value="price_high">Giá: Cao → Thấp</MenuItem>
               </Select>
             </FormControl>
           </div>
@@ -83,25 +109,31 @@ const Product = () => {
               <InputLabel>Sắp Xếp</InputLabel>
               <Select value={sort} label="Sắp Xếp" onChange={handleSortChange}>
                 <MenuItem value="">Mặc định</MenuItem>
-                <MenuItem value="low_to_high">Giá: Thấp → Cao</MenuItem>
-                <MenuItem value="high_to_low">Giá: Cao → Thấp</MenuItem>
+                <MenuItem value="price_low">Giá: Thấp → Cao</MenuItem>
+                <MenuItem value="price_high">Giá: Cao → Thấp</MenuItem>
               </Select>
             </FormControl>
           </div>
 
           <Divider />
 
-          <section className="grid grid-cols-1 justify-items-center gap-4 px-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:px-1">
-            {products.map((item) => (
-              <ProductCard key={item} product={{ id: item }} />
-            ))}
-          </section>
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <CircularProgress sx={{ color: "#C9A96E" }} />
+            </div>
+          ) : (
+            <section className="grid grid-cols-1 justify-items-center gap-4 px-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:px-1">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </section>
+          )}
 
           <div className="mt-10 flex justify-center pt-10">
             <Pagination
               page={page}
               onChange={handlePageChange}
-              count={10}
+              count={totalPages || 1}
               variant="outlined"
             />
           </div>

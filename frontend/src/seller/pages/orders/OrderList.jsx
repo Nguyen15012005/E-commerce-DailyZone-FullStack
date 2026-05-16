@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -31,6 +31,11 @@ import {
   Print,
   MoreVert,
 } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSellerOrders,
+  updateSellerOrderStatus,
+} from "../../../store/sellerSlice";
 
 const stats = [
   { label: "TỔNG ĐƠN HÀNG", value: "1,284", change: "+12%", isPositive: true },
@@ -40,7 +45,7 @@ const stats = [
   { label: "TỶ LỆ HỦY ĐƠN", value: "0.8%", change: "+0.2%", isPositive: true },
 ];
 
-const orders = [
+const fallbackOrders = [
   {
     id: "#ORD-9428",
     date: "24/05/2024",
@@ -110,12 +115,50 @@ const orders = [
 ];
 
 const OrderList = () => {
+  const dispatch = useDispatch();
+  const { orders: sellerOrders } = useSelector((state) => state.seller);
   const [tab, setTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [dateAnchorEl, setDateAnchorEl] = useState(null);
   const [dateFilter, setDateFilter] = useState("Tất cả thời gian");
   const [filterAnchorEl, setFilterAnchorEl] = useState(null);
   const [paymentFilter, setPaymentFilter] = useState("Tất cả thanh toán");
+
+  useEffect(() => {
+    dispatch(fetchSellerOrders());
+  }, [dispatch]);
+
+  const formatOrder = (order) => {
+    const date = order.orderDate ? new Date(order.orderDate) : new Date();
+    const statusMap = {
+      PENDING: { text: "Đang chuẩn bị", color: "#f1c40f" },
+      PLACED: { text: "Đang chuẩn bị", color: "#f1c40f" },
+      CONFIRMED: { text: "Đang chuẩn bị", color: "#f1c40f" },
+      SHIPPED: { text: "Đang giao", color: "#3498db" },
+      DELIVERED: { text: "Hoàn thành", color: "#2ecc71" },
+      CANCELLED: { text: "Đã hủy", color: "#e74c3c" },
+    };
+    const status = statusMap[order.orderStatus] || statusMap.PENDING;
+
+    return {
+      raw: order,
+      id: order.orderId || `#ORD-${order.id}`,
+      date: date.toLocaleDateString("vi-VN"),
+      time: date.toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      customer: order.user?.fullName || "Khách hàng",
+      email: order.user?.email || "",
+      total: `${Number(order.totalSellingPrice || 0).toLocaleString("vi-VN")}đ`,
+      payment: order.paymentStatus === "COMPLETED" ? "Đã thanh toán" : "Chờ thanh toán",
+      status: status.text,
+      statusColor: status.color,
+    };
+  };
+
+  const orders =
+    sellerOrders.length > 0 ? sellerOrders.map(formatOrder) : fallbackOrders;
 
   const handleDateClick = (event) => setDateAnchorEl(event.currentTarget);
   const handleDateClose = (value) => {
@@ -193,6 +236,16 @@ const OrderList = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `Orders_${new Date().toLocaleDateString("vi-VN")}.csv`;
     link.click();
+  };
+
+  const handleMoveToShipping = (order) => {
+    if (!order.raw?.id) return;
+    dispatch(
+      updateSellerOrderStatus({
+        orderId: order.raw.id,
+        orderStatus: "SHIPPED",
+      }),
+    );
   };
 
   return (
@@ -506,7 +559,7 @@ const OrderList = () => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton size="small">
+                    <IconButton size="small" onClick={() => handleMoveToShipping(order)}>
                       <MoreVert />
                     </IconButton>
                   </TableCell>

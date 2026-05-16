@@ -37,13 +37,13 @@ public class AppConfig {
                 // Cấu hình quyền truy cập API
                 .authorizeHttpRequests(authorize -> authorize
 
-                        // Những API bắt đầu bằng /api/** phải đăng nhập
-                        .requestMatchers("/api/**")
-                        .authenticated()
-
                         // API review sản phẩm cho phép truy cập tự do
                         .requestMatchers("/api/products/*/reviews")
                         .permitAll()
+
+                        // Những API bắt đầu bằng /api/** phải đăng nhập
+                        .requestMatchers("/api/**")
+                        .authenticated()
 
                         // Các request khác cho phép hết
                         .anyRequest()

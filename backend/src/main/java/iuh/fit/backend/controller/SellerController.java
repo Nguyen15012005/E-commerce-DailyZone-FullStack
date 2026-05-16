@@ -72,8 +72,8 @@ public class SellerController {
     public ResponseEntity<AuthResponse> createSeller(@RequestBody Seller seller) throws Exception {
         String otp = seller.getPassword();
 
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(seller.getEmail());
-        if (verificationCode == null || !verificationCode.getOtp().equals(otp)){
+        List<VerificationCode> verificationCodes = verificationCodeRepository.findByEmail(seller.getEmail());
+        if (verificationCodes == null || verificationCodes.isEmpty() || !verificationCodes.get(0).getOtp().equals(otp)){
             throw new Exception("Wrong otp...");
         }
 

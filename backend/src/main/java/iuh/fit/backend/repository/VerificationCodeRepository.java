@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @created 4/20/2026
  * @description
  */
+import java.util.List;
+
 public interface VerificationCodeRepository extends JpaRepository<VerificationCode, Long> {
-    VerificationCode findByEmail(String email);
+    List<VerificationCode> findByEmail(String email);
 
     VerificationCode findByOtp(String otp);
 }

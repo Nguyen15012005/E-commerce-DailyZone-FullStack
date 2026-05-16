@@ -71,10 +71,10 @@ public class AuthServiceImpl implements AuthService {
             }
         }
 
-        VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+        List<VerificationCode> isExist = verificationCodeRepository.findByEmail(email);
 
-        if (isExist!=null){
-            verificationCodeRepository.delete(isExist);
+        if (isExist != null && !isExist.isEmpty()){
+            verificationCodeRepository.deleteAll(isExist);
         }
 
         String otp = OtpUtil.generateOtp();
@@ -92,8 +92,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String createUser(SignupRequest req) throws Exception {
 
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(req.getEmail());
-        if(verificationCode==null || !verificationCode.getOtp().equals(req.getOtp())){
+        List<VerificationCode> verificationCodes = verificationCodeRepository.findByEmail(req.getEmail());
+        if(verificationCodes == null || verificationCodes.isEmpty() || !verificationCodes.get(0).getOtp().equals(req.getOtp())){
             throw new Exception("Wrong otp");
         }
 
@@ -154,8 +154,8 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Tên người dùng không hợp lệ (invalid username)");
         }
 
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
-        if(verificationCode==null || !verificationCode.getOtp().equals(otp)){
+        List<VerificationCode> verificationCodes = verificationCodeRepository.findByEmail(username);
+        if(verificationCodes == null || verificationCodes.isEmpty() || !verificationCodes.get(0).getOtp().equals(otp)){
             throw new Exception("Mã OTP không hợp lệ (invalid OTP)");
         }
 

@@ -2,6 +2,7 @@ package iuh.fit.backend.controller;
 
 import iuh.fit.backend.config.JwtProvider;
 import iuh.fit.backend.domain.AccountStatus;
+import iuh.fit.backend.domain.UserRole;
 import iuh.fit.backend.exception.SellerException;
 import iuh.fit.backend.model.Seller;
 import iuh.fit.backend.model.SellerReport;

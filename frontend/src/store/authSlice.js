@@ -66,13 +66,52 @@ export const loginWithOtp = createAsyncThunk(
   },
 );
 
+export const sendSellerLoginOtp = createAsyncThunk(
+  "auth/sendSellerLoginOtp",
+  async ({ email, isLogin = false }, { rejectWithValue }) => {
+    try {
+      const emailToSend = isLogin ? `signing_${email}` : email;
+      const response = await axios.post(
+        `${API_BASE_URL}/auth/sent/login-signup-otp`,
+        { email: emailToSend, role: "SELLER" },
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        extractErrorMessage(error, "Không thể gửi OTP cho Seller."),
+      );
+    }
+  },
+);
+
+export const loginSellerWithOtp = createAsyncThunk(
+  "auth/loginSellerWithOtp",
+  async ({ email, otp }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/sellers/login`, {
+        email,
+        otp,
+      });
+      const data = response.data;
+      localStorage.setItem("jwt", data.jwt);
+      localStorage.setItem("role", data.role);
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        extractErrorMessage(error, "Đăng nhập Seller thất bại."),
+      );
+    }
+  },
+);
+
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async ({ email, fullName, otp }, { rejectWithValue }) => {
+  async ({ email, fullName, phone, otp }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
         email,
         fullName,
+        phone,
         otp,
       });
       const data = response.data;
@@ -85,6 +124,42 @@ export const registerUser = createAsyncThunk(
           error,
           "Đăng ký thất bại. Vui lòng kiểm tra OTP và thử lại.",
         ),
+      );
+    }
+  },
+);
+
+export const registerSellerUser = createAsyncThunk(
+  "auth/registerSellerUser",
+  async ({ email, sellerName, phone, otp }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/sellers`, {
+        email,
+        sellerName,
+        phone,
+        password: otp, // Gửi OTP vào trường password để Backend verify
+      });
+      const data = response.data;
+      localStorage.setItem("jwt", data.jwt);
+      localStorage.setItem("role", data.role);
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        extractErrorMessage(error, "Đăng ký Seller thất bại."),
+      );
+    }
+  },
+);
+
+export const verifySellerEmail = createAsyncThunk(
+  "auth/verifySellerEmail",
+  async (otp, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/sellers/verify/${otp}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        extractErrorMessage(error, "Xác minh tài khoản Seller thất bại."),
       );
     }
   },
@@ -143,6 +218,20 @@ const authSlice = createSlice({
       });
 
     builder
+      .addCase(sendSellerLoginOtp.pending, (state) => {
+        state.sendOtpLoading = true;
+        state.sendOtpError = null;
+      })
+      .addCase(sendSellerLoginOtp.fulfilled, (state) => {
+        state.sendOtpLoading = false;
+        state.otpSent = true;
+      })
+      .addCase(sendSellerLoginOtp.rejected, (state, action) => {
+        state.sendOtpLoading = false;
+        state.sendOtpError = action.payload;
+      });
+
+    builder
       .addCase(loginWithOtp.pending, (state) => {
         state.loginLoading = true;
         state.loginError = null;
@@ -154,6 +243,22 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(loginWithOtp.rejected, (state, action) => {
+        state.loginLoading = false;
+        state.loginError = action.payload;
+      });
+
+    builder
+      .addCase(loginSellerWithOtp.pending, (state) => {
+        state.loginLoading = true;
+        state.loginError = null;
+      })
+      .addCase(loginSellerWithOtp.fulfilled, (state, action) => {
+        state.loginLoading = false;
+        state.jwt = action.payload.jwt;
+        state.role = action.payload.role;
+        state.isAuthenticated = true;
+      })
+      .addCase(loginSellerWithOtp.rejected, (state, action) => {
         state.loginLoading = false;
         state.loginError = action.payload;
       });
@@ -184,6 +289,22 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.registerLoading = false;
+        state.registerError = action.payload;
+      });
+
+    builder
+      .addCase(registerSellerUser.pending, (state) => {
+        state.registerLoading = true;
+        state.registerError = null;
+      })
+      .addCase(registerSellerUser.fulfilled, (state, action) => {
+        state.registerLoading = false;
+        state.jwt = action.payload.jwt;
+        state.role = action.payload.role;
+        state.isAuthenticated = true;
+      })
+      .addCase(registerSellerUser.rejected, (state, action) => {
         state.registerLoading = false;
         state.registerError = action.payload;
       });

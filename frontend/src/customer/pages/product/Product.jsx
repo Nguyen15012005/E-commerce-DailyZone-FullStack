@@ -40,6 +40,7 @@ const Product = () => {
       stock: searchParams.get("stock") || undefined,
       pageNumber: page - 1,
     };
+
     dispatch(fetchProducts(params));
   }, [dispatch, searchParams, sort, page]);
 
@@ -50,11 +51,15 @@ const Product = () => {
 
   const handlePageChange = (event, value) => {
     setPage(value);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
     <div className="mt-10">
+      {/* HERO */}
       <section className="relative mb-5 overflow-hidden px-3 lg:px-10">
         <img
           className="h-[220px] w-full rounded-lg object-cover sm:h-[260px] lg:h-[400px]"
@@ -83,33 +88,44 @@ const Product = () => {
         </div>
       </section>
 
+      {/* CONTENT */}
       <div className="gap-6 px-4 lg:flex lg:px-10">
+        {/* FILTER DESKTOP */}
         <aside className="hidden w-[260px] shrink-0 lg:block">
           <div className="sticky top-24">
             <FilterSection />
           </div>
         </aside>
 
+        {/* PRODUCT AREA */}
         <div className="flex-1 space-y-5">
+          {/* MOBILE TOPBAR */}
           <div className="sticky top-0 z-30 flex items-center justify-between bg-white px-2 py-4 lg:hidden">
             <FilterSection />
 
             <FormControl size="small" sx={{ width: "160px" }}>
               <InputLabel>Sắp Xếp</InputLabel>
+
               <Select value={sort} label="Sắp Xếp" onChange={handleSortChange}>
                 <MenuItem value="">Mặc định</MenuItem>
+
                 <MenuItem value="price_low">Giá: Thấp → Cao</MenuItem>
+
                 <MenuItem value="price_high">Giá: Cao → Thấp</MenuItem>
               </Select>
             </FormControl>
           </div>
 
+          {/* DESKTOP SORT */}
           <div className="hidden items-center justify-end px-2 lg:flex lg:px-0">
             <FormControl size="small" sx={{ width: "180px" }}>
               <InputLabel>Sắp Xếp</InputLabel>
+
               <Select value={sort} label="Sắp Xếp" onChange={handleSortChange}>
                 <MenuItem value="">Mặc định</MenuItem>
+
                 <MenuItem value="price_low">Giá: Thấp → Cao</MenuItem>
+
                 <MenuItem value="price_high">Giá: Cao → Thấp</MenuItem>
               </Select>
             </FormControl>
@@ -117,18 +133,23 @@ const Product = () => {
 
           <Divider />
 
+          {/* LOADING */}
           {loading ? (
             <div className="flex justify-center py-20">
               <CircularProgress sx={{ color: "#C9A96E" }} />
             </div>
           ) : (
-            <section className="grid grid-cols-1 justify-items-center gap-4 px-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:px-1">
+            /* PRODUCT GRID */
+            <section className="grid grid-cols-1 items-stretch gap-5 px-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:px-1">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <div key={product.id} className="h-full">
+                  <ProductCard product={product} />
+                </div>
               ))}
             </section>
           )}
 
+          {/* PAGINATION */}
           <div className="mt-10 flex justify-center pt-10">
             <Pagination
               page={page}

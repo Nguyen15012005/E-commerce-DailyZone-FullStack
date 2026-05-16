@@ -123,6 +123,8 @@ const OrderList = () => {
   const [dateFilter, setDateFilter] = useState("Tất cả thời gian");
   const [filterAnchorEl, setFilterAnchorEl] = useState(null);
   const [paymentFilter, setPaymentFilter] = useState("Tất cả thanh toán");
+  const [statusAnchorEl, setStatusAnchorEl] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     dispatch(fetchSellerOrders());
@@ -142,6 +144,7 @@ const OrderList = () => {
 
     return {
       raw: order,
+      rawDate: date,
       id: order.orderId || `#ORD-${order.id}`,
       date: date.toLocaleDateString("vi-VN"),
       time: date.toLocaleTimeString("vi-VN", {
@@ -159,6 +162,13 @@ const OrderList = () => {
 
   const orders =
     sellerOrders.length > 0 ? sellerOrders.map(formatOrder) : fallbackOrders;
+
+  const getOrderDate = (order) => {
+    if (order.rawDate) return order.rawDate;
+
+    const [day, month, year] = order.date.split("/").map(Number);
+    return new Date(year, month - 1, day);
+  };
 
   const handleDateClick = (event) => setDateAnchorEl(event.currentTarget);
   const handleDateClose = (value) => {
@@ -201,8 +211,17 @@ const OrderList = () => {
       return false;
 
     // Date filter
-    if (dateFilter === "Hôm nay") return order.date === "24/05/2024";
-    if (dateFilter === "Tháng này") return order.date.includes("/05/2024");
+    const orderDate = getOrderDate(order);
+    const now = new Date();
+    if (dateFilter === "Hôm nay") {
+      return orderDate.toDateString() === now.toDateString();
+    }
+    if (dateFilter === "Tháng này") {
+      return (
+        orderDate.getMonth() === now.getMonth() &&
+        orderDate.getFullYear() === now.getFullYear()
+      );
+    }
 
     return true;
   });
@@ -238,14 +257,29 @@ const OrderList = () => {
     link.click();
   };
 
-  const handleMoveToShipping = (order) => {
-    if (!order.raw?.id) return;
+  const handleStatusMenuOpen = (event, order) => {
+    setStatusAnchorEl(event.currentTarget);
+    setSelectedOrder(order);
+  };
+
+  const handleStatusMenuClose = () => {
+    setStatusAnchorEl(null);
+    setSelectedOrder(null);
+  };
+
+  const handleStatusChange = (orderStatus) => {
+    if (!selectedOrder?.raw?.id) {
+      handleStatusMenuClose();
+      return;
+    }
+
     dispatch(
       updateSellerOrderStatus({
-        orderId: order.raw.id,
-        orderStatus: "SHIPPED",
+        orderId: selectedOrder.raw.id,
+        orderStatus,
       }),
     );
+    handleStatusMenuClose();
   };
 
   return (
@@ -559,7 +593,10 @@ const OrderList = () => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton size="small" onClick={() => handleMoveToShipping(order)}>
+                    <IconButton
+                      size="small"
+                      onClick={(event) => handleStatusMenuOpen(event, order)}
+                    >
                       <MoreVert />
                     </IconButton>
                   </TableCell>
@@ -568,6 +605,25 @@ const OrderList = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Menu
+          anchorEl={statusAnchorEl}
+          open={Boolean(statusAnchorEl)}
+          onClose={handleStatusMenuClose}
+        >
+          <MenuItem onClick={() => handleStatusChange("CONFIRMED")}>
+            Xác nhận đơn
+          </MenuItem>
+          <MenuItem onClick={() => handleStatusChange("SHIPPED")}>
+            Chuyển sang đang giao
+          </MenuItem>
+          <MenuItem onClick={() => handleStatusChange("DELIVERED")}>
+            Hoàn thành
+          </MenuItem>
+          <MenuItem onClick={() => handleStatusChange("CANCELLED")}>
+            Hủy đơn
+          </MenuItem>
+        </Menu>
 
         <Box
           sx={{

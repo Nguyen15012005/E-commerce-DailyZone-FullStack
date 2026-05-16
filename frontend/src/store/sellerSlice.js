@@ -3,9 +3,13 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
-const getAuth = () => ({
-  headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-});
+const getAuth = () => {
+  const jwt = localStorage.getItem("jwt");
+
+  return {
+    headers: jwt ? { Authorization: `Bearer ${jwt}` } : {},
+  };
+};
 
 const extractErrorMessage = (error, fallback) => {
   const data = error.response?.data;
@@ -171,11 +175,17 @@ const sellerSlice = createSlice({
         state.products = [action.payload, ...state.products];
         state.successMessage = "Đã tạo sản phẩm.";
       })
+      .addCase(createSellerProduct.rejected, (state, action) => {
+        state.error = action.payload;
+      })
       .addCase(updateSellerProduct.fulfilled, (state, action) => {
         state.products = state.products.map((product) =>
           product.id === action.payload?.id ? action.payload : product,
         );
         state.successMessage = "Đã cập nhật sản phẩm.";
+      })
+      .addCase(updateSellerProduct.rejected, (state, action) => {
+        state.error = action.payload;
       })
       .addCase(deleteSellerProduct.fulfilled, (state, action) => {
         state.products = state.products.filter((product) => product.id !== action.payload);
@@ -197,6 +207,9 @@ const sellerSlice = createSlice({
           order.id === action.payload?.id ? action.payload : order,
         );
         state.successMessage = "Đã cập nhật trạng thái đơn hàng.";
+      })
+      .addCase(updateSellerOrderStatus.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });

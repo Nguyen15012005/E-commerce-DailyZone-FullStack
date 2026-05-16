@@ -11,15 +11,14 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
 
   const handleBecomeSeller = () => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
+    if (isAuthenticated && role === "SELLER") {
+      navigate("/seller");
+    } else {
+      navigate("/seller/register");
     }
-
-    navigate("/seller");
   };
 
   return (

@@ -19,6 +19,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Collections;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
+import iuh.fit.backend.service.SellerService;
+import iuh.fit.backend.util.OtpUtil;
+import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,7 +64,7 @@ public class SellerController {
        return ResponseEntity.ok(authResponse);
    }
 
-   @PatchMapping("/verify/{otp}")
+    @PatchMapping("/verify/{otp}")
     public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws Exception{
         VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp);
         if (verificationCode == null || !verificationCode.getOtp().equals(otp)){
@@ -63,22 +77,29 @@ public class SellerController {
    }
 
     @PostMapping()
-    public ResponseEntity<Seller> createSeller(@RequestBody Seller seller) throws Exception, MessagingException {
+    public ResponseEntity<AuthResponse> createSeller(@RequestBody Seller seller) throws Exception {
+        String otp = seller.getPassword();
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(seller.getEmail());
+        if (verificationCode == null || !verificationCode.getOtp().equals(otp)){
+            throw new Exception("Wrong otp...");
+        }
+
         Seller newSeller = sellerService.createSeller(seller);
+        newSeller = sellerService.verifyEmail(newSeller.getEmail(), otp);
 
-        String otp = OtpUtil.generateOtp();
-        VerificationCode verificationCode = new VerificationCode();
-        verificationCode.setOtp(otp);
-        verificationCode.setEmail(seller.getEmail());
+        // Auto login
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                newSeller.getEmail(), null, Collections.singletonList(new SimpleGrantedAuthority(UserRole.SELLER.toString())));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtProvider.generateToken(authentication);
 
-        verificationCodeRepository.save(verificationCode);
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setJwt(token);
+        authResponse.setMessage("Register success");
+        authResponse.setRole(UserRole.SELLER);
 
-        String subject = "Daily Store Email Verification Code";
-        String text = "Chào mừng bạn đến với Daily Store, vui lòng ấn vào link để kích hoạt tài khoản ";
-        String frontend_url = "http://localhost:5173/verify-seller/";
-        emailService.sendVerificationOtpEmail(seller.getEmail(), verificationCode.getOtp(), subject, text + frontend_url);
-
-        return new ResponseEntity<>(newSeller, HttpStatus.CREATED);
+        return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

@@ -39,7 +39,7 @@ const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
+  const { profile: user } = useSelector((state) => state.user);
 
   const handleLogout = () => {
     dispatch(logout());

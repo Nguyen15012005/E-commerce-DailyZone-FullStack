@@ -12,7 +12,23 @@ import Discounts from "../seller/pages/discounts/Discounts";
 import Help from "../seller/pages/help/Help";
 import Settings from "../seller/pages/settings/Settings";
 
+import SellerLoginPage from "../seller/pages/auth/SellerLoginPage";
+import SellerRegisterPage from "../seller/pages/auth/SellerRegisterPage";
+import VerifySellerPage from "../seller/pages/auth/VerifySellerPage";
+
 export const sellerRoutes = [
+  {
+    path: "/seller/login",
+    element: <SellerLoginPage />,
+  },
+  {
+    path: "/seller/register",
+    element: <SellerRegisterPage />,
+  },
+  {
+    path: "/verify-seller/:otp",
+    element: <VerifySellerPage />,
+  },
   {
     path: "/seller",
     element: <SellerLayout />,

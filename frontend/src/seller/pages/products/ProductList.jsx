@@ -130,7 +130,7 @@ const mapApiProductToUi = (product) => {
     price: String(product.sellingPrice || 0),
     stock,
     status: stock === 0 ? "HẾT HÀNG" : stock <= 10 ? "SẮP HẾT" : "ĐANG BÁN",
-    images: product.images || [],
+    images: Array.isArray(product.images) ? product.images : [],
     variants: [
       {
         type: "Biến thể",
@@ -150,7 +150,7 @@ const mapUiProductToApi = (product) => ({
   sellingPrice: Number(product.price || 0),
   quantity: Number(product.stock || 0),
   color: product.variants?.[0]?.value || "Mặc định",
-  images: product.images || [],
+  images: Array.isArray(product.images) ? product.images : [],
   category: product.category || "fashion",
   category2: product.category || "fashion",
   category3: product.category || "fashion",
@@ -217,7 +217,7 @@ const ProductList = () => {
     setEditDialogOpen(true);
   };
 
-  const handleSave = (isEdit) => {
+  const handleSave = async (isEdit) => {
     if (!currentProduct.name || !currentProduct.price) {
       alert("Vui lòng nhập tên và giá sản phẩm!");
       return;
@@ -236,8 +236,9 @@ const ProductList = () => {
     const apiProduct = mapUiProductToApi(updatedProduct);
 
     if (isEdit) {
-      if (updatedProduct.id) {
-        dispatch(
+      if (updatedProduct.raw?.id) {
+        try {
+          const savedProduct = await dispatch(
           updateSellerProduct({
             productId: updatedProduct.id,
             product: {
@@ -252,16 +253,31 @@ const ProductList = () => {
               sizes: apiProduct.size,
             },
           }),
+          ).unwrap();
+
+          setProductList((prev) =>
+            prev.map((p) =>
+              p.id === updatedProduct.id ? mapApiProductToUi(savedProduct) : p,
+            ),
+          );
+        } catch (error) {
+          alert(error || "Không thể cập nhật sản phẩm.");
+          return;
+        }
+      } else {
+        setProductList((prev) =>
+          prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
         );
       }
-      setProductList((prev) =>
-        prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
-      );
       setEditDialogOpen(false);
     } else {
-      dispatch(createSellerProduct(apiProduct));
-      setProductList([{ ...updatedProduct, id: Date.now() }, ...productList]);
-      setAddDialogOpen(false);
+      try {
+        const createdProduct = await dispatch(createSellerProduct(apiProduct)).unwrap();
+        setProductList((prev) => [mapApiProductToUi(createdProduct), ...prev]);
+        setAddDialogOpen(false);
+      } catch (error) {
+        alert(error || "Không thể tạo sản phẩm.");
+      }
     }
   };
 
@@ -338,13 +354,15 @@ const ProductList = () => {
   });
 
   return (
-    <Box sx={{ p: 4, bgcolor: "#f8f9fa", minHeight: "100vh" }}>
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       {/* Header */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: { xs: "flex-start", md: "center" },
+          flexDirection: { xs: "column", md: "row" },
+          gap: 2,
           mb: 4,
         }}
       >
@@ -363,6 +381,8 @@ const ProductList = () => {
           sx={{
             bgcolor: "#111",
             color: "#fff",
+            alignSelf: { xs: "stretch", sm: "auto" },
+            flexShrink: 0,
             borderRadius: "12px",
             px: 3,
             py: 1.5,
@@ -384,6 +404,7 @@ const ProductList = () => {
       <Box
         sx={{
           display: "flex",
+          flexWrap: "wrap",
           gap: 2,
           mb: 4,
           bgcolor: "#fff",
@@ -402,13 +423,18 @@ const ProductList = () => {
             startAdornment: <Search sx={{ color: "#9ca3af", mr: 1 }} />,
           }}
           sx={{
+            minWidth: { xs: "100%", md: 280 },
+            flex: "1 1 320px",
             "& .MuiOutlinedInput-root": {
               borderRadius: "12px",
               bgcolor: "#f9fafb",
             },
           }}
         />
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+        <FormControl
+          size="small"
+          sx={{ minWidth: { xs: "100%", sm: 200 }, flex: "0 1 220px" }}
+        >
           <Select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -421,7 +447,10 @@ const ProductList = () => {
             <MenuItem value="Hành lý">Hành lý</MenuItem>
           </Select>
         </FormControl>
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+        <FormControl
+          size="small"
+          sx={{ minWidth: { xs: "100%", sm: 200 }, flex: "0 1 220px" }}
+        >
           <Select
             value={priceRangeFilter}
             onChange={(e) => setPriceRangeFilter(e.target.value)}
@@ -448,6 +477,11 @@ const ProductList = () => {
                   border: "1px solid #eee",
                   boxShadow: "none",
                   position: "relative",
+                  height: "100%",
+                  minHeight: 430,
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
                   transition: "0.3s",
                   "&:hover": {
                     transform: "translateY(-5px)",
@@ -527,16 +561,41 @@ const ProductList = () => {
                     </Button>
                   </Box>
                 </Box>
-                <Box sx={{ p: 2 }}>
+                <Box
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    minHeight: 170,
+                    flex: 1,
+                    flexDirection: "column",
+                  }}
+                >
                   <Typography
                     variant="caption"
-                    sx={{ color: "#002060", fontWeight: 800 }}
+                    sx={{
+                      color: "#002060",
+                      fontWeight: 800,
+                      display: "block",
+                      maxWidth: "100%",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     {product.category}
                   </Typography>
                   <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: 800, mb: 0.5 }}
+                    sx={{
+                      fontWeight: 800,
+                      mb: 0.5,
+                      minHeight: 48,
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflowWrap: "anywhere",
+                    }}
                   >
                     {product.name}
                   </Typography>
@@ -544,18 +603,36 @@ const ProductList = () => {
                   <Stack
                     direction="row"
                     spacing={0.5}
-                    sx={{ mb: 1.5, flexWrap: "wrap", gap: 0.5 }}
+                    sx={{
+                      mb: 1.5,
+                      minHeight: 24,
+                      maxHeight: 50,
+                      overflow: "hidden",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                    }}
                   >
-                    {product.variants.slice(0, 2).map((v, i) => (
+                    {(Array.isArray(product.variants) ? product.variants : [])
+                      .slice(0, 2)
+                      .map((v, i) => (
                       <Chip
                         key={i}
                         label={v.value}
                         size="small"
                         variant="outlined"
-                        sx={{ fontSize: "10px", height: "20px" }}
+                        sx={{
+                          maxWidth: "100%",
+                          fontSize: "10px",
+                          height: "20px",
+                          "& .MuiChip-label": {
+                            display: "block",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          },
+                        }}
                       />
                     ))}
-                    {product.variants.length > 2 && (
+                    {(product.variants?.length || 0) > 2 && (
                       <Typography variant="caption">
                         +{product.variants.length - 2}
                       </Typography>
@@ -567,14 +644,27 @@ const ProductList = () => {
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
+                      gap: 1,
+                      mt: "auto",
+                      minWidth: 0,
                     }}
                   >
-                    <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 800,
+                        minWidth: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {Number(product.price).toLocaleString("vi-VN")}₫
                     </Typography>
                     <Typography
                       variant="caption"
                       sx={{
+                        flexShrink: 0,
                         bgcolor: "#f0f4ff",
                         px: 1,
                         borderRadius: "4px",

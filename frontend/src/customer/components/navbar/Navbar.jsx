@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { red } from "@mui/material/colors";
 import CategorySheet from "./CategorySheet";
 import { logout } from "../../../store/authSlice";
+import { fetchUserProfile } from "../../../store/userSlice";
 
 const Navbar = () => {
   const theme = useTheme();
@@ -49,7 +50,14 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { profile: user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      dispatch(fetchUserProfile());
+    }
+  }, [isAuthenticated, user, dispatch]);
 
   const menuItems = [
     { name: "Trang Chủ", key: "/" },
@@ -316,7 +324,7 @@ const Navbar = () => {
 
               {isLarge && (
                 <Button
-                  onClick={() => requireLoginNavigate("/seller")}
+                  onClick={() => navigate("/seller")}
                   startIcon={<Storefront />}
                   variant="outlined"
                   className="normal-case border border-[#C9A96E] px-6 py-2 text-[#B88A44]"

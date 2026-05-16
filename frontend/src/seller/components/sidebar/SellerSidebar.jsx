@@ -101,7 +101,7 @@ const SellerSidebar = () => {
           gap: 2,
           cursor: "pointer",
         }}
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/seller")}
       >
         <Box
           sx={{ display: "flex", position: "relative", width: 45, height: 40 }}

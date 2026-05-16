@@ -1,16 +1,13 @@
 import { Avatar, Button, Divider } from "@mui/material";
 import React from "react";
+import { useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
 const UserDetails = () => {
-  const user = {
-    fullName: "Nguyễn Nam Trung Nguyên",
-    email: "dailystore6879@gmail.com",
-    mobile: "0909 999 999",
-  };
+  const { profile: user } = useSelector((state) => state.user);
 
   const handleEditProfile = () => {
     alert("Chức năng chỉnh sửa hồ sơ sẽ được hoàn thiện sau");
@@ -30,7 +27,7 @@ const UserDetails = () => {
                 "linear-gradient(135deg, #D6B57A 0%, #C9A96E 50%, #B88A44 100%)",
             }}
           >
-            {user.fullName.charAt(0)}
+            {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
           </Avatar>
 
           <div>
@@ -39,7 +36,7 @@ const UserDetails = () => {
             </p>
 
             <h1 className="text-2xl font-bold text-[#3B2B12]">
-              {user.fullName}
+              {user?.fullName || "Người dùng"}
             </h1>
 
             <p className="mt-1 text-sm text-[#8B7355]">
@@ -69,17 +66,17 @@ const UserDetails = () => {
           {
             icon: <PersonOutlineOutlinedIcon />,
             label: "Họ và tên",
-            value: user.fullName,
+            value: user?.fullName || "Chưa cập nhật",
           },
           {
             icon: <EmailOutlinedIcon />,
             label: "Email",
-            value: user.email,
+            value: user?.email || "Chưa cập nhật",
           },
           {
             icon: <PhoneOutlinedIcon />,
             label: "Số điện thoại",
-            value: user.mobile,
+            value: user?.phone || user?.mobile || "Chưa cập nhật",
           },
         ].map((item, index) => (
           <React.Fragment key={item.label}>

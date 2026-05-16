@@ -11,6 +11,9 @@ import Cart from "../customer/pages/cart/Cart";
 import Checkout from "../customer/pages/checkout/Checkout";
 import Payment from "../customer/pages/checkout/Payment";
 import Review from "../customer/pages/review/Review";
+import SellerLoginPage from "../seller/pages/auth/SellerLoginPage";
+import SellerRegisterPage from "../seller/pages/auth/SellerRegisterPage";
+import VerifySellerPage from "../seller/pages/auth/VerifySellerPage";
 
 const CustomerLayout = ({ children }) => {
   return (
@@ -102,5 +105,17 @@ export const customerRoutes = [
         <Review />
       </CustomerLayout>
     ),
+  },
+  {
+    path: "/seller/login",
+    element: (<CustomerLayout><SellerLoginPage /></CustomerLayout>),
+  },
+  {
+    path: "/seller/register",
+    element: (<CustomerLayout><SellerRegisterPage /></CustomerLayout>),
+  },
+  {
+    path: "/verify-seller/:otp",
+    element: (<CustomerLayout><VerifySellerPage /></CustomerLayout>),
   },
 ];

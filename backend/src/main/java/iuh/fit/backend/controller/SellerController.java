@@ -2,6 +2,7 @@ package iuh.fit.backend.controller;
 
 import iuh.fit.backend.config.JwtProvider;
 import iuh.fit.backend.domain.AccountStatus;
+import iuh.fit.backend.domain.UserRole;
 import iuh.fit.backend.exception.SellerException;
 import iuh.fit.backend.model.Seller;
 import iuh.fit.backend.model.SellerReport;
@@ -19,22 +20,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
+import java.util.List;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.List;
-import iuh.fit.backend.service.SellerService;
-import iuh.fit.backend.util.OtpUtil;
-import jakarta.mail.MessagingException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author TrungNguyen

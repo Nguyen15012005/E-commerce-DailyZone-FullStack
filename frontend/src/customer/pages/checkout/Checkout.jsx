@@ -40,7 +40,8 @@ const paymentGatwayList = [
   },
   {
     value: "MOMO",
-    image: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
+    image:
+      "https://play-lh.googleusercontent.com/uCtnppeJ9ENYdJaSL5av-ZL1ZM1f3b35u9k8EOEjK3ZdyG509_2osbXGH5qzXVmoFv0=w240-h480-rw",
     label: "Ví MoMo",
   },
   {

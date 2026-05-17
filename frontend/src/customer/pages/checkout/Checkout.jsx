@@ -39,14 +39,26 @@ const paymentGatwayList = [
     label: "Thanh toán khi nhận hàng",
   },
   {
-    value: "RAZORPAY",
-    image: "https://razorpay.com/favicon.ico",
-    label: "Razorpay",
+    value: "MOMO",
+    image: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
+    label: "Ví MoMo",
   },
   {
-    value: "STRIPE",
-    image: "https://stripe.com/favicon.ico",
-    label: "Stripe",
+    value: "VNPAY",
+    image:
+      "https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg",
+    label: "VNPay",
+  },
+  {
+    value: "BANK_TRANSFER",
+    image: "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+    label: "Chuyển khoản ngân hàng",
+  },
+  {
+    value: "ZALOPAY",
+    image:
+      "https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ZaloPay-Square.png",
+    label: "ZaloPay",
   },
 ];
 
@@ -57,7 +69,7 @@ const Checkout = () => {
   const { profile } = useSelector((s) => s.user);
   const { cart } = useSelector((s) => s.cart);
   const { createLoading, paymentUrl, error, successMessage } = useSelector(
-    (s) => s.order
+    (s) => s.order,
   );
 
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);

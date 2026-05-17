@@ -14,6 +14,7 @@ import Review from "../customer/pages/review/Review";
 import SellerLoginPage from "../seller/pages/auth/SellerLoginPage";
 import SellerRegisterPage from "../seller/pages/auth/SellerRegisterPage";
 import VerifySellerPage from "../seller/pages/auth/VerifySellerPage";
+import Wishlist from "../customer/pages/wishlist/Wishlist";
 
 const CustomerLayout = ({ children }) => {
   return (
@@ -103,6 +104,14 @@ export const customerRoutes = [
     element: (
       <CustomerLayout>
         <Review />
+      </CustomerLayout>
+    ),
+  },
+  {
+    path: "/wishlist",
+    element: (
+      <CustomerLayout>
+        <Wishlist />
       </CustomerLayout>
     ),
   },

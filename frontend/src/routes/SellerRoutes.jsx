@@ -18,18 +18,6 @@ import VerifySellerPage from "../seller/pages/auth/VerifySellerPage";
 
 export const sellerRoutes = [
   {
-    path: "/seller/login",
-    element: <SellerLoginPage />,
-  },
-  {
-    path: "/seller/register",
-    element: <SellerRegisterPage />,
-  },
-  {
-    path: "/verify-seller/:otp",
-    element: <VerifySellerPage />,
-  },
-  {
     path: "/seller",
     element: <SellerLayout />,
     children: [

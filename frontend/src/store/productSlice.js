@@ -5,16 +5,17 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080
 
 // ─── Fallback data khi DB trống ───────────────────────────────────────────────
 const FALLBACK_PRODUCTS = [
+  // ── MEN ──────────────────────────────────────────────────────────────────
   {
     id: 1,
-    title: "Áo Thun Local Brand Form Rộng Unisex",
+    title: "Áo Thun Oversize Local Brand – Form Rộng Unisex",
     description: "Chất cotton 100%, mềm mịn, thoáng mát. Phù hợp mặc hằng ngày.",
     sellingPrice: 299000,
     mrpPrice: 399000,
     discountPercent: 25,
     images: [
-      "https://images.pexels.com/photos/8485550/pexels-photo-8485550.jpeg",
-      "https://images.pexels.com/photos/8485551/pexels-photo-8485551.jpeg",
+      "https://images.pexels.com/photos/5868726/pexels-photo-5868726.jpeg?auto=compress&w=500",
+      "https://images.pexels.com/photos/8485550/pexels-photo-8485550.jpeg?auto=compress&w=500",
     ],
     category: { name: "men" },
     seller: { businessName: "DailyZone Fashion" },
@@ -22,27 +23,216 @@ const FALLBACK_PRODUCTS = [
   },
   {
     id: 2,
-    title: "Giày Sneaker Thời Trang Cao Cấp",
-    description: "Thiết kế hiện đại, đế êm, phù hợp mọi dịp.",
-    sellingPrice: 450000,
-    mrpPrice: 600000,
-    discountPercent: 25,
-    images: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&q=80"],
+    title: "Áo Khoác Denim Wash Vintage – Phong Cách Retro",
+    description: "Vải denim cao cấp, wash màu tự nhiên. Phong cách retro bắt mắt.",
+    sellingPrice: 549000,
+    mrpPrice: 750000,
+    discountPercent: 27,
+    images: [
+      "https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&w=500",
+    ],
     category: { name: "men" },
     seller: { businessName: "DailyZone Fashion" },
-    numRatings: 85,
+    numRatings: 98,
   },
   {
     id: 3,
-    title: "Túi Xách Nữ Cao Cấp",
-    description: "Chất liệu da PU cao cấp, nhiều ngăn tiện lợi.",
-    sellingPrice: 350000,
-    mrpPrice: 500000,
-    discountPercent: 30,
-    images: ["https://tuixachsieucap.com.vn/wp-content/uploads/2021/04/z2429499413183_eeb4b90cfb8ae5807efa74e8d4c2d124.jpg"],
+    title: "Quần Jogger Cotton Slim Fit Nam",
+    description: "Co giãn 4 chiều, thoáng khí. Phù hợp tập gym hoặc đi dạo.",
+    sellingPrice: 369000,
+    mrpPrice: 499000,
+    discountPercent: 26,
+    images: [
+      "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "men" },
+    seller: { businessName: "DailyZone Sport" },
+    numRatings: 74,
+  },
+  {
+    id: 4,
+    title: "Giày Sneaker Trắng Nam – Đế Su Êm Chân",
+    description: "Da PU cao cấp, đế su chống trơn. Thiết kế trắng tinh tế.",
+    sellingPrice: 699000,
+    mrpPrice: 950000,
+    discountPercent: 26,
+    images: [
+      "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "men" },
+    seller: { businessName: "DailyZone Shoes" },
+    numRatings: 215,
+  },
+  // ── WOMEN ─────────────────────────────────────────────────────────────────
+  {
+    id: 5,
+    title: "Váy Hoa Nhí Boho Nữ – Dáng Midi Thắt Eo",
+    description: "Chất voan nhẹ, thoáng. Hoạ tiết hoa nhí dịu dàng, phù hợp dạo phố.",
+    sellingPrice: 389000,
+    mrpPrice: 520000,
+    discountPercent: 25,
+    images: [
+      "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&w=500",
+    ],
     category: { name: "women" },
     seller: { businessName: "DailyZone Fashion" },
-    numRatings: 200,
+    numRatings: 188,
+  },
+  {
+    id: 6,
+    title: "Áo Sơ Mi Linen Nữ – Nhẹ Mát Mùa Hè",
+    description: "Chất linen tự nhiên, thấm hút tốt. Form suông thanh lịch.",
+    sellingPrice: 329000,
+    mrpPrice: 450000,
+    discountPercent: 27,
+    images: [
+      "https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "women" },
+    seller: { businessName: "DailyZone Fashion" },
+    numRatings: 143,
+  },
+  {
+    id: 7,
+    title: "Túi Xách Nữ Da PU Cao Cấp – Nhiều Ngăn",
+    description: "Chất liệu da PU cao cấp, nhiều ngăn tiện lợi. Phù hợp đi làm, đi chơi.",
+    sellingPrice: 450000,
+    mrpPrice: 650000,
+    discountPercent: 31,
+    images: [
+      "https://images.pexels.com/photos/904350/pexels-photo-904350.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "women" },
+    seller: { businessName: "DailyZone Bags" },
+    numRatings: 256,
+  },
+  {
+    id: 8,
+    title: "Giày Cao Gót Block Heel Nữ – Thanh Lịch",
+    description: "Đế block heel 5cm vững chắc, chất da bóng sang trọng.",
+    sellingPrice: 599000,
+    mrpPrice: 850000,
+    discountPercent: 29,
+    images: [
+      "https://images.pexels.com/photos/2562992/pexels-photo-2562992.png?auto=compress&w=500",
+    ],
+    category: { name: "women" },
+    seller: { businessName: "DailyZone Shoes" },
+    numRatings: 167,
+  },
+  // ── ELECTRONICS ────────────────────────────────────────────────────────────
+  {
+    id: 9,
+    title: "Tai Nghe Bluetooth ANC Pro – Pin 30 Giờ",
+    description: "Chống ồn chủ động, pin 30 giờ, kết nối đa điểm. Âm thanh Hi-Fi.",
+    sellingPrice: 1290000,
+    mrpPrice: 1890000,
+    discountPercent: 32,
+    images: [
+      "https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "electronics" },
+    seller: { businessName: "DailyZone Tech" },
+    numRatings: 312,
+  },
+  {
+    id: 10,
+    title: "Đồng Hồ Thông Minh Smartwatch – GPS & SpO2",
+    description: "Màn hình AMOLED 1.4\", theo dõi sức khoẻ 24/7, chống nước IP68.",
+    sellingPrice: 2490000,
+    mrpPrice: 3490000,
+    discountPercent: 29,
+    images: [
+      "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "electronics" },
+    seller: { businessName: "DailyZone Tech" },
+    numRatings: 428,
+  },
+  {
+    id: 11,
+    title: "Loa Bluetooth Không Dây – Âm Thanh 360°",
+    description: "Âm bass mạnh, chống nước IPX7, pin 20 giờ. Thiết kế compact.",
+    sellingPrice: 890000,
+    mrpPrice: 1290000,
+    discountPercent: 31,
+    images: [
+      "https://images.pexels.com/photos/1706694/pexels-photo-1706694.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "electronics" },
+    seller: { businessName: "DailyZone Tech" },
+    numRatings: 195,
+  },
+  {
+    id: 12,
+    title: "Sạc Dự Phòng 20.000mAh PD Fast Charge",
+    description: "Sạc nhanh 22.5W, 2 cổng USB-A + 1 USB-C. Siêu mỏng nhẹ.",
+    sellingPrice: 590000,
+    mrpPrice: 790000,
+    discountPercent: 25,
+    images: [
+      "https://images.pexels.com/photos/4526477/pexels-photo-4526477.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "electronics" },
+    seller: { businessName: "DailyZone Tech" },
+    numRatings: 289,
+  },
+  // ── HOME & KITCHEN ─────────────────────────────────────────────────────────
+  {
+    id: 13,
+    title: "Bình Giữ Nhiệt Inox 500ml – Giữ Lạnh 24H",
+    description: "Inox 316 nguyên chất, không BPA. Giữ lạnh 24h, giữ nóng 12h.",
+    sellingPrice: 249000,
+    mrpPrice: 320000,
+    discountPercent: 22,
+    images: [
+      "https://images.pexels.com/photos/1342529/pexels-photo-1342529.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "home_furnitures" },
+    seller: { businessName: "DailyZone Home" },
+    numRatings: 341,
+  },
+  {
+    id: 14,
+    title: "Nồi Nấu Chậm Ceramic 3.5L – Tiết Kiệm Điện",
+    description: "Gốm sứ cao cấp, lòng nồi chống dính, tiết kiệm điện.",
+    sellingPrice: 890000,
+    mrpPrice: 1290000,
+    discountPercent: 31,
+    images: [
+      "https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "home_furnitures" },
+    seller: { businessName: "DailyZone Home" },
+    numRatings: 178,
+  },
+  {
+    id: 15,
+    title: "Đèn Bàn LED Cảm Ứng Điều Chỉnh Độ Sáng",
+    description: "3 chế độ ánh sáng, cổng sạc USB-C tích hợp. Bảo vệ mắt.",
+    sellingPrice: 399000,
+    mrpPrice: 550000,
+    discountPercent: 27,
+    images: [
+      "https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "home_furnitures" },
+    seller: { businessName: "DailyZone Home" },
+    numRatings: 224,
+  },
+  {
+    id: 16,
+    title: "Bộ Chăn Ga Gối Cotton Lạnh – 4 Món",
+    description: "Cotton lạnh cao cấp, thoáng mát mùa hè, mềm mịn dễ chịu.",
+    sellingPrice: 750000,
+    mrpPrice: 1050000,
+    discountPercent: 29,
+    images: [
+      "https://images.pexels.com/photos/1267300/pexels-photo-1267300.jpeg?auto=compress&w=500",
+    ],
+    category: { name: "home_furnitures" },
+    seller: { businessName: "DailyZone Home" },
+    numRatings: 156,
   },
 ];
 
@@ -71,9 +261,9 @@ export const fetchProducts = createAsyncThunk(
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/products`, { params });
-      return response.data;
+      return { data: response.data, category: params.category };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Không thể tải sản phẩm.");
+      return rejectWithValue({ message: error.response?.data?.message || "Không thể tải sản phẩm.", category: params.category });
     }
   }
 );
@@ -136,20 +326,31 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        const data = action.payload;
+        const { data, category } = action.payload;
         // Spring Page object: { content: [], totalPages, number }
         const content = data?.content ?? data;
-        state.products =
-          Array.isArray(content) && content.length > 0
-            ? content
+        if (Array.isArray(content) && content.length > 0) {
+          state.products = content;
+        } else {
+          // Lọc fallback theo category nếu có, ngược lại hiển thị tất cả
+          state.products = category
+            ? FALLBACK_PRODUCTS.filter(
+                (p) => p.category?.name?.toLowerCase() === category.toLowerCase()
+              ) || FALLBACK_PRODUCTS
             : FALLBACK_PRODUCTS;
+        }
         state.totalPages = data?.totalPages ?? 1;
         state.currentPage = data?.number ?? 0;
       })
-      .addCase(fetchProducts.rejected, (state) => {
+      .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        // fallback khi lỗi
-        state.products = FALLBACK_PRODUCTS;
+        const category = action.payload?.category;
+        // Lọc fallback theo category khi lỗi
+        state.products = category
+          ? FALLBACK_PRODUCTS.filter(
+              (p) => p.category?.name?.toLowerCase() === category.toLowerCase()
+            ) || FALLBACK_PRODUCTS
+          : FALLBACK_PRODUCTS;
       });
 
     // fetchProductById

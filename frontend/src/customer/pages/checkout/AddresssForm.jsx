@@ -11,7 +11,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-// Validation schema
 const ContactSchema = Yup.object().shape({
   name: Yup.string().required("Bắt buộc"),
   mobile: Yup.string()
@@ -26,8 +25,7 @@ const ContactSchema = Yup.object().shape({
   state: Yup.string().required("Bắt buộc"),
 });
 
-const AddressForm = ({ handleClose }) => {
-  // ================= STATE =================
+const AddressForm = ({ handleClose, onAddAddress }) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -36,7 +34,6 @@ const AddressForm = ({ handleClose }) => {
   const [loadingDistrict, setLoadingDistrict] = useState(false);
   const [loadingWard, setLoadingWard] = useState(false);
 
-  // ================= FORMIK =================
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -49,15 +46,14 @@ const AddressForm = ({ handleClose }) => {
     },
     validationSchema: ContactSchema,
     onSubmit: (values) => {
-      console.log("FORM DATA:", values);
-      handleClose();
+      onAddAddress(values);
     },
   });
 
-  // ================= LOAD PROVINCES =================
   useEffect(() => {
     const fetchProvinces = async () => {
       setLoadingProvince(true);
+
       try {
         const res = await axios.get("https://provinces.open-api.vn/api/p/");
         setProvinces(res.data);
@@ -71,7 +67,6 @@ const AddressForm = ({ handleClose }) => {
     fetchProvinces();
   }, []);
 
-  // ================= HANDLE CHANGE =================
   const handleProvinceChange = async (e) => {
     const value = e.target.value;
 
@@ -86,6 +81,7 @@ const AddressForm = ({ handleClose }) => {
 
     if (province) {
       setLoadingDistrict(true);
+
       try {
         const res = await axios.get(
           `https://provinces.open-api.vn/api/p/${province.code}?depth=2`,
@@ -111,6 +107,7 @@ const AddressForm = ({ handleClose }) => {
 
     if (district) {
       setLoadingWard(true);
+
       try {
         const res = await axios.get(
           `https://provinces.open-api.vn/api/d/${district.code}?depth=2`,
@@ -124,7 +121,6 @@ const AddressForm = ({ handleClose }) => {
     }
   };
 
-  // ================= UI =================
   return (
     <Box
       sx={{
@@ -146,13 +142,12 @@ const AddressForm = ({ handleClose }) => {
       }}
       className="shadow-lg"
     >
-      <p className="text-xl font-semibold text-center pb-6 text-gray-800">
+      <p className="pb-6 text-center text-xl font-semibold text-gray-800">
         Thêm địa chỉ giao hàng
       </p>
 
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2.5}>
-          {/* NAME */}
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -166,7 +161,6 @@ const AddressForm = ({ handleClose }) => {
             />
           </Grid>
 
-          {/* PHONE */}
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
@@ -180,8 +174,7 @@ const AddressForm = ({ handleClose }) => {
             />
           </Grid>
 
-          {/* PINCODE */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               name="pinCode"
@@ -194,7 +187,6 @@ const AddressForm = ({ handleClose }) => {
             />
           </Grid>
 
-          {/* ADDRESS */}
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -208,14 +200,14 @@ const AddressForm = ({ handleClose }) => {
             />
           </Grid>
 
-          {/* PROVINCE */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               select
               fullWidth
               label="Tỉnh / Thành phố"
               value={formik.values.state}
               onChange={handleProvinceChange}
+              onBlur={() => formik.setFieldTouched("state", true)}
               error={formik.touched.state && Boolean(formik.errors.state)}
               helperText={formik.touched.state && formik.errors.state}
             >
@@ -233,14 +225,14 @@ const AddressForm = ({ handleClose }) => {
             </TextField>
           </Grid>
 
-          {/* DISTRICT */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               select
               fullWidth
               label="Quận / Huyện"
               value={formik.values.city}
               onChange={handleDistrictChange}
+              onBlur={() => formik.setFieldTouched("city", true)}
               disabled={!districts.length}
               error={formik.touched.city && Boolean(formik.errors.city)}
               helperText={formik.touched.city && formik.errors.city}
@@ -259,15 +251,15 @@ const AddressForm = ({ handleClose }) => {
             </TextField>
           </Grid>
 
-          {/* WARD */}
           <Grid item xs={12}>
             <TextField
               select
               fullWidth
-              name="locality" // 👈 BẮT BUỘC
+              name="locality"
               label="Phường / Xã"
               value={formik.values.locality}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               disabled={!wards.length}
               error={formik.touched.locality && Boolean(formik.errors.locality)}
               helperText={formik.touched.locality && formik.errors.locality}
@@ -286,21 +278,38 @@ const AddressForm = ({ handleClose }) => {
             </TextField>
           </Grid>
 
-          {/* SUBMIT */}
           <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{
-                py: "14px",
-                borderRadius: "10px",
-                fontWeight: 600,
-                textTransform: "none",
-              }}
-            >
-              Thêm địa chỉ
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleClose}
+                variant="outlined"
+                fullWidth
+                sx={{
+                  py: "14px",
+                  borderRadius: "10px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                }}
+              >
+                Hủy
+              </Button>
+
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  py: "14px",
+                  borderRadius: "10px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  background: "#C6A15B",
+                  "&:hover": { background: "#a07830" },
+                }}
+              >
+                Thêm địa chỉ
+              </Button>
+            </div>
           </Grid>
         </Grid>
       </form>

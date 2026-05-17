@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
   Modal,
   Radio,
   RadioGroup,
@@ -78,25 +77,33 @@ const Checkout = () => {
   const [open, setOpen] = useState(false);
   const [snackOpen, setSnackOpen] = useState(false);
 
+  // địa chỉ thêm tạm ở frontend
+  const [localAddresses, setLocalAddresses] = useState([]);
+
   useEffect(() => {
     if (localStorage.getItem("jwt")) {
       dispatch(fetchUserProfile());
     }
   }, [dispatch]);
 
-  // Redirect sang payment URL khi đặt hàng thành công và có link
   useEffect(() => {
     if (paymentUrl) {
       window.location.href = paymentUrl;
     }
+
     if (successMessage && !paymentUrl) {
       setSnackOpen(true);
       setTimeout(() => navigate("/account/orders"), 1500);
     }
   }, [paymentUrl, successMessage, navigate]);
 
-  // Lấy addresses từ user profile
-  const addresses = profile?.addresses || [];
+  const addresses = [...(profile?.addresses || []), ...localAddresses];
+
+  const handleAddAddress = (newAddress) => {
+    setLocalAddresses((prev) => [...prev, newAddress]);
+    setSelectedAddressIndex(addresses.length);
+    setOpen(false);
+  };
 
   const handleCreateOrder = () => {
     if (!localStorage.getItem("jwt")) {
@@ -104,12 +111,16 @@ const Checkout = () => {
       return;
     }
 
-    // Nếu có địa chỉ đã lưu, dùng địa chỉ đó
     if (addresses.length > 0 && addresses[selectedAddressIndex]) {
       const address = addresses[selectedAddressIndex];
+
+      if (paymentGateway === "BANK_TRANSFER") {
+        navigate("/payment");
+        return;
+      }
+
       dispatch(createOrder({ address, paymentMethod: paymentGateway }));
     } else {
-      // Chưa có địa chỉ, mở form
       setOpen(true);
     }
   };
@@ -117,12 +128,12 @@ const Checkout = () => {
   return (
     <div className="min-h-screen px-5 pt-10 sm:px-10 md:px-20 lg:px-20">
       <div className="grid grid-cols-1 gap-9 rounded-lg bg-gray-50 p-10 lg:grid-cols-3 lg:space-y-0">
-        {/* LEFT */}
         <div className="col-span-2 space-y-5">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-semibold text-gray-700">
               Chọn địa chỉ giao hàng
             </span>
+
             <Button
               onClick={() => setOpen(true)}
               variant="outlined"
@@ -132,7 +143,7 @@ const Checkout = () => {
             </Button>
           </div>
 
-          <div className="text-sm font-medium space-y-4">
+          <div className="space-y-4 text-sm font-medium">
             <p className="text-gray-600">Địa chỉ đã lưu</p>
 
             <div className="space-y-3 rounded-xl border border-gray-300 p-4">
@@ -167,9 +178,7 @@ const Checkout = () => {
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="col-span-1 space-y-4 text-sm">
-          {/* Payment */}
           <section className="space-y-3 rounded-xl border bg-white p-5 shadow-sm">
             <h1 className="text-center text-lg font-semibold text-gray-700">
               Chọn phương thức thanh toán
@@ -204,9 +213,9 @@ const Checkout = () => {
             </RadioGroup>
           </section>
 
-          {/* Pricing */}
           <section className="rounded-xl border bg-white shadow-sm">
             <PricingCard cart={cart} coupon="" />
+
             <div className="p-5">
               <Button
                 onClick={handleCreateOrder}
@@ -233,10 +242,12 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* MODAL - FORM THÊM ĐỊA CHỈ */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={style}>
-          <AddressForm handleClose={() => setOpen(false)} />
+          <AddressForm
+            handleClose={() => setOpen(false)}
+            onAddAddress={handleAddAddress}
+          />
         </Box>
       </Modal>
 

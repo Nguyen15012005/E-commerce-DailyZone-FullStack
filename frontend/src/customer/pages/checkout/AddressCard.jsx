@@ -1,49 +1,48 @@
 import { Radio } from "@mui/material";
 import React from "react";
 
-const AddressCard = ({ value, selectedValue, handleChange }) => {
-  const isSelected = value == selectedValue;
+const AddressCard = ({ address, value, selectedValue, handleChange }) => {
+  const isSelected = value === selectedValue;
 
   return (
     <div
-      className={`p-5 rounded-xl flex gap-4 cursor-pointer transition-all duration-300 
-      ${
+      className={`flex cursor-pointer gap-4 rounded-xl p-5 transition-all duration-300 ${
         isSelected
           ? "border-2 bg-gray-200 shadow"
-          : "border hover:shadow-sm hover:border-gray-800"
+          : "border hover:border-gray-800 hover:shadow-sm"
       }`}
       onClick={() => handleChange({ target: { value } })}
     >
-      {/* Radio */}
       <div className="flex items-start pt-1">
         <Radio
           checked={isSelected}
           onChange={handleChange}
           value={value}
-          name="radio-buttons"
+          name="address-radio"
         />
       </div>
 
-      {/* Content */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <h1 className="font-semibold text-[15px] text-gray-800">
-            Nguyễn Văn A
+          <h1 className="text-[15px] font-semibold text-gray-800">
+            {address?.name || "Chưa có tên"}
           </h1>
 
           {isSelected && (
-            <span className="text-[11px] bg-primary text-white px-2 py-[2px] rounded">
-              Mặc định
+            <span className="rounded bg-[#C6A15B] px-2 py-[2px] text-[11px] text-white">
+              Đang chọn
             </span>
           )}
         </div>
 
-        <p className="text-sm text-gray-600 leading-relaxed max-w-[320px]">
-          123 Đường ABC, Phường XYZ, Quận 1, TP.HCM - 700000
+        <p className="max-w-[420px] text-sm leading-relaxed text-gray-600">
+          {address?.address}, {address?.locality}, {address?.city},{" "}
+          {address?.state} - {address?.pinCode}
         </p>
 
         <p className="text-sm text-gray-700">
-          <span className="font-medium">SĐT:</span> 0901234567
+          <span className="font-medium">SĐT:</span>{" "}
+          {address?.mobile || "Chưa có số điện thoại"}
         </p>
       </div>
     </div>

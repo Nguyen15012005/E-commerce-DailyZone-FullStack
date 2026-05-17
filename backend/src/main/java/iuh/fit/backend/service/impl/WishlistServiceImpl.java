@@ -5,6 +5,7 @@ import iuh.fit.backend.model.User;
 import iuh.fit.backend.model.Wishlist;
 import iuh.fit.backend.repository.WishlistRepository;
 import iuh.fit.backend.service.WishlistService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +36,13 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
+    @Transactional
     public Wishlist addProductToWishlist(User user, Product product) {
         Wishlist wishlist = getWishListByUserId(user);
-        if(wishlist.getProducts().contains(product)) {
-            wishlist.getProducts().remove(product);
+        boolean exists = wishlist.getProducts().stream()
+                .anyMatch(item -> item.getId().equals(product.getId()));
+        if(exists) {
+            wishlist.getProducts().removeIf(item -> item.getId().equals(product.getId()));
         }
         else {
             wishlist.getProducts().add(product);

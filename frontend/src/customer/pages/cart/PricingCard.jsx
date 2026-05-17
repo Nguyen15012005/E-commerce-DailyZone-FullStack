@@ -3,8 +3,9 @@ import React from "react";
 
 const PricingCard = ({ cart, coupon }) => {
   // Dữ liệu từ cart API: totalPrice, totalDiscountedPrice, discount, totalItem
-  const subtotal = cart?.totalPrice || 0;
-  const platformDiscount = cart?.discount || 0;
+  const subtotal = cart?.totalMrpPrice || cart?.totalPrice || 0;
+  const sellingTotal = cart?.totalSellingPrice || cart?.totalDiscountedPrice || 0;
+  const platformDiscount = Math.max(subtotal - sellingTotal, 0);
   const shipping = subtotal > 500000 ? 0 : 79000; // miễn phí ship khi > 500k
 
   // Giảm thêm theo coupon
@@ -14,7 +15,7 @@ const PricingCard = ({ cart, coupon }) => {
   }
 
   const totalDiscount = platformDiscount + couponDiscount;
-  const total = subtotal - totalDiscount + shipping;
+  const total = Math.max(subtotal - totalDiscount, 0) + shipping;
 
   const formatPrice = (price) =>
     price ? price.toLocaleString("vi-VN") + "đ" : "0đ";

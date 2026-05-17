@@ -15,6 +15,8 @@ const CartItem = ({ item }) => {
   // item từ backend: { id, product: { title, images, seller }, quantity, size, sellingPrice, mrpPrice }
   const product = item?.product || {};
   const quantity = item?.quantity || 1;
+  const lineSellingPrice = item?.sellingPrice || product?.sellingPrice * quantity || 0;
+  const lineMrpPrice = item?.mrpPrice || product?.mrpPrice * quantity || 0;
   const image =
     Array.isArray(product?.images) && product.images.length > 0
       ? product.images[0]
@@ -101,11 +103,11 @@ const CartItem = ({ item }) => {
         {/* PRICE */}
         <div>
           <p className="text-base font-semibold text-red-500">
-            {formatPrice((item?.sellingPrice || 0) * quantity)}
+            {formatPrice(lineSellingPrice)}
           </p>
-          {item?.mrpPrice && item.mrpPrice !== item.sellingPrice && (
+          {lineMrpPrice && lineMrpPrice !== lineSellingPrice && (
             <p className="text-xs text-gray-400 line-through">
-              {formatPrice(item.mrpPrice * quantity)}
+              {formatPrice(lineMrpPrice)}
             </p>
           )}
         </div>

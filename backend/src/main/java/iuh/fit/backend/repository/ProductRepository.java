@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("SELECT p FROM Product p where (:query is null or lower(p.title)" +
             " LIKE lower(concat('%', :query, '%') ) ) " +
-            "or (:query is null or lower(p.category.name)" +
+            "or (:query is null or lower(p.category.categoryId)" +
             " LIKE lower(concat('%', :query, '%') ) )")
     List<Product> searchProduct(@Param("query") String query);
 }

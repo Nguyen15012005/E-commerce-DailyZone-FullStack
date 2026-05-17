@@ -14,7 +14,21 @@ import ProductCard from "./product_card/ProductCard";
 import FilterSection from "./filter_product/FilterSection";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../../store/productSlice";
+import { fetchWishlist } from "../../../store/wishlistSlice";
 import { useSearchParams } from "react-router-dom";
+
+const parsePriceRange = (value) => {
+  if (!value) return {};
+  if (value.endsWith("+")) {
+    return { minPrice: value.replace("+", "") };
+  }
+
+  const [minPrice, maxPrice] = value.split("-");
+  return {
+    minPrice: minPrice || undefined,
+    maxPrice: maxPrice || undefined,
+  };
+};
 
 const Product = () => {
   const theme = useTheme();
@@ -28,14 +42,16 @@ const Product = () => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
+    const priceRange = parsePriceRange(searchParams.get("price"));
     const params = {
+      query: searchParams.get("query") || undefined,
       category: searchParams.get("category") || undefined,
       brand: searchParams.get("brand") || undefined,
-      colors: searchParams.get("colors") || undefined,
+      colors: searchParams.get("color") || undefined,
       sizes: searchParams.get("sizes") || undefined,
-      minPrice: searchParams.get("minPrice") || undefined,
-      maxPrice: searchParams.get("maxPrice") || undefined,
-      minDiscount: searchParams.get("minDiscount") || undefined,
+      minPrice: searchParams.get("minPrice") || priceRange.minPrice,
+      maxPrice: searchParams.get("maxPrice") || priceRange.maxPrice,
+      minDiscount: searchParams.get("discount") || undefined,
       sort: sort || undefined,
       stock: searchParams.get("stock") || undefined,
       pageNumber: page - 1,
@@ -44,10 +60,20 @@ const Product = () => {
     dispatch(fetchProducts(params));
   }, [dispatch, searchParams, sort, page]);
 
+  useEffect(() => {
+    if (localStorage.getItem("jwt")) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch]);
+
   const handleSortChange = (event) => {
     setSort(event.target.value);
     setPage(1);
   };
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchParams]);
 
   const handlePageChange = (event, value) => {
     setPage(value);

@@ -9,6 +9,7 @@ import iuh.fit.backend.repository.ProductRepository;
 import iuh.fit.backend.request.CreateProductRequest;
 import iuh.fit.backend.service.ProductService;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -126,20 +127,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProduct(String category, String brand, String colors, String sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber) {
-        Specification<Product> specification = (root, query, criteriaBuilder)->{
+    public Page<Product> getAllProduct(String keyword, String category, String brand, String colors, String sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber) {
+        Specification<Product> specification = (root, criteriaQuery, criteriaBuilder)->{
             List<Predicate> predicates = new ArrayList<>();
-            if (category != null){
-                Join<Product, Category> categoryJoin = root.join("category");
-                predicates.add(criteriaBuilder.equal(categoryJoin.get("categoryId"), category));
+            if (keyword != null && !keyword.isBlank()) {
+                Join<Product, Category> categoryJoin = root.join("category", JoinType.LEFT);
+                String pattern = "%" + keyword.toLowerCase() + "%";
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), pattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), pattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(categoryJoin.get("categoryId")), pattern)
+                ));
+            }
+            if (category != null && !category.isBlank()){
+                Join<Product, Category> categoryJoin = root.join("category", JoinType.LEFT);
+                Join<Category, Category> parentCategoryJoin = categoryJoin.join("parentCategory", JoinType.LEFT);
+                Join<Category, Category> rootCategoryJoin = parentCategoryJoin.join("parentCategory", JoinType.LEFT);
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.equal(categoryJoin.get("categoryId"), category),
+                        criteriaBuilder.equal(parentCategoryJoin.get("categoryId"), category),
+                        criteriaBuilder.equal(rootCategoryJoin.get("categoryId"), category)
+                ));
             }
             if (colors != null && !colors.isEmpty()) {
-                System.out.println("Colors: " + colors);
                 predicates.add(criteriaBuilder.equal(root.get("color"), colors));
             }
-            if (sizes != null && sizes.isEmpty()) {
-                System.out.println("Sizes: " + sizes);
-                predicates.add(criteriaBuilder.equal(root.get("sizes"), sizes));
+            if (sizes != null && !sizes.isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("sizes"), "%" + sizes + "%"));
             }
             if (minPrice != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("sellingPrice"), minPrice));
@@ -150,8 +164,12 @@ public class ProductServiceImpl implements ProductService {
             if (minDiscount != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("discountPercent"), minDiscount));
             }
-            if (stock != null) {
-                predicates.add(criteriaBuilder.equal(root.get("stock"), stock));
+            if (stock != null && !stock.isBlank()) {
+                if ("in_stock".equals(stock)) {
+                    predicates.add(criteriaBuilder.greaterThan(root.get("quantity"), 0));
+                } else if ("out_of_stock".equals(stock)) {
+                    predicates.add(criteriaBuilder.equal(root.get("quantity"), 0));
+                }
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

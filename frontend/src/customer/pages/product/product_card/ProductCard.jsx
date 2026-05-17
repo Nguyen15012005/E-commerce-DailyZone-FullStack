@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./ProductCard.css";
-import { IconButton, Button } from "@mui/material";
+import { Alert, IconButton, Button, Snackbar } from "@mui/material";
 import { Favorite, ModeComment, ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToWishlist } from "../../../../store/wishlistSlice";
+import { addToCart, fetchCart } from "../../../../store/cartSlice";
 
 // ảnh fallback khi sản phẩm không có ảnh
 const FALLBACK_IMAGES = [
@@ -13,9 +16,15 @@ const FALLBACK_IMAGES = [
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.auth);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const { addLoading } = useSelector((state) => state.cart);
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [message, setMessage] = useState("");
 
   const productId = product?.id || 1;
 
@@ -44,12 +53,66 @@ const ProductCard = ({ product }) => {
   }, [isHovered, images.length]);
 
   const goToDetail = () => navigate(`/product-detail/${productId}`);
+  const isWishlisted = wishlist?.products?.some((item) => item.id === productId);
+
+  const requireLogin = () => {
+    if (!isAuthenticated || !localStorage.getItem("jwt")) {
+      navigate("/login");
+      return false;
+    }
+
+    if (role && role !== "CUSTOMER") {
+      setMessage("Vui lòng đăng nhập bằng tài khoản khách hàng để mua sản phẩm.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleWishlist = async (event) => {
+    event.stopPropagation();
+    if (!requireLogin()) return;
+    const result = await dispatch(addToWishlist(productId));
+    if (addToWishlist.rejected.match(result)) {
+      setMessage(result.payload || "Không thể thêm sản phẩm vào yêu thích.");
+    }
+  };
+
+  const handleAddToCart = async (event) => {
+    event.stopPropagation();
+    if (!requireLogin()) return;
+
+    const result = await dispatch(
+      addToCart({ productId, size: "FREE", quantity: 1 }),
+    );
+
+    if (addToCart.fulfilled.match(result)) {
+      dispatch(fetchCart());
+      navigate("/cart");
+    } else {
+      setMessage(result.payload || "Không thể thêm sản phẩm vào giỏ hàng.");
+    }
+  };
 
   const formatPrice = (price) =>
     price ? price.toLocaleString("vi-VN") + "₫" : "—";
 
   return (
     <div className="product-card" onClick={goToDetail}>
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={3000}
+        onClose={(event) => {
+          event?.stopPropagation?.();
+          setMessage("");
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="error" onClose={() => setMessage("")}>
+          {message}
+        </Alert>
+      </Snackbar>
+
       <div
         className="card"
         onMouseEnter={() => setIsHovered(true)}
@@ -79,11 +142,9 @@ const ProductCard = ({ product }) => {
 
           <div className="actions">
             <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate("/wishlist");
-              }}
+              onClick={handleWishlist}
               className="icon-btn favorite"
+              sx={{ color: isWishlisted ? "#e11d48" : undefined }}
             >
               <Favorite />
             </IconButton>
@@ -131,14 +192,12 @@ const ProductCard = ({ product }) => {
           </div>
 
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate("/cart");
-            }}
+            onClick={handleAddToCart}
             variant="contained"
             startIcon={<ShoppingCart />}
             fullWidth
             className="add-btn"
+            disabled={addLoading}
           >
             Thêm vào giỏ
           </Button>

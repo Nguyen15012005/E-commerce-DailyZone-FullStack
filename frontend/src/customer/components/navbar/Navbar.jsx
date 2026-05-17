@@ -37,6 +37,7 @@ const Navbar = () => {
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
 
   const [openSearch, setOpenSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSheet, setShowSheet] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("men");
   const [openMenu, setOpenMenu] = useState(false);
@@ -118,6 +119,16 @@ const Navbar = () => {
 
     setOpenMenu(false);
     setShowSheet(false);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+
+    if (!query) return;
+
+    navigate(`/product-list?query=${encodeURIComponent(query)}`);
+    setOpenSearch(false);
   };
 
   return (
@@ -336,8 +347,9 @@ const Navbar = () => {
           </div>
 
           {openSearch && (
-            <div
+            <form
               ref={searchRef}
+              onSubmit={handleSearchSubmit}
               className="flex w-full items-center gap-3 border-b border-[#F2E8D7] bg-white px-4 py-4 md:px-6 lg:px-20"
             >
               <Search sx={{ color: "#B88A44" }} />
@@ -345,9 +357,11 @@ const Navbar = () => {
               <input
                 className="flex-1 bg-transparent text-[#3B2B12] outline-none placeholder:text-[#8B7355]"
                 placeholder="Tìm kiếm sản phẩm..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
                 autoFocus
               />
-            </div>
+            </form>
           )}
         </div>
 

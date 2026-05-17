@@ -20,6 +20,7 @@ public interface ProductService {
     Product findProductById(Long productId) throws ProductException;
     List<Product> searchProduct(String query);
     public Page<Product> getAllProduct(
+            String query,
             String category,
             String brand,
             String colors,

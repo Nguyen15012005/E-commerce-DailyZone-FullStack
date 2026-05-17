@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Divider } from "@mui/material";
+import { Alert, Button, CircularProgress, Divider, Snackbar } from "@mui/material";
 import {
   ShieldCheck,
   Star,
@@ -16,7 +16,7 @@ import ReviewCard from "../../review/ReviewCard";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, clearProductDetail } from "../../../../store/productSlice";
-import { addToCart } from "../../../../store/cartSlice";
+import { addToCart, fetchCart } from "../../../../store/cartSlice";
 import { addToWishlist } from "../../../../store/wishlistSlice";
 import { fetchReviews } from "../../../../store/reviewSlice";
 
@@ -25,12 +25,15 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  const { productDetail, detailLoading } = useSelector((s) => s.product);
+  const { productDetail, detailLoading, error: productError } = useSelector((s) => s.product);
   const { reviews } = useSelector((s) => s.review);
-  const { addLoading } = useSelector((s) => s.cart);
+  const { addLoading, error: cartError } = useSelector((s) => s.cart);
+  const { error: wishlistError } = useSelector((s) => s.wishlist);
+  const { role } = useSelector((s) => s.auth);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -73,23 +76,45 @@ const ProductDetail = () => {
   const formatPrice = (price) =>
     price ? price.toLocaleString("vi-VN") + "₫" : "—";
 
-  const handleAddCart = () => {
+  const canUseCustomerActions = () => {
     if (!localStorage.getItem("jwt")) {
       navigate("/login");
-      return;
+      return false;
     }
+
+    if (role && role !== "CUSTOMER") {
+      setMessage("Vui lòng đăng nhập bằng tài khoản khách hàng để mua sản phẩm.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleAddCart = () => {
+    if (!canUseCustomerActions() || !product?.id) return;
+
     dispatch(
-      addToCart({ productId: Number(id), size: "FREE", quantity })
-    ).then(() => navigate("/cart"));
+      addToCart({ productId: Number(product.id), size: "FREE", quantity })
+    ).then((result) => {
+      if (addToCart.fulfilled.match(result)) {
+        dispatch(fetchCart());
+        navigate("/cart");
+      } else {
+        setMessage(result.payload || "Không thể thêm sản phẩm vào giỏ hàng.");
+      }
+    });
   };
 
   const handleAddWishlist = () => {
-    if (!localStorage.getItem("jwt")) {
-      navigate("/login");
-      return;
-    }
-    dispatch(addToWishlist(Number(id)));
-    navigate("/wishlist");
+    if (!canUseCustomerActions() || !product?.id) return;
+
+    dispatch(addToWishlist(Number(product.id))).then((result) => {
+      if (addToWishlist.fulfilled.match(result)) {
+        navigate("/wishlist");
+      } else {
+        setMessage(result.payload || "Không thể thêm sản phẩm vào yêu thích.");
+      }
+    });
   };
 
   if (detailLoading) {
@@ -100,8 +125,41 @@ const ProductDetail = () => {
     );
   }
 
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 px-5 pt-10 lg:px-20">
+        <div className="rounded-xl bg-white p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Không tìm thấy sản phẩm
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">
+            {productError || "Sản phẩm không tồn tại hoặc API chưa trả dữ liệu."}
+          </p>
+          <Button
+            onClick={() => navigate("/product-list")}
+            variant="contained"
+            sx={{ mt: 3, backgroundColor: "#C9A96E" }}
+          >
+            Quay lại danh sách sản phẩm
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 px-5 pt-10 lg:px-20">
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={3000}
+        onClose={() => setMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="error" onClose={() => setMessage("")}>
+          {message}
+        </Alert>
+      </Snackbar>
+
       <div className="grid grid-cols-1 gap-10 rounded-xl bg-white p-5 shadow-sm lg:grid-cols-2">
         {/* LEFT - IMAGE */}
         <section className="flex flex-col gap-5 lg:flex-row">

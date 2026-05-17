@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, CircularProgress, IconButton } from "@mui/material";
+import { Alert, Button, CircularProgress, IconButton, Snackbar } from "@mui/material";
 import { Favorite, ShoppingCart, DeleteOutline, ArrowBack } from "@mui/icons-material";
-import { fetchWishlist } from "../../../store/wishlistSlice";
+import { addToWishlist, fetchWishlist } from "../../../store/wishlistSlice";
+import { addToCart, fetchCart } from "../../../store/cartSlice";
 
 // ─── Dữ liệu mặc định hiển thị khi backend chưa có sản phẩm ────────────────
 const DEFAULT_WISHLIST_PRODUCTS = [
@@ -78,6 +79,9 @@ const DEFAULT_WISHLIST_PRODUCTS = [
 // ─── Component WishlistCard ──────────────────────────────────────────────────
 const WishlistCard = ({ product }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { role } = useSelector((state) => state.auth);
+  const [message, setMessage] = React.useState("");
 
   const discountPercent =
     product?.mrpPrice && product?.sellingPrice
@@ -92,10 +96,35 @@ const WishlistCard = ({ product }) => {
       ? product.images[0]
       : "https://images.pexels.com/photos/5868726/pexels-photo-5868726.jpeg?auto=compress&w=600";
 
+  const canUseCustomerActions = () => {
+    if (!localStorage.getItem("jwt")) {
+      navigate("/login");
+      return false;
+    }
+
+    if (role && role !== "CUSTOMER") {
+      setMessage("Vui lòng đăng nhập bằng tài khoản khách hàng để mua sản phẩm.");
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <div
       className="group relative overflow-hidden rounded-2xl border border-[#F2E8D7] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(201,169,110,0.18)]"
     >
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={3000}
+        onClose={() => setMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="error" onClose={() => setMessage("")}>
+          {message}
+        </Alert>
+      </Snackbar>
+
       {/* Badge giảm giá */}
       {discountPercent > 0 && (
         <span className="absolute left-3 top-3 z-10 rounded-full bg-gradient-to-r from-[#D6B57A] to-[#B88A44] px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
@@ -106,6 +135,13 @@ const WishlistCard = ({ product }) => {
       {/* Nút xoá khỏi wishlist */}
       <IconButton
         size="small"
+        onClick={async () => {
+          if (!canUseCustomerActions()) return;
+          const result = await dispatch(addToWishlist(product.id));
+          if (addToWishlist.rejected.match(result)) {
+            setMessage(result.payload || "Không thể cập nhật danh sách yêu thích.");
+          }
+        }}
         className="absolute right-2 top-2 z-10"
         sx={{
           background: "rgba(255,255,255,0.9)",
@@ -166,7 +202,19 @@ const WishlistCard = ({ product }) => {
           variant="contained"
           fullWidth
           startIcon={<ShoppingCart sx={{ fontSize: 16 }} />}
-          onClick={() => navigate("/cart")}
+          onClick={async () => {
+            if (!canUseCustomerActions()) return;
+            const result = await dispatch(
+              addToCart({ productId: product.id, size: "FREE", quantity: 1 }),
+            );
+
+            if (addToCart.fulfilled.match(result)) {
+              dispatch(fetchCart());
+              navigate("/cart");
+            } else {
+              setMessage(result.payload || "Không thể thêm sản phẩm vào giỏ hàng.");
+            }
+          }}
           sx={{
             background: "linear-gradient(135deg, #D6B57A 0%, #B88A44 100%)",
             borderRadius: "10px",
@@ -201,10 +249,10 @@ const Wishlist = () => {
     }
   }, [dispatch]);
 
-  // Nếu backend trả về có sản phẩm thì dùng, ngược lại dùng mặc định
   const apiProducts = wishlist?.products || [];
-  const displayProducts =
-    apiProducts.length > 0 ? apiProducts : DEFAULT_WISHLIST_PRODUCTS;
+  const displayProducts = localStorage.getItem("jwt")
+    ? apiProducts
+    : DEFAULT_WISHLIST_PRODUCTS;
 
   if (loading) {
     return (

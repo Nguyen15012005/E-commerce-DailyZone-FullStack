@@ -254,6 +254,54 @@ const FALLBACK_PRODUCT = {
   seller: { businessName: "DailyZone Fashion" },
 };
 
+const getFallbackProductById = (productId) => {
+  const id = Number(productId);
+  return FALLBACK_PRODUCTS.find((product) => Number(product.id) === id) || null;
+};
+
+const applyFallbackFilters = (products, params = {}) => {
+  const query = params.query?.toLowerCase();
+  const category = params.category?.toLowerCase();
+  const color = params.colors?.toLowerCase();
+  const minPrice = params.minPrice ? Number(params.minPrice) : null;
+  const maxPrice = params.maxPrice ? Number(params.maxPrice) : null;
+  const minDiscount = params.minDiscount ? Number(params.minDiscount) : null;
+
+  let result = products.filter((product) => {
+    const matchesQuery =
+      !query ||
+      product.title?.toLowerCase().includes(query) ||
+      product.description?.toLowerCase().includes(query) ||
+      product.category?.name?.toLowerCase().includes(query);
+    const matchesCategory =
+      !category || product.category?.name?.toLowerCase() === category;
+    const matchesColor = !color || product.color?.toLowerCase() === color;
+    const matchesMinPrice =
+      minPrice === null || Number(product.sellingPrice) >= minPrice;
+    const matchesMaxPrice =
+      maxPrice === null || Number(product.sellingPrice) <= maxPrice;
+    const matchesDiscount =
+      minDiscount === null || Number(product.discountPercent) >= minDiscount;
+
+    return (
+      matchesQuery &&
+      matchesCategory &&
+      matchesColor &&
+      matchesMinPrice &&
+      matchesMaxPrice &&
+      matchesDiscount
+    );
+  });
+
+  if (params.sort === "price_low") {
+    result = [...result].sort((a, b) => a.sellingPrice - b.sellingPrice);
+  } else if (params.sort === "price_high") {
+    result = [...result].sort((a, b) => b.sellingPrice - a.sellingPrice);
+  }
+
+  return result;
+};
+
 // ─── Thunks ────────────────────────────────────────────────────────────────────
 
 export const fetchProducts = createAsyncThunk(
@@ -261,9 +309,9 @@ export const fetchProducts = createAsyncThunk(
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/products`, { params });
-      return { data: response.data, category: params.category };
+      return { data: response.data, params };
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || "Không thể tải sản phẩm.", category: params.category });
+      return rejectWithValue({ message: error.response?.data?.message || "Không thể tải sản phẩm.", params });
     }
   }
 );
@@ -312,6 +360,7 @@ const productSlice = createSlice({
   reducers: {
     clearProductDetail(state) {
       state.productDetail = null;
+      state.error = null;
     },
     clearSearchResults(state) {
       state.searchResults = [];
@@ -326,31 +375,22 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        const { data, category } = action.payload;
+        const { data, params } = action.payload;
         // Spring Page object: { content: [], totalPages, number }
         const content = data?.content ?? data;
         if (Array.isArray(content) && content.length > 0) {
           state.products = content;
         } else {
-          // Lọc fallback theo category nếu có, ngược lại hiển thị tất cả
-          state.products = category
-            ? FALLBACK_PRODUCTS.filter(
-                (p) => p.category?.name?.toLowerCase() === category.toLowerCase()
-              ) || FALLBACK_PRODUCTS
-            : FALLBACK_PRODUCTS;
+          state.products = applyFallbackFilters(FALLBACK_PRODUCTS, params);
         }
         state.totalPages = data?.totalPages ?? 1;
         state.currentPage = data?.number ?? 0;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        const category = action.payload?.category;
-        // Lọc fallback theo category khi lỗi
-        state.products = category
-          ? FALLBACK_PRODUCTS.filter(
-              (p) => p.category?.name?.toLowerCase() === category.toLowerCase()
-            ) || FALLBACK_PRODUCTS
-          : FALLBACK_PRODUCTS;
+        state.products = applyFallbackFilters(FALLBACK_PRODUCTS, action.payload?.params);
+        state.totalPages = 1;
+        state.currentPage = 0;
       });
 
     // fetchProductById
@@ -361,11 +401,15 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.detailLoading = false;
-        state.productDetail = action.payload ?? FALLBACK_PRODUCT;
+        state.productDetail =
+          action.payload ?? getFallbackProductById(action.meta.arg);
       })
-      .addCase(fetchProductById.rejected, (state) => {
+      .addCase(fetchProductById.rejected, (state, action) => {
         state.detailLoading = false;
-        state.productDetail = FALLBACK_PRODUCT;
+        state.productDetail = getFallbackProductById(action.meta.arg);
+        state.error = state.productDetail
+          ? null
+          : action.payload || "Không tìm thấy sản phẩm.";
       });
 
     // searchProducts

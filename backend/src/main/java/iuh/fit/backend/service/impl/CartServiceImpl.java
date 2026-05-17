@@ -26,17 +26,19 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartItem addCartItem(User user, Product product, String size, int quantity) {
         Cart cart = findUserCart(user);
-        CartItem isPresent = cartItemRepository.findByCartAndProductAndSize(cart, product, size);
+        int itemQuantity = quantity > 0 ? quantity : 1;
+        String itemSize = size != null && !size.isBlank() ? size : "FREE";
+        CartItem isPresent = cartItemRepository.findByCartAndProductAndSize(cart, product, itemSize);
         if(isPresent == null){
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
-            cartItem.setQuantity(quantity);
+            cartItem.setQuantity(itemQuantity);
             cartItem.setUserId(user.getId());
-            cartItem.setSize(size);
+            cartItem.setSize(itemSize);
 
-            int totalPrice = quantity* product.getSellingPrice();
+            int totalPrice = itemQuantity * product.getSellingPrice();
             cartItem.setSellingPrice(totalPrice);
-            cartItem.setMrpPrice(quantity* product.getMrpPrice());
+            cartItem.setMrpPrice(itemQuantity * product.getMrpPrice());
 
 
             cart.getCartItems().add(cartItem);
@@ -44,13 +46,21 @@ public class CartServiceImpl implements CartService {
 
             return cartItemRepository.save(cartItem);
         }
-        return isPresent;
+        isPresent.setQuantity(isPresent.getQuantity() + itemQuantity);
+        isPresent.setSellingPrice(isPresent.getQuantity() * product.getSellingPrice());
+        isPresent.setMrpPrice(isPresent.getQuantity() * product.getMrpPrice());
+        return cartItemRepository.save(isPresent);
 
     }
 
     @Override
     public Cart findUserCart(User user) {
         Cart cart = cartRepository.findByUserId(user.getId());
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(user);
+            cart = cartRepository.save(cart);
+        }
         int totalPrice = 0;
         int totalDiscountedPrice = 0;
         int totalItem = 0;

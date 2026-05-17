@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SellerReportServiceImpl implements SellerReportService {
 
-    private SellerReportRepository sellerReportRepository;
+    private final SellerReportRepository sellerReportRepository;
 
     @Override
     public SellerReport getSellerReport(Seller seller) {
